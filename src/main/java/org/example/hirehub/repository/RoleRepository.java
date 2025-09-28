@@ -9,6 +9,7 @@ import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
@@ -21,4 +22,10 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     LEFT JOIN FETCH rp.role
 """)
     List<Role> findAll();
+
+    @Query(value = """
+    SELECT r FROM Role r
+    WHERE r.name=?1
+""")
+    Optional<Role> findByName(String name);
 }

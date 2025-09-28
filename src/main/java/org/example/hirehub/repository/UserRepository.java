@@ -22,13 +22,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    LEFT JOIN PERMISSION p ON p.id = rp.permission_id
 //""", nativeQuery = true)
 //    List<User> findAll();
-    @NonNull
-    @Query("""
-        SELECT DISTINCT u FROM User u
-        LEFT JOIN FETCH u.role r
-        LEFT JOIN FETCH r.rolePermission rp
-        LEFT JOIN FETCH rp.permission
-    """)
-    List<User> findAll();
+//    @NonNull
+//    @Query("""
+//        SELECT DISTINCT u FROM User u
+//        LEFT JOIN FETCH u.role r
+//        LEFT JOIN FETCH r.rolePermission rp
+//        LEFT JOIN FETCH rp.permission
+//    """)
+//    List<User> findAll();
+
+    @Query(value= """
+    SELECT u from User u
+    WHERE u.email = ?1
+""")
+    User findByEmail(String email);
+
 }
 
