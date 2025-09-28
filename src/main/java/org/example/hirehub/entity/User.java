@@ -17,18 +17,19 @@ import java.util.List;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
     private String address;
-    @OneToOne
+    @ManyToOne
     private Role role;
     private String avatar;
-    private boolean isVerified = false;
-    private boolean isBanned = false;
+    private Boolean isVerified = false;
+    private Boolean isBanned = false;
     private String description;
-    private int numberOfEmployees;
+    private Integer numberOfEmployees;
 
-    private int foundedYear = 0;
+    private Integer foundedYear = 0;
 
     @OneToMany(mappedBy = "userA")
     private List<Relationship> relationshipsA;
@@ -37,6 +38,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Experience> experiences;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserSkill> userSkills;
 
     private boolean isDeleted = false;
 

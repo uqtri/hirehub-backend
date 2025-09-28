@@ -21,6 +21,9 @@ public class Skill {
     @OneToMany(mappedBy = "skill")
     private List<ExperienceSkill> skills;
 
+    @OneToMany(mappedBy = "skill")
+    private List<UserSkill> userSkills;
+
     private boolean isDeleted = false;
 
 
