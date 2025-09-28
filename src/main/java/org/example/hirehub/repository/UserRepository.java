@@ -3,6 +3,7 @@ package org.example.hirehub.repository;
 import org.example.hirehub.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,12 +22,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    LEFT JOIN PERMISSION p ON p.id = rp.permission_id
 //""", nativeQuery = true)
 //    List<User> findAll();
+    @NonNull
     @Query("""
         SELECT DISTINCT u FROM User u
         LEFT JOIN FETCH u.role r
         LEFT JOIN FETCH r.rolePermission rp
         LEFT JOIN FETCH rp.permission
     """)
-    List<User> findAllWithRoleAndPermissions();
+    List<User> findAll();
 }
 
