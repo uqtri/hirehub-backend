@@ -19,6 +19,7 @@ public class User {
     private Long id;
     @Column(unique = true, nullable = false)
     private String email;
+    private String name;
     private String password;
     private String address;
     @ManyToOne

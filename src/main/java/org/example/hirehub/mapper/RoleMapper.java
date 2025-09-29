@@ -17,7 +17,6 @@ public interface RoleMapper {
     @Mapping(target = "action", source = "permission.action")
     @Mapping(target = "resource", source = "permission.resource")
 
-
     PermissionSummaryDTO toDTO (RolePermission rolePermission);
     PermissionSummaryDTO toDTO(Permission permission);
 }
