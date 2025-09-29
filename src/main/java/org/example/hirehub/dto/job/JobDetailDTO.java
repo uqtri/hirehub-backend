@@ -6,8 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.hirehub.dto.resume.ResumeDetailDTO;
 import org.example.hirehub.dto.skill.SkillSummaryDTO;
-import org.example.hirehub.dto.user.UserSummaryDTO;
+import org.example.hirehub.dto.user.CompanySummaryDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -19,8 +20,10 @@ public class JobDetailDTO {
     private String description;
     private String level;
     private Boolean isBanned;
+    private LocalDateTime postingDate;
 
     private List<SkillSummaryDTO> skills;
-    private UserSummaryDTO recruiter;
+    private CompanySummaryDTO recruiter;
     private List<ResumeDetailDTO> resumes;
+    private Integer hit_counter;
 }

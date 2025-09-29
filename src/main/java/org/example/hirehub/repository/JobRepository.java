@@ -1,10 +1,36 @@
 package org.example.hirehub.repository;
 
-import org.example.hirehub.entity.Job;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.example.hirehub.entity.Job;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
+    @Query("SELECT j FROM Job j " +
+            "WHERE (:title IS NULL OR j.title = :title) " +
+            "OR (:company IS NULL OR j.recruiter.name = :company) " +
+            "OR (:location IS NULL OR j.recruiter.address LIKE CONCAT('%', :location, '%')) " +
+            "OR (:level IS NULL OR j.level = :level) " +
+            "OR (:workspace IS NULL OR j.workspace = :workspace) " +
+            "OR (:postingDate IS NULL OR j.postingDate >= :postingDate) " +
+            "OR (:keyword IS NULL " +
+            "     OR j.title LIKE CONCAT('%', :keyword, '%') " +
+            "     OR j.recruiter.name LIKE CONCAT('%', :keyword, '%') " +
+            "     OR j.level LIKE CONCAT('%', :keyword, '%')) " +
+            "ORDER BY j.postingDate DESC")
+    List<Job> searchJobsDynamic(@Param("title") String title,
+                                @Param("company") String company,
+                                @Param("location") String location,
+                                @Param("level") String level,
+                                @Param("workspace") String workspace,
+                                @Param("postingDate") LocalDateTime postingDate,
+                                @Param("keyword") String keyword);
+
 }
 
