@@ -24,4 +24,9 @@ public class JobSkill {
     @MapsId("skillId")
     private Skill skill;
 
+    public JobSkill(Job job, Skill skill) {
+        this.job = job;
+        this.skill =  skill;
+        this.jobSkillKey = new JobSkillKey(job.getId(), skill.getId());
+    }
 }

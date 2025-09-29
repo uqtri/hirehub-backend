@@ -1,5 +1,15 @@
 package org.example.hirehub.service;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.example.hirehub.dto.job.CreateJobRequestDTO;
+import org.example.hirehub.entity.JobSkill;
+import org.example.hirehub.entity.Skill;
+import org.example.hirehub.entity.User;
+import org.example.hirehub.repository.SkillRepository;
+import org.example.hirehub.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import org.example.hirehub.repository.JobRepository;
@@ -9,12 +19,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Service
 public class JobService {
 
     private final JobRepository jobRepository;
-    public JobService(JobRepository jobRepository){
+    private final UserRepository userRepository;
+    private final SkillRepository skillRepository;
+
+    public JobService(JobRepository jobRepository,
+                      UserRepository userRepository,
+                      SkillRepository skillRepository){
         this.jobRepository = jobRepository;
+        this.userRepository = userRepository;
+        this.skillRepository = skillRepository;
     }
 
     public List<Job> getAllJobs(String postingDate, String company, String title,
@@ -41,14 +60,37 @@ public class JobService {
                 title, company, location, level, workspace, dateFilter,keyword
         );
 
-        return new ArrayList<>(jobs);
+        return jobs;
     }
 
     public Job getJobById(Long id) {
         return jobRepository.findById(id).orElse(null);
     }
 
-    public Job createJob(Job job) {
+    public Job createJob(CreateJobRequestDTO request) {
+        Job job = new Job();
+        job.setTitle(request.getTitle());
+        job.setDescription(request.getDescription());
+        job.setApply_link(request.getApplyLink());
+        job.setLevel(request.getLevel());
+        job.setWorkspace(request.getWorkspace());
+
+        // recruiter
+        User recruiter = userRepository.findById(request.getRecruiterId())
+                .orElseThrow(() -> new RuntimeException("Recruiter not found"));
+        job.setRecruiter(recruiter);
+
+        // skills
+        List<JobSkill> jobSkills = request.getSkillIds().stream()
+                .map(skillId -> {
+                    Skill skill = skillRepository.findById(skillId)
+                            .orElseThrow(() -> new RuntimeException("Skill not found"));
+                    return new JobSkill(job, skill);
+                })
+                .toList();
+
+        job.getSkills().addAll(jobSkills);
+
         return jobRepository.save(job);
     }
 

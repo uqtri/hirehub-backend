@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class JobDetailDTO {
     private Long id;
+    private String title;
     private String description;
     private String level;
     private Boolean isBanned;
