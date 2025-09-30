@@ -21,6 +21,6 @@ public class ExperienceDetailDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
-
-    private List<SkillSummaryDTO> skills; // Experience → Skills
+    private String image;
+    private List<SkillSummaryDTO> skills;
 }
