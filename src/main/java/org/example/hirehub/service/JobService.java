@@ -1,5 +1,6 @@
 package org.example.hirehub.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,6 +68,7 @@ public class JobService {
         return jobRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public Job createJob(CreateJobRequestDTO request) {
         Job job = new Job();
         job.setTitle(request.getTitle());
@@ -80,18 +82,29 @@ public class JobService {
                 .orElseThrow(() -> new RuntimeException("Recruiter not found"));
         job.setRecruiter(recruiter);
 
-        // skills
+        // save job trước để có id
+        Job insertedJob = jobRepository.save(job);
+
+        // skills mapping
         List<JobSkill> jobSkills = request.getSkillIds().stream()
                 .map(skillId -> {
                     Skill skill = skillRepository.findById(skillId)
-                            .orElseThrow(() -> new RuntimeException("Skill not found"));
-                    return new JobSkill(job, skill);
+                            .orElseThrow(() -> new RuntimeException("Skill not found with id: " + skillId));
+                    return new JobSkill(insertedJob, skill);
                 })
                 .toList();
 
-        job.getSkills().addAll(jobSkills);
+        if(insertedJob.getSkills() == null) {
+            insertedJob.setSkills(jobSkills);
+        }
+        else {
+            insertedJob.getSkills().clear();
 
-        return jobRepository.save(job);
+            insertedJob.getSkills().addAll(jobSkills);
+        }
+
+        // save lại để cascade persist JobSkill
+        return jobRepository.save(insertedJob);
     }
 
     public Job updateJob(Job job) {

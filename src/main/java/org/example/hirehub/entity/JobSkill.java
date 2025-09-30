@@ -8,25 +8,29 @@ import lombok.Setter;
 import org.example.hirehub.key.JobSkillKey;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class JobSkill {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EmbeddedId
     private JobSkillKey jobSkillKey;
 
-    @ManyToOne
-    @MapsId("jobId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("jobId") // map tới JobSkillKey.jobId
+    @JoinColumn(name = "job_id")
     private Job job;
-    @ManyToOne
-    @MapsId("skillId")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("skillId") // map tới JobSkillKey.skillId
+    @JoinColumn(name = "skill_id")
     private Skill skill;
 
     public JobSkill(Job job, Skill skill) {
         this.job = job;
-        this.skill =  skill;
+        this.skill = skill;
         this.jobSkillKey = new JobSkillKey(job.getId(), skill.getId());
     }
 }
+

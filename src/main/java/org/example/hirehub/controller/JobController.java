@@ -26,7 +26,7 @@ public class JobController {
     }
 
     @GetMapping("")
-    public List<Job> getAllJobs(
+    public List<JobDetailDTO> getAllJobs(
             @RequestParam(required = false) String postingDate,
             @RequestParam(required = false) String company,
             @RequestParam(required = false) String title,
@@ -34,9 +34,8 @@ public class JobController {
             @RequestParam(required = false) String level,
             @RequestParam(required = false) String workspace,
             @RequestParam(required = false) String keyword
-    )
-    { return jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword);
-//        return jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword).stream().map(jobMapper::toDTO).toList();
+    ) {
+        return jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword).stream().map(jobMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
@@ -44,12 +43,11 @@ public class JobController {
         return jobMapper.toDTO(jobService.getJobById(id));
     }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<JobDetailDTO> createJob(
             @Valid @RequestBody CreateJobRequestDTO request) {
         JobDetailDTO job = jobMapper.toDTO(jobService.createJob(request));
         return ResponseEntity.ok(job);
     }
-
 
 }
