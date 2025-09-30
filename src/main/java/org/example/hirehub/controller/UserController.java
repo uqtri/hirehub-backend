@@ -81,8 +81,7 @@ public class UserController {
                 return ResponseEntity.status(400).body(Map.of("message", "User not found"));
             }
             userMapper.updateUserFromDTO(existingUser, request);
-
-
+            
             List<Long> skillIds = request.getSkillIds();
 
             if(skillIds != null && !skillIds.isEmpty()) {
