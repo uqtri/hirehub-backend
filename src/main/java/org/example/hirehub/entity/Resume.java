@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Setter
 @Getter
@@ -19,10 +21,10 @@ public class Resume {
     private User user;
     @ManyToOne
     private Job job;
-    private String status;
+    private String status = "NOT VIEW";
+    @Column(columnDefinition = "TEXT")
     private String cover_letter;
-
     private boolean isDeleted = false;
-
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }

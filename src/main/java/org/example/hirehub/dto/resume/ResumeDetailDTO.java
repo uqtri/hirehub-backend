@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.example.hirehub.dto.job.JobSummaryDTO;
 import org.example.hirehub.dto.user.UserSummaryDTO;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -16,6 +18,7 @@ public class ResumeDetailDTO {
     private String link;
     private String status;
     private String coverLetter;
+    private LocalDateTime createdAt;
 
     private UserSummaryDTO user;
     private JobSummaryDTO job;
