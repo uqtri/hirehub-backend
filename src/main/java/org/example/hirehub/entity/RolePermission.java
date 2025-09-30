@@ -12,7 +12,6 @@ import org.example.hirehub.key.RolePermissionKey;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class RolePermission {
 
     @EmbeddedId
@@ -24,4 +23,10 @@ public class RolePermission {
     @ManyToOne
     @MapsId("permissionId")
     private Permission permission;
+
+    public RolePermission(Role role, Permission permission) {
+        this.role = role;
+        this.permission = permission;
+        this.rolePermissionKey = new RolePermissionKey(role.getId(), permission.getId());
+    }
 }
