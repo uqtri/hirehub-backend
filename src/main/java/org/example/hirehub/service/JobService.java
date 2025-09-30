@@ -123,13 +123,14 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    public void deleteJob(Long id) {
+    @Transactional
+    public Job deleteJob(Long id) {
         Job job = jobRepository.findById(id).orElse(null);
         if(job == null) {
-            return;
+            return null;
         }
 
         job.setDeleted(true);
-        jobRepository.save(job);
+        return jobRepository.save(job);
     }
 }

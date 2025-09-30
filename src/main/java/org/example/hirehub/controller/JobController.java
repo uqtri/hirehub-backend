@@ -53,10 +53,27 @@ public class JobController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<JobDetailDTO> updateJob(@PathVariable Long id,
+    public ResponseEntity<JobDetailDTO> updateJob(
+            @PathVariable Long id,
             @Valid @RequestBody UpdateJobRequestDTO request) {
-        JobDetailDTO job = jobMapper.toDTO(jobService.updateJob(request, id));
-        return ResponseEntity.ok(job);
+        Job updatedJob = jobService.updateJob(request, id);
+
+        if (updatedJob == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(jobMapper.toDTO(updatedJob));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<JobDetailDTO> deleteJob(@PathVariable Long id) {
+        Job deletedJob = jobService.deleteJob(id);
+
+        if (deletedJob == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(jobMapper.toDTO(deletedJob));
     }
 
 }
