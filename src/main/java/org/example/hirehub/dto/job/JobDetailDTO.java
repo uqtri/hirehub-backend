@@ -15,11 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JobDetailDTO {
+
     private Long id;
     private String description;
     private String level;
     private Boolean isBanned;
-
     private List<SkillSummaryDTO> skills;
     private UserSummaryDTO recruiter;
     private List<ResumeDetailDTO> resumes;
