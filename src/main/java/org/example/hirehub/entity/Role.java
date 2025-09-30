@@ -19,7 +19,7 @@ public class Role {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RolePermission> rolePermission;
 
     private boolean isDeleted = false;
