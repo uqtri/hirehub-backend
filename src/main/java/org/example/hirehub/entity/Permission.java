@@ -21,7 +21,7 @@ public class Permission {
     private String action;
     private String resource;
 
-    @OneToMany(mappedBy = "permission")
+    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RolePermission> rolePermission;
 
     private boolean isDeleted = false;

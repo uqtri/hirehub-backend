@@ -13,6 +13,7 @@ import org.example.hirehub.repository.SkillRepository;
 import org.example.hirehub.service.RoleService;
 import org.example.hirehub.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -40,36 +41,38 @@ public class UserController {
         this.skillRepository = skillRepository;
     }
     @GetMapping("")
-    public List<UserDetailDTO> findAll() {
+    public List<UserDetailDTO> findAllUsers() {
         return userService.getAllUsers().stream().map(userMapper::toDTO).toList();
     }
-    @GetMapping("/{id}") public UserDetailDTO findById(@PathVariable Long id) {
 
-        List<User> users = userService.getAllUsers();
-
-        User u = userService.getUserById(1L);
-
+    @GetMapping("/{id}") public UserDetailDTO findUserById(@PathVariable Long id) {
         return userMapper.toDTO(userService.getUserById(id));
     }
+
     @PostMapping("")
-    public ResponseEntity<Map<String, ?>>  save(@RequestBody CreateUserRequestDTO request) {
+    public ResponseEntity<Map<String, ?>>  createUser(@RequestBody CreateUserRequestDTO request) {
 
-        User user = userService.getUserByEmail(request.getEmail());
-        if(user != null) {
-            return ResponseEntity.status(400).body(Map.of("message", "User already exists"));
+        try {
+            User user = userService.getUserByEmail(request.getEmail());
+            if(user != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Người dùng đã tồn tại"));
+            }
+
+            User newUser = userMapper.toEntity(request);
+            Role defaultRole = roleService.getRoleByName("User").orElse(null);
+
+            Role role = roleService.getRoleById(request.getRoleId()).orElse(defaultRole);
+            newUser.setRole(role);
+
+            userService.save(newUser);
+            return ResponseEntity.status(201).body(Map.of("message", "User added"));
         }
-
-        User newUser = userMapper.toEntity(request);
-        Role defaultRole = roleService.getRoleByName("User").orElse(null);
-
-        Role role = roleService.getRoleById(request.getRoleId()).orElse(defaultRole);
-        newUser.setRole(role);
-
-        userService.save(newUser);
-        return ResponseEntity.status(201).body(Map.of("message", "User added"));
+        catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, ?>>  update(@PathVariable Long id, @RequestBody UpdateUserRequestDTO request) {
+    public ResponseEntity<Map<String, ?>>  updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDTO request) {
 
         try {
 
@@ -89,10 +92,6 @@ public class UserController {
                 skillRepository.findSkillsByIds(skillIds).forEach(skill -> {
                     existingUser.getUserSkills().add(new UserSkill(existingUser, skill));
                 });
-//                List<UserSkill> userSkills = skillRepository.findSkillsByIds(skillIds).stream().map(skill -> new UserSkill(existingUser, skill)).toList();
-
-
-//                existingUser.setUserSkills(userSkills);
             }
             userService.save(existingUser);
             return ResponseEntity.status(201).body(Map.of("message", "User updated", "data", existingUser));
