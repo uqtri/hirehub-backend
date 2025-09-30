@@ -1,6 +1,8 @@
 package org.example.hirehub.controller;
 
+import org.example.hirehub.dto.job.UpdateJobRequestDTO;
 import org.example.hirehub.entity.Job;
+import org.hibernate.sql.Update;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -47,6 +49,13 @@ public class JobController {
     public ResponseEntity<JobDetailDTO> createJob(
             @Valid @RequestBody CreateJobRequestDTO request) {
         JobDetailDTO job = jobMapper.toDTO(jobService.createJob(request));
+        return ResponseEntity.ok(job);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<JobDetailDTO> updateJob(@PathVariable Long id,
+            @Valid @RequestBody UpdateJobRequestDTO request) {
+        JobDetailDTO job = jobMapper.toDTO(jobService.updateJob(request, id));
         return ResponseEntity.ok(job);
     }
 

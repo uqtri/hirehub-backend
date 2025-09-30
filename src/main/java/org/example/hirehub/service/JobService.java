@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.hirehub.dto.job.CreateJobRequestDTO;
+import org.example.hirehub.dto.job.UpdateJobRequestDTO;
 import org.example.hirehub.entity.JobSkill;
 import org.example.hirehub.entity.Skill;
 import org.example.hirehub.entity.User;
+import org.example.hirehub.mapper.JobMapper;
 import org.example.hirehub.repository.SkillRepository;
 import org.example.hirehub.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -28,13 +30,15 @@ public class JobService {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
+    private final JobMapper jobMapper;
 
     public JobService(JobRepository jobRepository,
                       UserRepository userRepository,
-                      SkillRepository skillRepository){
+                      SkillRepository skillRepository, JobMapper jobMapper){
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
         this.skillRepository = skillRepository;
+        this.jobMapper = jobMapper;
     }
 
     public List<Job> getAllJobs(String postingDate, String company, String title,
@@ -71,21 +75,16 @@ public class JobService {
     @Transactional
     public Job createJob(CreateJobRequestDTO request) {
         Job job = new Job();
-        job.setTitle(request.getTitle());
-        job.setDescription(request.getDescription());
-        job.setApply_link(request.getApplyLink());
-        job.setLevel(request.getLevel());
-        job.setWorkspace(request.getWorkspace());
 
-        // recruiter
+        jobMapper.createJobFromDTO(job, request);
+
         User recruiter = userRepository.findById(request.getRecruiterId())
                 .orElseThrow(() -> new RuntimeException("Recruiter not found"));
         job.setRecruiter(recruiter);
 
-        // save job trước để có id
         Job insertedJob = jobRepository.save(job);
 
-        // skills mapping
+        insertedJob.getSkills().clear();
         List<JobSkill> jobSkills = request.getSkillIds().stream()
                 .map(skillId -> {
                     Skill skill = skillRepository.findById(skillId)
@@ -94,20 +93,33 @@ public class JobService {
                 })
                 .toList();
 
-        if(insertedJob.getSkills() == null) {
-            insertedJob.setSkills(jobSkills);
-        }
-        else {
-            insertedJob.getSkills().clear();
-
             insertedJob.getSkills().addAll(jobSkills);
-        }
 
-        // save lại để cascade persist JobSkill
         return jobRepository.save(insertedJob);
     }
 
-    public Job updateJob(Job job) {
+    @Transactional
+    public Job updateJob(UpdateJobRequestDTO request, Long id) {
+        Job job = jobRepository.findById(id).orElse(null);
+
+        if (job == null) {
+            return null;
+        }
+
+        jobMapper.updateJobFromDTO(job, request);
+
+        if (request.getSkillIds() != null) {
+            job.getSkills().clear();
+            List<JobSkill> jobSkills = request.getSkillIds().stream()
+                    .map(skillId -> {
+                        Skill skill = skillRepository.findById(skillId)
+                                .orElseThrow(() -> new RuntimeException("Skill not found with id: " + skillId));
+                        return new JobSkill(job, skill);
+                    })
+                    .toList();
+            job.getSkills().addAll(jobSkills);
+        }
+
         return jobRepository.save(job);
     }
 
