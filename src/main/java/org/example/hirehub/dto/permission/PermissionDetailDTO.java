@@ -1,17 +1,19 @@
 package org.example.hirehub.dto.permission;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
+
 import org.example.hirehub.dto.role.RoleSummaryDTO;
 
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class PermissionDetailDTO {
     private Long id;
     private String action;

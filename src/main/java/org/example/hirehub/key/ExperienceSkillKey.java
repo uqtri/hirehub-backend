@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
+@Embeddable
+
 public class ExperienceSkillKey implements Serializable {
     private  Long experienceId;
     private  Long skillId;

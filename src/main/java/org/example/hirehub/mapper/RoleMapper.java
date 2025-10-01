@@ -2,9 +2,9 @@ package org.example.hirehub.mapper;
 
 import org.example.hirehub.dto.permission.PermissionSummaryDTO;
 import org.example.hirehub.dto.role.RoleDetailDTO;
+import org.example.hirehub.entity.RolePermission;
 import org.example.hirehub.entity.Permission;
 import org.example.hirehub.entity.Role;
-import org.example.hirehub.entity.RolePermission;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

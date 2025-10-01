@@ -1,13 +1,14 @@
 package org.example.hirehub.controller;
 
-import org.example.hirehub.dto.role.RoleDetailDTO;
-import org.example.hirehub.mapper.RoleMapper;
-import org.example.hirehub.repository.RoleRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import java.util.List;
 
+import org.example.hirehub.repository.RoleRepository;
+import org.example.hirehub.dto.role.RoleDetailDTO;
+import org.example.hirehub.mapper.RoleMapper;
 
 @RestController
 

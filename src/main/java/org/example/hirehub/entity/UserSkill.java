@@ -1,20 +1,23 @@
 package org.example.hirehub.entity;
 
 import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Entity;
 import jakarta.persistence.MapsId;
+
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
+
 import org.example.hirehub.key.UserSkillKey;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class UserSkill {
     @EmbeddedId
     private UserSkillKey userSkillKey;

@@ -1,10 +1,11 @@
 package org.example.hirehub.service;
 
-import org.example.hirehub.entity.User;
-import org.example.hirehub.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import org.example.hirehub.repository.UserRepository;
+import org.example.hirehub.entity.User;
 
 @Service
 public class UserService {

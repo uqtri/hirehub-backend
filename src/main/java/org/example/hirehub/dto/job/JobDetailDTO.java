@@ -1,20 +1,22 @@
 package org.example.hirehub.dto.job;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.example.hirehub.dto.user.CompanySummaryDTO;
 import org.example.hirehub.dto.resume.ResumeDetailDTO;
 import org.example.hirehub.dto.skill.SkillSummaryDTO;
-import org.example.hirehub.dto.user.CompanySummaryDTO;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
+
 public class JobDetailDTO {
     private Long id;
     private String title;

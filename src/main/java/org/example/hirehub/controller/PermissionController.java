@@ -1,16 +1,16 @@
 package org.example.hirehub.controller;
 
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
 import org.example.hirehub.dto.permission.PermissionDetailDTO;
+import org.example.hirehub.service.PermissionService;
+import org.example.hirehub.mapper.PermissionMapper;
+import org.example.hirehub.entity.RolePermission;
+import org.example.hirehub.service.RoleService;
 import org.example.hirehub.entity.Permission;
 import org.example.hirehub.entity.Role;
-import org.example.hirehub.entity.RolePermission;
-import org.example.hirehub.mapper.PermissionMapper;
-import org.example.hirehub.repository.PermissionRepository;
-import org.example.hirehub.service.PermissionService;
-import org.example.hirehub.service.RoleService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class PermissionController {
         this.roleService = roleService;
     }
     @GetMapping("")
-    public List<PermissionDetailDTO> getAllPermisisons() {
+    public List<PermissionDetailDTO> getAllPermissisons() {
         return permissionService.getAllPermissions().stream().map(permissionMapper::toDTO).toList();
     }
 

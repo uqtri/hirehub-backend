@@ -1,10 +1,11 @@
 package org.example.hirehub.dto.experience;
 
+import org.example.hirehub.dto.user.UserSummaryDTO;
+
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.hirehub.dto.user.UserSummaryDTO;
+import lombok.Getter;
 
 @Setter
 @Getter

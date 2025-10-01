@@ -1,16 +1,15 @@
 package org.example.hirehub.controller;
 
 import org.example.hirehub.dto.job.UpdateJobRequestDTO;
-import org.example.hirehub.entity.Job;
-import org.hibernate.sql.Update;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.example.hirehub.entity.Job;
 import jakarta.validation.Valid;
 
-import org.example.hirehub.mapper.JobMapper;
-import org.example.hirehub.service.JobService;
-import org.springframework.http.ResponseEntity;
-import org.example.hirehub.dto.job.JobDetailDTO;
 import org.example.hirehub.dto.job.CreateJobRequestDTO;
+import org.example.hirehub.dto.job.JobDetailDTO;
+import org.example.hirehub.service.JobService;
+import org.example.hirehub.mapper.JobMapper;
 
 import java.util.List;
 
@@ -57,22 +56,12 @@ public class JobController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateJobRequestDTO request) {
         Job updatedJob = jobService.updateJob(request, id);
-
-        if (updatedJob == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(jobMapper.toDTO(updatedJob));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<JobDetailDTO> deleteJob(@PathVariable Long id) {
         Job deletedJob = jobService.deleteJob(id);
-
-        if (deletedJob == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(jobMapper.toDTO(deletedJob));
     }
 
