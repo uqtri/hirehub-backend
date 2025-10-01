@@ -1,16 +1,15 @@
-package org.example.hirehub.dto.role;
+package org.example.hirehub.dto.resume;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
 
-public class RoleSummaryDTO {
-    private Long id;
-    private String name;
+public class UpdateResumeRequestDTO {
+    private String status;
 }

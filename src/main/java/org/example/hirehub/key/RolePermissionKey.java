@@ -1,18 +1,15 @@
 package org.example.hirehub.key;
 
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
-import org.example.hirehub.entity.RolePermission;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 @NoArgsConstructor
-//@AllArgsConstructor
 @Setter
 @Getter
 public class RolePermissionKey  implements Serializable {

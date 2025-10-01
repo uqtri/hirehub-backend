@@ -1,24 +1,21 @@
 package org.example.hirehub.controller;
 
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import jakarta.persistence.EntityManager;
+
 import org.example.hirehub.dto.user.CreateUserRequestDTO;
 import org.example.hirehub.dto.user.UpdateUserRequestDTO;
-import org.example.hirehub.dto.user.UserDetailDTO;
-import org.example.hirehub.entity.Role;
-import org.example.hirehub.entity.Skill;
-import org.example.hirehub.entity.User;
-import org.example.hirehub.entity.UserSkill;
-import org.example.hirehub.mapper.UserMapper;
 import org.example.hirehub.repository.SkillRepository;
-import org.example.hirehub.service.RoleService;
+import org.example.hirehub.dto.user.UserDetailDTO;
 import org.example.hirehub.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.example.hirehub.service.RoleService;
+import org.example.hirehub.mapper.UserMapper;
+import org.example.hirehub.entity.UserSkill;
+import org.example.hirehub.entity.Role;
+import org.example.hirehub.entity.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +78,7 @@ public class UserController {
                 return ResponseEntity.status(400).body(Map.of("message", "User not found"));
             }
             userMapper.updateUserFromDTO(existingUser, request);
-            
+
             List<Long> skillIds = request.getSkillIds();
 
             if(skillIds != null && !skillIds.isEmpty()) {

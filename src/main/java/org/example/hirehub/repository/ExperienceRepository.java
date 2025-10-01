@@ -1,9 +1,10 @@
 package org.example.hirehub.repository;
 
-import org.example.hirehub.entity.Experience;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import org.example.hirehub.entity.Experience;
 
 import java.util.List;
 

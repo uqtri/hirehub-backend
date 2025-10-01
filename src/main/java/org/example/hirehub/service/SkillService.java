@@ -1,10 +1,12 @@
 package org.example.hirehub.service;
 
-import org.example.hirehub.entity.Skill;
-import org.example.hirehub.repository.SkillRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import org.example.hirehub.repository.SkillRepository;
+import org.example.hirehub.entity.Skill;
+
 
 @Service
 public class SkillService {

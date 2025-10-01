@@ -1,18 +1,20 @@
 package org.example.hirehub.entity;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class Message {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

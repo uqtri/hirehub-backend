@@ -1,11 +1,12 @@
 package org.example.hirehub.service;
 
-import org.example.hirehub.entity.Role;
-import org.example.hirehub.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.example.hirehub.repository.RoleRepository;
+import org.example.hirehub.entity.Role;
+
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class RoleService {

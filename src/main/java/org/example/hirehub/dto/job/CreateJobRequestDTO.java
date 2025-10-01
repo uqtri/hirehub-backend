@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
+
 public class CreateJobRequestDTO {
     @NotBlank(message = "Tiêu đề công việc không được để trống.")
     @NotNull(message = "Tiêu đề công việc là bắt buộc.")

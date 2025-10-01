@@ -1,11 +1,13 @@
 package org.example.hirehub.service;
 
-import org.example.hirehub.entity.Permission;
-import org.example.hirehub.repository.PermissionRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
+
+import org.example.hirehub.repository.PermissionRepository;
+import org.example.hirehub.entity.Permission;
+
 
 @Service
 public class PermissionService {

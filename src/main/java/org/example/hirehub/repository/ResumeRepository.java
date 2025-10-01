@@ -13,21 +13,16 @@ import java.util.List;
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
     @Query(value = """
-            SELECT r FROM RESUME r
-            JOIN r.job z
-            WHERE z.id = :id
-            ORDER BY CreatedAt DESC;
-            """
-    )
-    List<Resume> findResumesForCompany(@Param("id") Long id);
-
-    @Query(value = """
-            SELECT r FROM RESUME r
+            SELECT r FROM Resume r
+            JOIN r.job j
+            JOIN j.recruiter rc
             JOIN r.user u
-            WHERE u.id = :id
-            ORDER BY CreatedAt DESC;
+            WHERE (:job IS NULL OR j.id = :job)
+            AND (:user IS NULL OR u.id = :user)
+            AND (:recruiter IS NULL OR rc.id = :recruiter)
+            ORDER BY createdAt DESC
             """
     )
-    List<Resume> findResumesForUser(@Param("id") Long id);
+    List<Resume> searchResumesDynamic(@Param("user") Long user, @Param("job") Long job, @Param("recruiter") Long recruiter);
 
 }

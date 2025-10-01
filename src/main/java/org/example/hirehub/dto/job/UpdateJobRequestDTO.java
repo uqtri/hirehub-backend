@@ -1,19 +1,20 @@
 package org.example.hirehub.dto.job;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
+
 public class UpdateJobRequestDTO {
 
     @Size(max = 100, message = "Tiêu đề công việc không được dài quá 100 ký tự.")

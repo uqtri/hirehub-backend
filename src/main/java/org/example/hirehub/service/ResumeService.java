@@ -1,25 +1,23 @@
 package org.example.hirehub.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.hirehub.dto.job.CreateJobRequestDTO;
-import org.example.hirehub.dto.job.UpdateJobRequestDTO;
-import org.example.hirehub.entity.*;
-import org.example.hirehub.mapper.JobMapper;
-import org.example.hirehub.mapper.ResumeMapper;
-import org.example.hirehub.repository.ResumeRepository;
-import org.example.hirehub.repository.SkillRepository;
-import org.example.hirehub.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 
-import org.example.hirehub.repository.JobRepository;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+
+import org.example.hirehub.dto.resume.CreateResumeRequestDTO;
+import org.example.hirehub.dto.resume.UpdateResumeRequestDTO;
+import org.example.hirehub.repository.ResumeRepository;
+import org.example.hirehub.repository.UserRepository;
+import org.example.hirehub.repository.JobRepository;
+import org.example.hirehub.exception.ResumeHandlerException;
+import org.example.hirehub.exception.JobHandlerException;
+import org.example.hirehub.mapper.ResumeMapper;
+import org.example.hirehub.entity.*;
 
 @Setter
 @Getter
@@ -28,89 +26,57 @@ public class ResumeService {
 
     private final ResumeRepository resumeRepository;
     private final ResumeMapper resumeMapper;
+    private final UserRepository userRepository;
+    private final JobRepository jobRepository;
 
-    public ResumeService(ResumeRepository resumeRepository, ResumeMapper resumeMapper){
+    public ResumeService(ResumeRepository resumeRepository, ResumeMapper resumeMapper,
+                         UserRepository userRepository,
+                         JobRepository jobRepository){
         this.resumeRepository = resumeRepository;
         this.resumeMapper = resumeMapper;
+        this.userRepository = userRepository;
+        this.jobRepository = jobRepository;
     }
 
-    public List<Resume> getAllResumes() {
-
-       return resumeRepository.findAll();
-
+    public List<Resume> getAllResumes(Long user, Long job, Long recruiter) {
+       return resumeRepository.searchResumesDynamic(user, job, recruiter);
     }
 
     public Resume getResumeById(Long id) {
-        return resumeRepository.findById(id).orElse(null);
+        return resumeRepository.findById(id).orElseThrow(() -> new ResumeHandlerException.ResumeNotFoundException(id));
     }
 
-    public List<Resume> getResumeForCompany(Long id) {
-        return resumeRepository.findResumesForCompany(id);
+    @Transactional
+    public Resume createResume(CreateResumeRequestDTO request) {
+        Resume resume = new Resume();
+
+        resumeMapper.createResumeFromDTO(resume, request);
+
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Job job = jobRepository.findById(request.getJobId()).orElseThrow(() -> new JobHandlerException.JobNotFoundException(request.getJobId()));
+
+
+        resume.setUser(user);
+        resume.setJob(job);
+
+        return resumeRepository.save(resume);
     }
 
-    public List<Resume> getResumeForUser(Long id) {
-        return resumeRepository.findResumesForUser(id);
+    @Transactional
+    public Resume updateResume(UpdateResumeRequestDTO request, Long id) {
+        Resume resume = resumeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Resume not found with id " + id));
+
+        resumeMapper.updateResumeFromDTO(resume, request);
+
+        return resumeRepository.save(resume);
     }
 
-//    @Transactional
-//    public Job createJob(CreateJobRequestDTO request) {
-//        Job job = new Job();
-//
-//        jobMapper.createJobFromDTO(job, request);
-//
-//        User recruiter = userRepository.findById(request.getRecruiterId())
-//                .orElseThrow(() -> new RuntimeException("Recruiter not found"));
-//        job.setRecruiter(recruiter);
-//
-//        Job insertedJob = jobRepository.save(job);
-//
-//        insertedJob.getSkills().clear();
-//        List<JobSkill> jobSkills = request.getSkillIds().stream()
-//                .map(skillId -> {
-//                    Skill skill = skillRepository.findById(skillId)
-//                            .orElseThrow(() -> new RuntimeException("Skill not found with id: " + skillId));
-//                    return new JobSkill(insertedJob, skill);
-//                })
-//                .toList();
-//
-//        insertedJob.getSkills().addAll(jobSkills);
-//
-//        return jobRepository.save(insertedJob);
-//    }
-//
-//    @Transactional
-//    public Job updateJob(UpdateJobRequestDTO request, Long id) {
-//        Job job = jobRepository.findById(id).orElse(null);
-//
-//        if (job == null) {
-//            return null;
-//        }
-//
-//        jobMapper.updateJobFromDTO(job, request);
-//
-//        if (request.getSkillIds() != null) {
-//            job.getSkills().clear();
-//            List<JobSkill> jobSkills = request.getSkillIds().stream()
-//                    .map(skillId -> {
-//                        Skill skill = skillRepository.findById(skillId)
-//                                .orElseThrow(() -> new RuntimeException("Skill not found with id: " + skillId));
-//                        return new JobSkill(job, skill);
-//                    })
-//                    .toList();
-//            job.getSkills().addAll(jobSkills);
-//        }
-//
-//        return jobRepository.save(job);
-//    }
-//
-//    @Transactional
-//    public Job deleteJob(Long id) {
-//        Job job = jobRepository.findById(id).orElse(null);
-//        if(job == null) {
-//            return null;
-//        }
-//
-//        job.setDeleted(true);
-//        return jobRepository.save(job);
-//    }
+    @Transactional
+    public Resume deleteResume(Long id) {
+        Resume resume = resumeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Resume not found with id " + id));
+
+        resume.setDeleted(true);
+        return resumeRepository.save(resume);
+    }
 }

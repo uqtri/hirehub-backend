@@ -2,19 +2,18 @@ package org.example.hirehub.dto.resume;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
+
 public class CreateResumeRequestDTO {
     @NotBlank(message = "Resume không được để trống.")
     @NotNull(message = "Resume là bắt buộc.")

@@ -1,6 +1,5 @@
 package org.example.hirehub.dto.user;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
+
 public class UpdateUserRequestDTO {
     private String email;
     private String password;

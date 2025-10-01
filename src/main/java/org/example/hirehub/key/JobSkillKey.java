@@ -2,17 +2,19 @@ package org.example.hirehub.key;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class JobSkillKey implements Serializable {
      private Long jobId;
      private Long skillId;

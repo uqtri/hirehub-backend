@@ -1,14 +1,14 @@
 package org.example.hirehub.dto.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 
 public class CompanySummaryDTO {
     private String name;

@@ -1,15 +1,14 @@
 package org.example.hirehub.repository;
 
-import org.example.hirehub.dto.role.RoleDetailDTO;
-import org.example.hirehub.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Repository;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.example.hirehub.entity.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {

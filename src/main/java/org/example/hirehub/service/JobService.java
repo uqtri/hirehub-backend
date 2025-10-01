@@ -1,26 +1,27 @@
 package org.example.hirehub.service;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.example.hirehub.exception.SkillHandlerException;
+import org.example.hirehub.exception.UserHandlerException;
+import org.example.hirehub.exception.JobHandlerException;
 import org.example.hirehub.dto.job.CreateJobRequestDTO;
 import org.example.hirehub.dto.job.UpdateJobRequestDTO;
+import org.example.hirehub.repository.SkillRepository;
+import org.example.hirehub.repository.UserRepository;
+import org.example.hirehub.repository.JobRepository;
+import org.example.hirehub.mapper.JobMapper;
 import org.example.hirehub.entity.JobSkill;
 import org.example.hirehub.entity.Skill;
 import org.example.hirehub.entity.User;
-import org.example.hirehub.mapper.JobMapper;
-import org.example.hirehub.repository.SkillRepository;
-import org.example.hirehub.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
-import org.example.hirehub.repository.JobRepository;
 import org.example.hirehub.entity.Job;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Setter
 @Getter
@@ -79,7 +80,7 @@ public class JobService {
         jobMapper.createJobFromDTO(job, request);
 
         User recruiter = userRepository.findById(request.getRecruiterId())
-                .orElseThrow(() -> new RuntimeException("Recruiter not found"));
+                .orElseThrow(() -> new UserHandlerException.RecruiterNotFoundException(request.getRecruiterId()));
         job.setRecruiter(recruiter);
 
         Job insertedJob = jobRepository.save(job);
@@ -88,7 +89,7 @@ public class JobService {
         List<JobSkill> jobSkills = request.getSkillIds().stream()
                 .map(skillId -> {
                     Skill skill = skillRepository.findById(skillId)
-                            .orElseThrow(() -> new RuntimeException("Skill not found with id: " + skillId));
+                            .orElseThrow(() -> new SkillHandlerException.SkillNotFoundException(skillId));
                     return new JobSkill(insertedJob, skill);
                 })
                 .toList();
@@ -100,11 +101,7 @@ public class JobService {
 
     @Transactional
     public Job updateJob(UpdateJobRequestDTO request, Long id) {
-        Job job = jobRepository.findById(id).orElse(null);
-
-        if (job == null) {
-            return null;
-        }
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
 
         jobMapper.updateJobFromDTO(job, request);
 
@@ -113,7 +110,7 @@ public class JobService {
             List<JobSkill> jobSkills = request.getSkillIds().stream()
                     .map(skillId -> {
                         Skill skill = skillRepository.findById(skillId)
-                                .orElseThrow(() -> new RuntimeException("Skill not found with id: " + skillId));
+                                .orElseThrow(() -> new SkillHandlerException.SkillNotFoundException(skillId));
                         return new JobSkill(job, skill);
                     })
                     .toList();
@@ -125,10 +122,7 @@ public class JobService {
 
     @Transactional
     public Job deleteJob(Long id) {
-        Job job = jobRepository.findById(id).orElse(null);
-        if(job == null) {
-            return null;
-        }
+        Job job = jobRepository.findById(id).orElseThrow(()-> new JobHandlerException.JobNotFoundException(id));
 
         job.setDeleted(true);
         return jobRepository.save(job);

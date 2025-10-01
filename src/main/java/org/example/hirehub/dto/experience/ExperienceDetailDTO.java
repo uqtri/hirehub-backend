@@ -1,11 +1,12 @@
 package org.example.hirehub.dto.experience;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.example.hirehub.dto.skill.SkillSummaryDTO;
 import org.example.hirehub.dto.user.UserSummaryDTO;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;

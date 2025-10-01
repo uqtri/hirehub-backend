@@ -1,10 +1,10 @@
 package org.example.hirehub.mapper;
 
 import org.example.hirehub.dto.permission.PermissionSummaryDTO;
-import org.example.hirehub.dto.role.RoleDetailDTO;
-import org.example.hirehub.dto.skill.SkillSummaryDTO;
 import org.example.hirehub.dto.user.CreateUserRequestDTO;
 import org.example.hirehub.dto.user.UpdateUserRequestDTO;
+import org.example.hirehub.dto.skill.SkillSummaryDTO;
+import org.example.hirehub.dto.role.RoleDetailDTO;
 import org.example.hirehub.dto.user.UserDetailDTO;
 import org.example.hirehub.entity.*;
 import org.mapstruct.*;
