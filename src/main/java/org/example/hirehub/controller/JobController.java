@@ -28,7 +28,7 @@ public class JobController {
 
     @GetMapping("")
     public List<JobDetailDTO> getAllJobs(
-            @RequestParam(required = false) String postingDate,
+            @RequestParam(required = false) String dateFilter,
             @RequestParam(required = false) String company,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String location,
@@ -36,7 +36,7 @@ public class JobController {
             @RequestParam(required = false) String workspace,
             @RequestParam(required = false) String keyword
     ) {
-        return jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword).stream().map(jobMapper::toDTO).toList();
+        return jobService.getAllJobs(dateFilter, company, title, location, level, workspace, keyword).stream().map(jobMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")

@@ -42,35 +42,35 @@ public class JobService {
         this.jobMapper = jobMapper;
     }
 
-    public List<Job> getAllJobs(String postingDate, String company, String title,
+    public List<Job> getAllJobs(String dateFilter, String company, String title,
                                String location, String level, String workspace,
                                String keyword) {
 
-        LocalDateTime dateFilter = null;
-        if (postingDate != null) {
+        /*LocalDateTime postingDate = null;
+        if (dateFilter != null) {
             LocalDateTime now = LocalDateTime.now();
-            switch (postingDate) {
+            switch (dateFilter) {
                 case "24h":
-                    dateFilter = now.minusHours(24);
+                    postingDate = now.minusHours(24);
                     break;
                 case "1w":
-                    dateFilter = now.minusWeeks(1);
+                    postingDate = now.minusWeeks(1);
                     break;
                 case "1m":
-                    dateFilter = now.minusMonths(1);
+                    postingDate = now.minusMonths(1);
                     break;
             }
-        }
+        }*/
 
         List<Job> jobs = jobRepository.searchJobsDynamic(
-                title, company, location, level, workspace, dateFilter,keyword
+                title, company, location, level, workspace , keyword
         );
 
         return jobs;
     }
 
     public Job getJobById(Long id) {
-        return jobRepository.findById(id).orElse(null);
+        return jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
     }
 
     @Transactional

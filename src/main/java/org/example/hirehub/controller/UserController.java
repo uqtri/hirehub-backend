@@ -1,5 +1,6 @@
 package org.example.hirehub.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -68,6 +69,8 @@ public class UserController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
+
+    @PreAuthorize("hasAnyRole('RECRUITER','USER')")
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, ?>>  updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDTO request) {
 
