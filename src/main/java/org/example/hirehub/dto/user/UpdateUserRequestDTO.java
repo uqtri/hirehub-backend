@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 
 public class UpdateUserRequestDTO {
-    private String email;
     private String password;
     private String address;
     private Long roleId;

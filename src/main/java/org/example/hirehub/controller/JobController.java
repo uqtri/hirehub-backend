@@ -1,6 +1,7 @@
 package org.example.hirehub.controller;
 
 import org.example.hirehub.dto.job.UpdateJobRequestDTO;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.example.hirehub.entity.Job;
@@ -44,6 +45,7 @@ public class JobController {
         return jobMapper.toDTO(jobService.getJobById(id));
     }
 
+    @PreAuthorize("hasRole('RECRUITER') and hasAuthority('CREATE_JOB')")
     @PostMapping("")
     public ResponseEntity<JobDetailDTO> createJob(
             @Valid @RequestBody CreateJobRequestDTO request) {
