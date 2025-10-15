@@ -1,6 +1,6 @@
 package org.example.hirehub.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -30,13 +30,14 @@ public class UserController {
     private final EntityManager entityManager;
     private final RoleService roleService;
     private final SkillRepository skillRepository;
-
-    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, RoleService roleService, SkillRepository skillRepository) {
+    private final PasswordEncoder passwordEncoder;
+    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.entityManager = entityManager;
         this.roleService = roleService;
         this.skillRepository = skillRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     @GetMapping("")
     public List<UserDetailDTO> findAllUsers() {
@@ -56,6 +57,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Người dùng đã tồn tại"));
             }
 
+            request.setPassword(passwordEncoder.encode(request.getPassword()));
             User newUser = userMapper.toEntity(request);
             Role defaultRole = roleService.getRoleByName("User").orElse(null);
 
@@ -69,16 +71,16 @@ public class UserController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
-
-    @PreAuthorize("hasAnyRole('RECRUITER','USER')")
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, ?>>  updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDTO request) {
-
         try {
 
             User existingUser = userService.getUserById(id);
             if(existingUser == null) {
-                return ResponseEntity.status(400).body(Map.of("message", "User not found"));
+                return ResponseEntity.status(400).body(Map.of("message", "Không tìm thấy người dùng"));
+            }
+            if(request.getPassword() != null) {
+                request.setPassword(passwordEncoder.encode(request.getPassword()));
             }
             userMapper.updateUserFromDTO(existingUser, request);
 
