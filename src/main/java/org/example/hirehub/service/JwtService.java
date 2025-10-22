@@ -2,6 +2,7 @@ package org.example.hirehub.service;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -42,8 +43,15 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
     public Boolean validateToken (String token) {
-        final String username = extractClaim(token, Claims::getSubject);
-
-        return !isTokenExpired(token);
+        try {
+            final String username = extractClaim(token, Claims::getSubject);
+            return !isTokenExpired(token);
+        }
+        catch (ExpiredJwtException e) {
+            return false;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }

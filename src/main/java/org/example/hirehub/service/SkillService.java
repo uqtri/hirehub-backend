@@ -16,8 +16,11 @@ public class SkillService {
     SkillService(SkillRepository skillRepository) {
         this.skillRepository = skillRepository;
     }
-    List<Skill> getSkillsByIds (List<Long> ids) {
+    public List<Skill> getSkillsByIds (List<Long> ids) {
         return skillRepository.findSkillsByIds(ids);
     }
 
+    public List<Skill> getSkills() {
+        return skillRepository.findAll();
+    }
 }
