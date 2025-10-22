@@ -34,7 +34,7 @@ public class UserController {
     public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userMapper = userMapper;
-        this.entityManager = entityManager;
+//        this.entityManager = entityManager;
         this.roleService = roleService;
         this.skillRepository = skillRepository;
         this.passwordEncoder = passwordEncoder;
