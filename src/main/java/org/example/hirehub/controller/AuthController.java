@@ -3,6 +3,7 @@ package org.example.hirehub.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.hirehub.dto.auth.LoginRequest;
+import org.example.hirehub.dto.auth.SignUpRequest;
 import org.example.hirehub.security.CustomUserDetails;
 import org.example.hirehub.service.AuthService;
 import org.example.hirehub.service.JwtService;
@@ -76,5 +77,10 @@ public class AuthController {
         authService.resetPassword(token, email, newPassword);
         return ResponseEntity.ok().body(Map.of("message", "Thay đổi mật khẩu thành công"));
     }
+    @PostMapping("/sign-up")
+    public ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest data) {
+
+    }
+
 }
 

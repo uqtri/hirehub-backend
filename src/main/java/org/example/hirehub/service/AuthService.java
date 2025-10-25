@@ -1,6 +1,7 @@
 package org.example.hirehub.service;
 
 import jakarta.mail.MessagingException;
+import org.example.hirehub.dto.auth.SignUpRequest;
 import org.example.hirehub.entity.Token;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.util.TokenUtil;
@@ -86,5 +87,8 @@ public class AuthService {
         user.setPassword(encodedPassword);
         tokenService.delete(code);
         userService.save(user);
+    }
+    public void signUp(SignUpRequest data) {
+        
     }
 }
