@@ -11,6 +11,8 @@ import org.example.hirehub.entity.User;
 import org.example.hirehub.exception.AuthHandlerException;
 import org.example.hirehub.mapper.AuthMapper;
 import org.example.hirehub.mapper.UserMapper;
+import org.example.hirehub.message.EmailMessage;
+import org.example.hirehub.producer.EmailProducer;
 import org.example.hirehub.repository.UserRepository;
 import org.example.hirehub.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,10 +46,11 @@ public class AuthService {
     private final RoleService roleService;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final EmailProducer emailProducer;
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository) {
+    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository, EmailProducer emailProducer) {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
         this.tokenService = tokenService;
@@ -58,6 +61,7 @@ public class AuthService {
         this.roleService = roleService;
         this.userMapper = userMapper;
         this.userRepository = userRepository;
+        this.emailProducer = emailProducer;
     }
 
     public User login(@RequestBody(required = false) LoginRequest loginRequest) {
@@ -93,7 +97,9 @@ public class AuthService {
         context.setVariable("activationLink", activationLink);
         String htmlContent = templateEngine.process("email/activation", context);
 
-        emailService.sendEmail(email, "Kích hoạt tài khoản", htmlContent, true, "HireHub Support");
+//        emailService.sendEmail(email, "Kích hoạt tài khoản", htmlContent, true, "HireHub Support");
+        EmailMessage emailMessage = new EmailMessage.Builder().to(email).body(htmlContent).isHtml(true).type("activation").subject("Kích hoạt tài khoản").build();
+        emailProducer.sendEmail(emailMessage);
     }
     public void sendPasswordResetEmail(String email) throws MessagingException {
         Context context = new Context();
@@ -105,7 +111,8 @@ public class AuthService {
         context.setVariable("resetLink", resetLink);
         String htmlContent = templateEngine.process("email/reset-password", context);
 
-        emailService.sendEmail(email, "Thay đổi mật khẩu", htmlContent, true, "HireHub Support");
+        EmailMessage emailMessage = new EmailMessage.Builder().to(email).body(htmlContent).isHtml(true).type("reset-password").subject("Thay đổi mật khẩu").build();
+        emailProducer.sendEmail(emailMessage);
     }
     public void activate(String token, String email) throws Exception {
 
@@ -150,7 +157,10 @@ public class AuthService {
         Role role = (data.getRoleId() != null ? roleService.getRoleById(data.getRoleId()).orElse(defaultRole) : defaultRole);
         newUser.setRole(role);
         userService.save(newUser);
-        if(role != null && role.getName().equals("user")) this.sendActivationEmail(data.getEmail());
+        if(role != null && role.getName().equals("user")) {
+
+            this.sendActivationEmail(data.getEmail());
+        }
         return newUser;
     }
     public User getProfile() {
