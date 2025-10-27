@@ -24,6 +24,8 @@ public class JobDetailDTO {
     private String level;
     private Boolean isBanned;
     private LocalDateTime postingDate;
+    private String workspace;
+    private String type;
 
     private List<SkillSummaryDTO> skills;
     private CompanySummaryDTO recruiter;
