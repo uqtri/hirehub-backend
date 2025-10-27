@@ -95,6 +95,12 @@ public class AuthController {
 
         return ResponseEntity.ok().body(Map.of("message", "Đăng ký thành công, nếu là doanh nghiệp vui lòng chờ duyệt", "data", user));
     }
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, ?>>  getProfile() {
 
+        UserDetailDTO user = userMapper.toDTO(authService.getProfile());
+
+        return ResponseEntity.status(200).body(Map.of("data", user));
+    }
 }
 

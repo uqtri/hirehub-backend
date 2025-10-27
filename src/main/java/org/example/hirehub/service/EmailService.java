@@ -30,11 +30,15 @@ public class EmailService {
         message.setText(body);
         message.setTo(to);
     }
-    public void sendEmail(String to, String subject, String body,  boolean isHtml) throws MessagingException {
+    public void sendEmail(String to, String subject, String body,  boolean isHtml, String displayName) throws MessagingException {
+        if (displayName == null || displayName.isBlank()) {
+            displayName = "HireHub Support"; // default fallback
+        }
+
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-        helper.setFrom(fromAddress);
+        helper.setFrom(String.format("%s <%s>", displayName, fromAddress));
         helper.setSubject(subject);
         helper.setText(body, isHtml);
         helper.setTo(to);
