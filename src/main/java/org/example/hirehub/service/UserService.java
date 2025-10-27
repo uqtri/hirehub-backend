@@ -24,7 +24,13 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+
+        User user = userRepository.findByEmail(email);
+
+        if(user == null) {
+            throw new IllegalArgumentException("Không tìm thấy người dùng");
+        }
+        return user;
     }
 
     public User createUser(User user) {
