@@ -35,9 +35,11 @@ public class JobController {
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String level,
             @RequestParam(required = false) String workspace,
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String province
+
     ) {
-        return jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword).stream().map(jobMapper::toDTO).toList();
+        return jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword, province).stream().map(jobMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")

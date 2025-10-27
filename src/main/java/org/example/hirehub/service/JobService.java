@@ -44,7 +44,7 @@ public class JobService {
 
     public List<Job> getAllJobs(String postingDate, String company, String title,
                                String location, String level, String workspace,
-                               String keyword) {
+                               String keyword, String province) {
 
         LocalDateTime dateFilter = null;
         if (postingDate != null) {
@@ -63,7 +63,7 @@ public class JobService {
         }
 
         List<Job> jobs = jobRepository.searchJobsDynamic(
-                title, company, location, level, workspace, dateFilter,keyword
+                title, company, location, level, workspace, dateFilter, keyword, province
         );
 
         return jobs;
