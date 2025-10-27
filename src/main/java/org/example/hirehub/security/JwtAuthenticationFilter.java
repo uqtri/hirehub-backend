@@ -34,7 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
        Cookie[] cookies = request.getCookies();
        String token = null;
         if (cookies != null) {
-
             token = Arrays.stream(cookies).filter(cookie -> Objects.equals(cookie.getName(), "jwt")).map(Cookie::getValue).findFirst().orElse(null);
         }
         if(token != null && jwtService.validateToken(token)) {

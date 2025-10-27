@@ -150,4 +150,5 @@ public class AuthService {
         if(role != null && role.getName().equals("user")) this.sendActivationEmail(data.getEmail());
         return newUser;
     }
+
 }

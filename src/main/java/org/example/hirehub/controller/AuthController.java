@@ -51,7 +51,7 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         Cookie cookie = new Cookie("jwt", jwtService.generateToken((CustomUserDetails)authentication.getPrincipal()));
-
+        cookie.setPath("/");
         response.addCookie(cookie);
 
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng nhập thành công", "data", user));

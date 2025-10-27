@@ -1,5 +1,7 @@
 package org.example.hirehub.service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,5 +52,16 @@ public class UserService {
 
         user.setDeleted(true);
         userRepository.save(user);
+    }
+    public User getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAnonymous = authentication.getPrincipal().equals("anonymousUser");
+
+        if(isAnonymous) {
+            return null;
+        }
+        String email = authentication.getName();
+        return userRepository.findByEmail(email);
     }
 }
