@@ -18,4 +18,12 @@ public class AuthHandlerException {
             super(message);
         }
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static class UserAlreadyExistException extends RuntimeException {
+
+        public UserAlreadyExistException(String message) {
+            super(message);
+        }
+    }
+
 }

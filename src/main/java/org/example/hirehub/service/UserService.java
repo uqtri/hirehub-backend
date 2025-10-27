@@ -27,9 +27,6 @@ public class UserService {
 
         User user = userRepository.findByEmail(email);
 
-        if(user == null) {
-            throw new IllegalArgumentException("Không tìm thấy người dùng");
-        }
         return user;
     }
 

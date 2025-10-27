@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.hirehub.dto.auth.LoginRequest;
 import org.example.hirehub.dto.auth.SignUpRequest;
+import org.example.hirehub.dto.user.CreateUserRequestDTO;
 import org.example.hirehub.dto.user.UserDetailDTO;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.mapper.UserMapper;
@@ -89,10 +90,10 @@ public class AuthController {
         return ResponseEntity.ok().body(Map.of("message", "Thay đổi mật khẩu thành công"));
     }
     @PostMapping("/sign-up")
-    public ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest data) throws Exception {
-        authService.signUp(data);
+    public ResponseEntity<Map<String, ?>> signUp(@RequestBody CreateUserRequestDTO data) throws Exception {
+        UserDetailDTO user = userMapper.toDTO(authService.signUp(data));
 
-        return ResponseEntity.ok().body(Map.of("message", "Đăng ký thành công, nếu là doanh nghiệp vui lòng chờ duyệt"));
+        return ResponseEntity.ok().body(Map.of("message", "Đăng ký thành công, nếu là doanh nghiệp vui lòng chờ duyệt", "data", user));
     }
 
 }

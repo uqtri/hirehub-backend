@@ -18,4 +18,5 @@ public class SignUpRequest {
     private String confirmPassword;
     private Integer foundedYear;
     private Integer numberOfEmployees;
+    private Long roleId;
 }

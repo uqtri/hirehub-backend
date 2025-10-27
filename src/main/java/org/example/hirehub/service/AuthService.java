@@ -4,10 +4,13 @@ import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 import org.example.hirehub.dto.auth.LoginRequest;
 import org.example.hirehub.dto.auth.SignUpRequest;
+import org.example.hirehub.dto.user.CreateUserRequestDTO;
+import org.example.hirehub.entity.Role;
 import org.example.hirehub.entity.Token;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.exception.AuthHandlerException;
 import org.example.hirehub.mapper.AuthMapper;
+import org.example.hirehub.mapper.UserMapper;
 import org.example.hirehub.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,10 +40,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthMapper authMapper;
     private final AuthenticationManager authenticationManager;
+    private final RoleService roleService;
+    private final UserMapper userMapper;
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager) {
+    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper) {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
         this.tokenService = tokenService;
@@ -48,6 +53,8 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
         this.authMapper = authMapper;
         this.authenticationManager = authenticationManager;
+        this.roleService = roleService;
+        this.userMapper = userMapper;
     }
 
     public User login(@RequestBody(required = false) LoginRequest loginRequest) {
@@ -127,18 +134,20 @@ public class AuthService {
         tokenService.delete(code);
         userService.save(user);
     }
-    public void signUp(SignUpRequest data) throws Exception {
-
-        if(data.getPassword() == null) {
-            throw new AuthHandlerException.PasswordMismatchException("Vui long cung cấp mật khẩu");
+    public User signUp(CreateUserRequestDTO data) throws Exception {
+        User user = userService.getUserByEmail(data.getEmail());
+        if(user != null) {
+            throw new AuthHandlerException.UserAlreadyExistException("Đã tồn tại email");
         }
 
-        if(!data.getPassword().equals(data.getConfirmPassword())) {
-            throw new AuthHandlerException.PasswordMismatchException("Mật khẩu không khớp");
-        }
-        User user = authMapper.toEntity(data);
+        data.setPassword(passwordEncoder.encode(data.getPassword()));
+        User newUser = userMapper.toEntity(data);
+        Role defaultRole = roleService.getRoleByName("user").orElse(null);
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.save(user);
+        Role role = (data.getRoleId() != null ? roleService.getRoleById(data.getRoleId()).orElse(defaultRole) : defaultRole);
+        newUser.setRole(role);
+        userService.save(newUser);
+        if(role != null && role.getName().equals("user")) this.sendActivationEmail(data.getEmail());
+        return newUser;
     }
 }
