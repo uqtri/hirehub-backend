@@ -25,6 +25,8 @@ public class UserDetailDTO {
     private String description;
     private Boolean isVerified;
     private Boolean isBanned;
+    private Integer numberOfEmployees;
+    private Integer foundedYear = 0;
 
     private RoleDetailDTO role;
     private List<SkillSummaryDTO> skills;

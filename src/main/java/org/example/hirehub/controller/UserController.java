@@ -100,12 +100,5 @@ public class UserController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
-    @GetMapping("/me")
-    public ResponseEntity<Map<String, ?>>  getProfile() {
-
-        UserDetailDTO user = userMapper.toDTO(userService.getProfile());
-
-        return ResponseEntity.status(200).body(Map.of("data", user));
-    }
 
 }

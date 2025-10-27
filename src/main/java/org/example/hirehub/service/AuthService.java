@@ -11,6 +11,7 @@ import org.example.hirehub.entity.User;
 import org.example.hirehub.exception.AuthHandlerException;
 import org.example.hirehub.mapper.AuthMapper;
 import org.example.hirehub.mapper.UserMapper;
+import org.example.hirehub.repository.UserRepository;
 import org.example.hirehub.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -42,10 +43,11 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final RoleService roleService;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper) {
+    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository) {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
         this.tokenService = tokenService;
@@ -55,6 +57,7 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
         this.roleService = roleService;
         this.userMapper = userMapper;
+        this.userRepository = userRepository;
     }
 
     public User login(@RequestBody(required = false) LoginRequest loginRequest) {
@@ -81,7 +84,7 @@ public class AuthService {
 
     public void sendActivationEmail(String email) throws MessagingException {
         Context context = new Context();
-        String token = TokenUtil.generateToken(32, true);
+        String token = TokenUtil.generateToken(6, false);
 
         tokenService.save(new Token(token, email, "activation"));
 
@@ -90,11 +93,11 @@ public class AuthService {
         context.setVariable("activationLink", activationLink);
         String htmlContent = templateEngine.process("email/activation", context);
 
-        emailService.sendEmail(email, "Kích hoạt tài khoản", htmlContent, true);
+        emailService.sendEmail(email, "Kích hoạt tài khoản", htmlContent, true, "HireHub Support");
     }
     public void sendPasswordResetEmail(String email) throws MessagingException {
         Context context = new Context();
-        String token = TokenUtil.generateToken(6, false);
+        String token = TokenUtil.generateToken(32, true);
 
         tokenService.save(new Token(token, email, "reset-password"));
 
@@ -102,7 +105,7 @@ public class AuthService {
         context.setVariable("resetLink", resetLink);
         String htmlContent = templateEngine.process("email/reset-password", context);
 
-        emailService.sendEmail(email, "Thay đổi mật khẩu", htmlContent, true);
+        emailService.sendEmail(email, "Thay đổi mật khẩu", htmlContent, true, "HireHub Support");
     }
     public void activate(String token, String email) throws Exception {
 
@@ -149,6 +152,17 @@ public class AuthService {
         userService.save(newUser);
         if(role != null && role.getName().equals("user")) this.sendActivationEmail(data.getEmail());
         return newUser;
+    }
+    public User getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAnonymous = authentication.getPrincipal().equals("anonymousUser");
+
+        if(isAnonymous) {
+            return null;
+        }
+        String email = authentication.getName();
+        return userRepository.findByEmail(email);
     }
 
 }
