@@ -87,7 +87,7 @@ public class AuthService {
     }
     public void sendPasswordResetEmail(String email) throws MessagingException {
         Context context = new Context();
-        String token = TokenUtil.generateToken(32, true);
+        String token = TokenUtil.generateToken(6, false);
 
         tokenService.save(new Token(token, email, "reset-password"));
 
