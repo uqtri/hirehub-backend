@@ -1,5 +1,8 @@
 package org.example.hirehub.service;
 
+import org.example.hirehub.dto.user.UserDetailDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.cloudinary.utils.ObjectUtils;
 import org.example.hirehub.dto.user.UpdateUserRequestDTO;
 import org.example.hirehub.entity.UserSkill;
@@ -36,8 +39,8 @@ public class UserService {
         this.languageLevelService = languageLevelService;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<User> getAllUsers(String keyword, String province, String role, Pageable pageable) {
+        return userRepository.findAll(keyword, province, role, pageable);
     }
 
     public User getUserById(Long id) {

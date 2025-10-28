@@ -37,6 +37,7 @@ public class User {
     private Integer foundedYear = 0;
     private String github;
     private String resume_link;
+    private String field;
 
     @ManyToMany
     private List<LanguageLevel> languages;

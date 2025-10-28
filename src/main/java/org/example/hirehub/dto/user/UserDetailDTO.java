@@ -31,6 +31,7 @@ public class UserDetailDTO {
     private Integer foundedYear = 0;
     private String github;
     private String resume_link;
+    private String field;
 
     private RoleDetailDTO role;
     private List<SkillSummaryDTO> skills;

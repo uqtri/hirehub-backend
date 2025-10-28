@@ -27,5 +27,5 @@ public class CreateUserRequestDTO {
     private String address;
     private Long roleId;
     private List<Long> skillIds;
-
+    private String field;
 }

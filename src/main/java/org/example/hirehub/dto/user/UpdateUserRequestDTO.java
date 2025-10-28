@@ -29,4 +29,6 @@ public class UpdateUserRequestDTO {
     private List<Long> languageLevelIds;
     private MultipartFile avatar;
     private MultipartFile resume;
+    private String field;
+
 }
