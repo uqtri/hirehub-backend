@@ -1,5 +1,7 @@
 package org.example.hirehub.controller;
 
+import org.example.hirehub.repository.LanguageLevelRepository;
+import org.example.hirehub.service.CloudinaryService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,9 @@ import org.example.hirehub.mapper.UserMapper;
 import org.example.hirehub.entity.UserSkill;
 import org.example.hirehub.entity.Role;
 import org.example.hirehub.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -30,13 +34,18 @@ public class UserController {
     private final RoleService roleService;
     private final SkillRepository skillRepository;
     private final PasswordEncoder passwordEncoder;
-    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder) {
+    private final CloudinaryService cloudinaryService;
+    private final LanguageLevelRepository languageLevelRepository;
+
+    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService, LanguageLevelRepository languageLevelRepository) {
         this.userService = userService;
         this.userMapper = userMapper;
 //        this.entityManager = entityManager;
         this.roleService = roleService;
         this.skillRepository = skillRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cloudinaryService = cloudinaryService;
+        this.languageLevelRepository = languageLevelRepository;
     }
     @GetMapping("")
     public List<UserDetailDTO> findAllUsers() {
@@ -71,34 +80,14 @@ public class UserController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, ?>>  updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDTO request) {
-        try {
+    public ResponseEntity<Map<String, ?>>  updateUser(@PathVariable Long id, @ModelAttribute UpdateUserRequestDTO request) throws IOException {
 
-            User existingUser = userService.getUserById(id);
-            if(existingUser == null) {
-                return ResponseEntity.status(400).body(Map.of("message", "Không tìm thấy người dùng"));
-            }
-            if(request.getPassword() != null) {
-                request.setPassword(passwordEncoder.encode(request.getPassword()));
-            }
-            userMapper.updateUserFromDTO(existingUser, request);
+        User user = userService.updateUserById(id, request);
 
-            List<Long> skillIds = request.getSkillIds();
-
-            if(skillIds != null && !skillIds.isEmpty()) {
-
-                existingUser.getUserSkills().clear();
-
-                skillRepository.findSkillsByIds(skillIds).forEach(skill -> {
-                    existingUser.getUserSkills().add(new UserSkill(existingUser, skill));
-                });
-            }
-            userService.save(existingUser);
-            return ResponseEntity.status(201).body(Map.of("message", "User updated", "data", existingUser));
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Không tìm thấy người dùng"));
         }
-        catch (Exception e) {
-            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
-        }
+        return ResponseEntity.status(201).body(Map.of("message", "Cập nhập thông tin thành công", "data", userMapper.toDTO(user)));
     }
 
 }

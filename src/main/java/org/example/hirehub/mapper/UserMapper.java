@@ -1,5 +1,7 @@
 package org.example.hirehub.mapper;
 
+import org.example.hirehub.dto.language.LanguageDetailDTO;
+import org.example.hirehub.dto.languageLevel.LanguageLevelDetailDTO;
 import org.example.hirehub.dto.permission.PermissionSummaryDTO;
 import org.example.hirehub.dto.user.CreateUserRequestDTO;
 import org.example.hirehub.dto.user.UpdateUserRequestDTO;
@@ -36,7 +38,12 @@ public interface UserMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromDTO(@MappingTarget User user, CreateUserRequestDTO createUserRequestDTO);
 
+    @Mapping(target = "avatar", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateUserFromDTO(@MappingTarget User user, UpdateUserRequestDTO createUserRequestDTO);
+    void updateUserFromDTO(@MappingTarget User user, UpdateUserRequestDTO updateUserRequestDTO);
 
+
+    LanguageLevelDetailDTO toDTO (LanguageLevel languageLevel);
+
+    LanguageDetailDTO toDTO(Language language);
 }
