@@ -29,10 +29,17 @@ public class User {
     private String avatar;
     private Boolean isVerified = false;
     private Boolean isBanned = false;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
     private Integer numberOfEmployees;
-
     private Integer foundedYear = 0;
+    private String github;
+    private String resume_link;
+    private String field;
+
+    @ManyToMany
+    private List<LanguageLevel> languages;
 
     @OneToMany(mappedBy = "userA")
     private List<Relationship> relationshipsA;
@@ -47,5 +54,7 @@ public class User {
 
     private boolean isDeleted = false;
 
+    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Study> studies;
 
 }

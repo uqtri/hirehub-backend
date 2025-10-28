@@ -19,4 +19,6 @@ public class UpdateUserRequestDTO {
     private Boolean isVerified;
     private Boolean isBanned;
     private List<Long> skillIds;
+    private String field;
+
 }

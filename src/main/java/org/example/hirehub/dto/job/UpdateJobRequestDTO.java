@@ -32,4 +32,6 @@ public class UpdateJobRequestDTO {
 
     private List<Long> skillIds;
     private Long recruiterId;
+    private String type;
+
 }

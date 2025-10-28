@@ -41,4 +41,6 @@ public class CreateJobRequestDTO {
 
     private List<Long> skillIds;
     private Long recruiterId;
+    private String type;
+
 }

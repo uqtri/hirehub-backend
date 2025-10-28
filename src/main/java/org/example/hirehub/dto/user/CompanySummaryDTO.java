@@ -17,4 +17,6 @@ public class CompanySummaryDTO {
     private String description;
     private Integer numberOfEmployees;
     private String avatar;
+    private String field;
+
 }

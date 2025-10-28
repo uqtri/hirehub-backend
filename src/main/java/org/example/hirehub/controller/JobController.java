@@ -1,6 +1,10 @@
 package org.example.hirehub.controller;
 
 import org.example.hirehub.dto.job.UpdateJobRequestDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +32,21 @@ public class JobController {
     }
 
     @GetMapping("")
-    public List<JobDetailDTO> getAllJobs(
-            @RequestParam(required = false) String dateFilter,
+    public Page<JobDetailDTO> getAllJobs(
+            @RequestParam(required = false) String postingDate,
             @RequestParam(required = false) String company,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String level,
             @RequestParam(required = false) String workspace,
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String province,
+            @PageableDefault(page = 0, size = 10, sort = "postingDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return jobService.getAllJobs(dateFilter, company, title, location, level, workspace, keyword).stream().map(jobMapper::toDTO).toList();
+        Page<Job> jobs = jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword, province, pageable);
+        return jobs.map(jobMapper::toDTO);
     }
+
 
     @GetMapping("/{id}")
     public JobDetailDTO getById(@PathVariable Long id) {

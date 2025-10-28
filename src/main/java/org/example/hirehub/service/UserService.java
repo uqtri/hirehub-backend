@@ -1,5 +1,10 @@
 package org.example.hirehub.service;
 
+import org.example.hirehub.dto.user.UserDetailDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +20,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<User> getAllUsers(String keyword, String province, String role, Pageable pageable) {
+        return userRepository.findAll(keyword, province, role, pageable);
     }
 
     public User getUserById(Long id) {
@@ -24,7 +29,10 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+
+        User user = userRepository.findByEmail(email);
+
+        return user;
     }
 
     public User createUser(User user) {

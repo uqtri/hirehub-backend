@@ -3,14 +3,22 @@ package org.example.hirehub.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.hirehub.dto.auth.LoginRequest;
+import org.example.hirehub.dto.auth.SignUpRequest;
+import org.example.hirehub.dto.user.CreateUserRequestDTO;
+import org.example.hirehub.dto.user.UserDetailDTO;
+import org.example.hirehub.entity.User;
+import org.example.hirehub.mapper.UserMapper;
 import org.example.hirehub.security.CustomUserDetails;
 import org.example.hirehub.service.AuthService;
 import org.example.hirehub.service.JwtService;
+import org.example.hirehub.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
@@ -21,27 +29,32 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final AuthService authService;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
-    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService) {
+    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService, UserService userService, UserMapper userMapper) {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    public ResponseEntity<Map<String, ?>> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+        UserDetailDTO user = userMapper.toDTO(authService.login(loginRequest));
 
-        Authentication result = authenticationManager.authenticate(authentication);
-
-        if (!result.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Email hoặc mật khẩu không đúng"));
+        if(user == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        Cookie cookie = new Cookie("jwt", jwtService.generateToken((CustomUserDetails)result.getPrincipal()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        Cookie cookie = new Cookie("jwt", jwtService.generateToken((CustomUserDetails)authentication.getPrincipal()));
+        cookie.setPath("/");
         response.addCookie(cookie);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng nhập thành công"));
+
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng nhập thành công", "data", user));
     }
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
@@ -75,6 +88,19 @@ public class AuthController {
 
         authService.resetPassword(token, email, newPassword);
         return ResponseEntity.ok().body(Map.of("message", "Thay đổi mật khẩu thành công"));
+    }
+    @PostMapping("/sign-up")
+    public ResponseEntity<Map<String, ?>> signUp(@RequestBody CreateUserRequestDTO data) throws Exception {
+        UserDetailDTO user = userMapper.toDTO(authService.signUp(data));
+
+        return ResponseEntity.ok().body(Map.of("message", "Đăng ký thành công, nếu là doanh nghiệp vui lòng chờ duyệt", "data", user));
+    }
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, ?>>  getProfile() {
+
+        UserDetailDTO user = userMapper.toDTO(authService.getProfile());
+
+        return ResponseEntity.status(200).body(Map.of("data", user));
     }
 }
 

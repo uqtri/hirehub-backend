@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,35 +44,34 @@ public class JobService {
         this.jobMapper = jobMapper;
     }
 
-    public List<Job> getAllJobs(String dateFilter, String company, String title,
-                               String location, String level, String workspace,
-                               String keyword) {
+    public Page<Job> getAllJobs(String postingDate, String company, String title,
+                                String location, String level, String workspace,
+                                String keyword, String province, Pageable pageable) {
 
-        /*LocalDateTime postingDate = null;
-        if (dateFilter != null) {
+        LocalDateTime dateFilter = null;
+        if (postingDate != null) {
             LocalDateTime now = LocalDateTime.now();
-            switch (dateFilter) {
+            switch (postingDate) {
                 case "24h":
-                    postingDate = now.minusHours(24);
+                    dateFilter = now.minusHours(24);
                     break;
                 case "1w":
-                    postingDate = now.minusWeeks(1);
+                    dateFilter = now.minusWeeks(1);
                     break;
                 case "1m":
-                    postingDate = now.minusMonths(1);
+                    dateFilter = now.minusMonths(1);
                     break;
             }
-        }*/
+        }
 
-        List<Job> jobs = jobRepository.searchJobsDynamic(
-                title, company, location, level, workspace , keyword
+       return jobRepository.searchJobsDynamic(
+                title, company, location, level, workspace, dateFilter, keyword, province, pageable
         );
 
-        return jobs;
     }
 
     public Job getJobById(Long id) {
-        return jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
+        return jobRepository.findById(id).orElse(null);
     }
 
     @Transactional

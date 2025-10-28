@@ -1,5 +1,10 @@
 package org.example.hirehub.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -31,17 +36,22 @@ public class UserController {
     private final RoleService roleService;
     private final SkillRepository skillRepository;
     private final PasswordEncoder passwordEncoder;
-    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, EntityManager entityManager1, RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userMapper = userMapper;
+        this.entityManager = entityManager1;
 //        this.entityManager = entityManager;
         this.roleService = roleService;
         this.skillRepository = skillRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     @GetMapping("")
-    public List<UserDetailDTO> findAllUsers() {
-        return userService.getAllUsers().stream().map(userMapper::toDTO).toList();
+    public Page<UserDetailDTO> findAllUsers (@RequestParam(required = false) String keyword,
+                                             @RequestParam(required = false) String province,
+                                             @RequestParam(required = false) String role,
+                                             @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.DESC) Pageable pageable ) {
+        return userService.getAllUsers(keyword, province, role, pageable).map(userMapper::toDTO);
     }
 
     @GetMapping("/{id}") public UserDetailDTO findUserById(@PathVariable Long id) {
