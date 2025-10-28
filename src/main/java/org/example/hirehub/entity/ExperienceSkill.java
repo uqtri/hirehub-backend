@@ -12,6 +12,8 @@ import lombok.Setter;
 
 import org.example.hirehub.key.ExperienceSkillKey;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -28,4 +30,6 @@ public class ExperienceSkill {
     @ManyToOne
     @MapsId("skillId")
     private Skill skill;
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 }

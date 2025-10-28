@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,5 +18,8 @@ public class Language {
 
     @OneToMany(mappedBy = "language")
     private List<LanguageLevel> levels;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 
 }
