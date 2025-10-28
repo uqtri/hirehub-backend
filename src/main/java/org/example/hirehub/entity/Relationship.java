@@ -10,6 +10,8 @@ import lombok.Setter;
 
 import org.example.hirehub.key.RelationshipKey;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -26,4 +28,7 @@ public class Relationship {
     @ManyToOne
     private User userB;
     private String status;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 }

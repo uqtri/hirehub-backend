@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import org.example.hirehub.key.RolePermissionKey;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @Entity
 @Getter
@@ -25,9 +27,13 @@ public class RolePermission {
     @MapsId("permissionId")
     private Permission permission;
 
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     public RolePermission(Role role, Permission permission) {
         this.role = role;
         this.permission = permission;
         this.rolePermissionKey = new RolePermissionKey(role.getId(), permission.getId());
     }
+
+
 }

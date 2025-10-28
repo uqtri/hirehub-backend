@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -15,5 +17,8 @@ public class University {
     private Long id;
     private String name;
     private String logo;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 }
 

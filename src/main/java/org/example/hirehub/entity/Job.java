@@ -37,5 +37,6 @@ public class Job {
     private Long hit_counter = 0L;
     private LocalDateTime postingDate = LocalDateTime.now();
     private String type;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }

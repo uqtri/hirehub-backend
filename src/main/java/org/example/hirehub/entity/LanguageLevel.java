@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -19,4 +20,7 @@ public class LanguageLevel {
 
     @ManyToMany
     private List<User> users;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 }

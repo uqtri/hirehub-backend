@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import org.example.hirehub.key.JobSkillKey;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -29,6 +31,7 @@ public class JobSkill {
     @MapsId("skillId") // map tới JobSkillKey.skillId
     @JoinColumn(name = "skill_id")
     private Skill skill;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public JobSkill(Job job, Skill skill) {
         this.job = job;

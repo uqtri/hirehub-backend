@@ -29,4 +29,7 @@ public class Message {
 
     private LocalDateTime createdTime;
     private boolean isDeleted = false;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 }

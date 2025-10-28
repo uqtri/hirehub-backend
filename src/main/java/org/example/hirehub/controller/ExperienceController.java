@@ -1,5 +1,6 @@
 package org.example.hirehub.controller;
 
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +61,7 @@ public class ExperienceController {
         experience.setCompany(company);
         experience.setUser(user);
         if (file != null && !file.isEmpty()) {
-            String secureUrl = cloudinaryService.uploadAndGetUrl(file);
+            String secureUrl = cloudinaryService.uploadAndGetUrl(file, ObjectUtils.emptyMap());
             experience.setImage(secureUrl);
         }
         experienceService.save(experience);
@@ -87,7 +88,7 @@ public class ExperienceController {
         Optional.ofNullable(userId).map(userService::getUserById).ifPresent(experience::setUser);
 
         if (file != null && !file.isEmpty()) {
-            String secureUrl= cloudinaryService.uploadAndGetUrl(file);
+            String secureUrl= cloudinaryService.uploadAndGetUrl(file, ObjectUtils.emptyMap());
             experience.setImage(secureUrl);
         }
         experienceService.save(experience);
