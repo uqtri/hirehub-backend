@@ -1,5 +1,7 @@
 package org.example.hirehub.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Query;
@@ -27,14 +29,16 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             "    OR j.level LIKE %:keyword%" +
             ")) " +
             "ORDER BY j.postingDate DESC")
-    List<Job> searchJobsDynamic(@Param("title") String title,
+    Page<Job> searchJobsDynamic(@Param("title") String title,
                                 @Param("company") String company,
                                 @Param("location") String location,
                                 @Param("level") String level,
                                 @Param("workspace") String workspace,
                                 @Param("postingDate") LocalDateTime postingDate,
                                 @Param("keyword") String keyword,
-                                @Param("province") String province);
+                                @Param("province") String province,
+                                Pageable pageable
+    );
 
 
 

@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,9 +44,9 @@ public class JobService {
         this.jobMapper = jobMapper;
     }
 
-    public List<Job> getAllJobs(String postingDate, String company, String title,
-                               String location, String level, String workspace,
-                               String keyword, String province) {
+    public Page<Job> getAllJobs(String postingDate, String company, String title,
+                                String location, String level, String workspace,
+                                String keyword, String province, Pageable pageable) {
 
         LocalDateTime dateFilter = null;
         if (postingDate != null) {
@@ -62,11 +64,10 @@ public class JobService {
             }
         }
 
-        List<Job> jobs = jobRepository.searchJobsDynamic(
-                title, company, location, level, workspace, dateFilter, keyword, province
+       return jobRepository.searchJobsDynamic(
+                title, company, location, level, workspace, dateFilter, keyword, province, pageable
         );
 
-        return jobs;
     }
 
     public Job getJobById(Long id) {
