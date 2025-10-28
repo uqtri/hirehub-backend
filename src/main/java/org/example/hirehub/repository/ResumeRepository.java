@@ -20,7 +20,7 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
             WHERE (:job IS NULL OR j.id = :job)
             AND (:user IS NULL OR u.id = :user)
             AND (:recruiter IS NULL OR rc.id = :recruiter)
-            ORDER BY createdAt DESC
+            ORDER BY r.createdAt DESC
             """
     )
     List<Resume> searchResumesDynamic(@Param("user") Long user, @Param("job") Long job, @Param("recruiter") Long recruiter);
