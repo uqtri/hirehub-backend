@@ -3,6 +3,7 @@ package org.example.hirehub.mapper;
 import org.example.hirehub.dto.language.LanguageDetailDTO;
 import org.example.hirehub.dto.languageLevel.LanguageLevelDetailDTO;
 import org.example.hirehub.dto.permission.PermissionSummaryDTO;
+import org.example.hirehub.dto.study.StudySummaryDTO;
 import org.example.hirehub.dto.user.CreateUserRequestDTO;
 import org.example.hirehub.dto.user.UpdateUserRequestDTO;
 import org.example.hirehub.dto.skill.SkillSummaryDTO;
@@ -46,4 +47,6 @@ public interface UserMapper {
     LanguageLevelDetailDTO toDTO (LanguageLevel languageLevel);
 
     LanguageDetailDTO toDTO(Language language);
+
+    StudySummaryDTO toDTO (Study study);
 }

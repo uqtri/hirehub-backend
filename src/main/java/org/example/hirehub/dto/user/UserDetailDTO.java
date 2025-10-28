@@ -9,6 +9,8 @@ import org.example.hirehub.dto.experience.ExperienceSummaryDTO;
 import org.example.hirehub.dto.languageLevel.LanguageLevelDetailDTO;
 import org.example.hirehub.dto.skill.SkillSummaryDTO;
 import org.example.hirehub.dto.role.RoleDetailDTO;
+import org.example.hirehub.dto.study.StudyDetailDTO;
+import org.example.hirehub.dto.study.StudySummaryDTO;
 import org.example.hirehub.entity.LanguageLevel;
 
 import java.util.List;
@@ -37,5 +39,5 @@ public class UserDetailDTO {
     private List<SkillSummaryDTO> skills;
     private List<ExperienceSummaryDTO> experiences;
     private List<LanguageLevelDetailDTO> languages;
-    // languages, studies
+    private List<StudySummaryDTO> studies;
 }
