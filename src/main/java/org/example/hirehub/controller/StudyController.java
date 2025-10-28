@@ -28,7 +28,7 @@ public class StudyController {
         this.studyMapper = studyMapper;
     }
 
-    @GetMapping("/userId/{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<Map<String, ?>> getStudiesByUserId(@PathVariable Long id) {
         List<StudyDetailDTO> studies = studyService.findStudiesByUserId(id).stream().map(studyMapper::toDTO).toList();
 
