@@ -58,6 +58,5 @@ public class User {
     @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Study> studies;
 
-    private String field;
     private LocalDateTime createdAt = LocalDateTime.now();
 }
