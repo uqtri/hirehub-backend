@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -35,4 +36,6 @@ public class Experience {
 
   @OneToMany(mappedBy = "experience")
   private List<ExperienceSkill> skills;
+  private LocalDateTime createdAt = LocalDateTime.now();
+
 }

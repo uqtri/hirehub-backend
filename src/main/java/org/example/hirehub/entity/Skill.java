@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,6 +28,7 @@ public class Skill {
 
     private boolean isDeleted = false;
 
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }
 

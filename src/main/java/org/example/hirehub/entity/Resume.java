@@ -29,4 +29,5 @@ public class Resume {
     private boolean isDeleted = false;
     private LocalDateTime createdAt = LocalDateTime.now();
 
+
 }

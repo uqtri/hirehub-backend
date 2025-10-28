@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -25,5 +26,7 @@ public class Permission {
     private List<RolePermission> rolePermission;
 
     private boolean isDeleted = false;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }
