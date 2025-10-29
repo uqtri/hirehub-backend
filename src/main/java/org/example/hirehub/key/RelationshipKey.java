@@ -1,12 +1,21 @@
 package org.example.hirehub.key;
 
+import lombok.NoArgsConstructor;
+import org.example.hirehub.entity.User;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@NoArgsConstructor
 public class RelationshipKey implements Serializable {
 
     private Long userA;
     private Long userB;
+
+    public RelationshipKey(Long userA, Long userB) {
+        this.userA = userA;
+        this.userB = userB;
+    }
 
     @Override
     public boolean equals(Object o) {

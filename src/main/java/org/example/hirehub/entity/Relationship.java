@@ -5,7 +5,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Entity;
 import jakarta.persistence.MapsId;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.example.hirehub.key.RelationshipKey;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-
+@NoArgsConstructor
 public class Relationship {
 
     @EmbeddedId
@@ -27,8 +29,13 @@ public class Relationship {
     @MapsId("userB")
     @ManyToOne
     private User userB;
-    private String status;
+    private String status = "pending";
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public Relationship(User userA, User userB) {
+        this.userA = userA;
+        this.userB = userB;
+        this.relationshipKey = new RelationshipKey(userA.getId(), userB.getId());
+    }
 }
