@@ -28,4 +28,6 @@ public class CreateUserRequestDTO {
     private Long roleId;
     private List<Long> skillIds;
     private String field;
+    private String position;
+    private String status;
 }

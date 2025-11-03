@@ -40,4 +40,6 @@ public class UserDetailDTO {
     private List<ExperienceSummaryDTO> experiences;
     private List<LanguageLevelDetailDTO> languages;
     private List<StudySummaryDTO> studies;
+    private String position;
+    private String status;
 }

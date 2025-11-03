@@ -30,5 +30,7 @@ public class UpdateUserRequestDTO {
     private MultipartFile avatar;
     private MultipartFile resume;
     private String field;
+    private String position;
+    private String status;
 
 }

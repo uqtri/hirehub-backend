@@ -18,5 +18,4 @@ public class CompanySummaryDTO {
     private String numberOfEmployees;
     private String avatar;
     private String field;
-
 }

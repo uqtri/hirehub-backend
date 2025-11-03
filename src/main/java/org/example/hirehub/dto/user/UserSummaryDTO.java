@@ -16,4 +16,6 @@ public class UserSummaryDTO {
     private String name;
     private String address;
     private String avatar;
+    private String position;
+    private String status;
 }

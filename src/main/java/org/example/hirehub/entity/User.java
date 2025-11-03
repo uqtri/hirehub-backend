@@ -38,6 +38,8 @@ public class User {
     private String github;
     private String resume_link;
     private String field;
+    private String position;
+    private String status;
 
     @ManyToMany
     private List<LanguageLevel> languages;
