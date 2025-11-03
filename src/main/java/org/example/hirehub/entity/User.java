@@ -33,7 +33,7 @@ public class User {
 
     @Column(columnDefinition = "TEXT")
     private String description;
-    private Integer numberOfEmployees;
+    private String numberOfEmployees;
     private Integer foundedYear = 0;
     private String github;
     private String resume_link;
