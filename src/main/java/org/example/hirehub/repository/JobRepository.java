@@ -21,7 +21,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             "AND (:location IS NULL OR r.address LIKE %:location%) " +
             "AND (:level IS NULL OR j.level = :level) " +
             "AND (:workspace IS NULL OR j.workspace = :workspace) " +
-            "AND (:province IS NULL OR r.address LIKE %:province%) " +
+            "AND (:province IS NULL OR j.address LIKE %:province%) " +
 //            "AND (:postingDate IS NULL OR j.postingDate >= :postingDate) " +
             "AND (:keyword IS NULL OR (" +
             "       j.title LIKE %:keyword% " +

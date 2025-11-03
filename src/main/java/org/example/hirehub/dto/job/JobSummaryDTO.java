@@ -15,4 +15,6 @@ public class JobSummaryDTO {
     private String title;
     private String level;
     private String description;
+    private String address;
+
 }

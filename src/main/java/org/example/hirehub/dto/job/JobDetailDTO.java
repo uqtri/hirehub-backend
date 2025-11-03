@@ -26,6 +26,7 @@ public class JobDetailDTO {
     private LocalDateTime postingDate;
     private String workspace;
     private String type;
+    private String address;
 
     private List<SkillSummaryDTO> skills;
     private CompanySummaryDTO recruiter;
