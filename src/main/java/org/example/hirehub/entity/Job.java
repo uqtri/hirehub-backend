@@ -33,6 +33,8 @@ public class Job {
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobSkill> skills = new ArrayList<>();
 
+    private String addresses;
+
     private boolean isDeleted = false;
     private Long hit_counter = 0L;
     private LocalDateTime postingDate = LocalDateTime.now();
