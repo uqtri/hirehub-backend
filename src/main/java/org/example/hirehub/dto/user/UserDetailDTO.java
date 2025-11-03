@@ -29,7 +29,7 @@ public class UserDetailDTO {
     private String description;
     private Boolean isVerified;
     private Boolean isBanned;
-    private Integer numberOfEmployees;
+    private String numberOfEmployees;
     private Integer foundedYear = 0;
     private String github;
     private String resume_link;

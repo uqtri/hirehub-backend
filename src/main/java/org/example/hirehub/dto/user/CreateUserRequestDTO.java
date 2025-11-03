@@ -21,9 +21,10 @@ public class CreateUserRequestDTO {
 
     @NotBlank(message = "Mật khẩu không được để trống")
     @Size(min = 6, max = 32, message = "Mật khẩu phải có từ 6 đến 32 ký tự")
-    private Integer numberOfEmployees;
-    private Integer foundedYear = 0;
     private String password;
+
+    private String numberOfEmployees;
+    private Integer foundedYear = 0;
     private String address;
     private Long roleId;
     private List<Long> skillIds;

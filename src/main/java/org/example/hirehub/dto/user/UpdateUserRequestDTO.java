@@ -22,7 +22,7 @@ public class UpdateUserRequestDTO {
     private Boolean isVerified;
     private Boolean isBanned;
     private List<Long> skillIds;
-    private Integer numberOfEmployees;
+    private String numberOfEmployees;
     private String description;
     private String github;
     private String resume_link;
