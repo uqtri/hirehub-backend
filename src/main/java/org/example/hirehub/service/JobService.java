@@ -44,6 +44,9 @@ public class JobService {
         this.jobMapper = jobMapper;
     }
 
+    public List<Job> getAllJobs() {
+        return jobRepository.findAll();
+    }
     public Page<Job> getAllJobs(String postingDate, String company, String title,
                                 String location, String level, String workspace,
                                 String keyword, String province, Pageable pageable) {

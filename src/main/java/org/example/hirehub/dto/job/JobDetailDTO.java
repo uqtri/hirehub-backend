@@ -22,7 +22,7 @@ public class JobDetailDTO {
     private String title;
     private String description;
     private String level;
-    private Boolean isBanned;
+    private Boolean is_banned;
     private LocalDateTime postingDate;
     private String workspace;
     private String type;
