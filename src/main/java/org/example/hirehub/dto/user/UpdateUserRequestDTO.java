@@ -32,5 +32,7 @@ public class UpdateUserRequestDTO {
     private String field;
     private String position;
     private String status;
+    private String resume_name;
+
 
 }

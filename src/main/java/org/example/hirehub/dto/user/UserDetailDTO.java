@@ -42,4 +42,6 @@ public class UserDetailDTO {
     private List<StudySummaryDTO> studies;
     private String position;
     private String status;
+    private String resume_name;
+
 }

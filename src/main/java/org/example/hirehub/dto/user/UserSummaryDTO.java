@@ -18,4 +18,6 @@ public class UserSummaryDTO {
     private String avatar;
     private String position;
     private String status;
+    private String resume_name;
+
 }

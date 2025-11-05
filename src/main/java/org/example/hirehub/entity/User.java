@@ -41,6 +41,8 @@ public class User {
     private String position;
     private String status;
 
+    private String resume_name;
+
     @ManyToMany
     private List<LanguageLevel> languages;
 
