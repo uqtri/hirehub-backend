@@ -12,6 +12,7 @@ import org.example.hirehub.security.CustomUserDetails;
 import org.example.hirehub.service.AuthService;
 import org.example.hirehub.service.JwtService;
 import org.example.hirehub.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -20,7 +21,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,7 +36,15 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final UserMapper userMapper;
+    @Value("${google.client-id}")
+    private String googleClientId;
+    @Value("${google.client-secret}")
+    private String googleClientSecret;
 
+    @Value("${google.client-redirect-url}")
+    private String redirectUrl;
+    @Value("${frontend.url}")
+    private String frontendUrl;
     public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService, UserService userService, UserMapper userMapper) {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -101,6 +114,27 @@ public class AuthController {
         UserDetailDTO user = userMapper.toDTO(authService.getProfile());
 
         return ResponseEntity.status(200).body(Map.of("data", user));
+    }
+
+    @GetMapping("/google")
+    public void redirectToGoogleAuthorization(HttpServletResponse response) throws Exception {
+
+        List<String> scopes = List.of("https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile");
+        String scopeString = scopes.stream().collect(Collectors.joining(" "));
+        String responseType = "code";
+        String url = String.format("https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&prompt=consent", googleClientId, redirectUrl, scopeString);
+
+        response.sendRedirect(url);
+    }
+    @GetMapping("/google/callback")
+    public void googleCallback(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
+
+        User user = authService.handleGoogleCallback(code);
+
+        Cookie cookie = new Cookie("jwt", jwtService.generateToken(new CustomUserDetails(user)));
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        response.sendRedirect(frontendUrl);
     }
 }
 
