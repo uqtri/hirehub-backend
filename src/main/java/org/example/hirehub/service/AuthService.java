@@ -2,6 +2,9 @@ package org.example.hirehub.service;
 
 import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.hirehub.dto.auth.LoginRequest;
 import org.example.hirehub.dto.auth.SignUpRequest;
 import org.example.hirehub.dto.user.CreateUserRequestDTO;
@@ -32,10 +35,7 @@ import org.thymeleaf.context.Context;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +53,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final EmailProducer emailProducer;
     private final HttpClientService httpClientService;
+    private final JwtService jwtService;
+    private final RedisService redisService;
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -64,7 +66,7 @@ public class AuthService {
     @Value("${google.client-redirect-url}")
     private String redirectUrl;
 
-    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository, EmailProducer emailProducer, HttpClientService httpClientService) {
+    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository, EmailProducer emailProducer, HttpClientService httpClientService, JwtService jwtService, RedisService redisService) {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
         this.tokenService = tokenService;
@@ -77,6 +79,8 @@ public class AuthService {
         this.userRepository = userRepository;
         this.emailProducer = emailProducer;
         this.httpClientService = httpClientService;
+        this.jwtService = jwtService;
+        this.redisService = redisService;
     }
 
     public User login(@RequestBody(required = false) LoginRequest loginRequest) {
@@ -227,5 +231,29 @@ public class AuthService {
         newUser.setRole(roleService.getRoleByName("user").orElse(null));
         userService.save(newUser);
         return newUser;
+    }
+    public void clearToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String refreshTokenValue = null;
+        String accessToken = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+             accessToken = Arrays.stream(cookies)
+                    .filter(c -> Objects.equals(c.getName(), "jwt"))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+
+            String username = jwtService.extractSubject(accessToken);
+
+            refreshTokenValue = Arrays.stream(cookies)
+                    .filter(c -> Objects.equals(c.getName(), "refresh_token"))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+
+           var result = redisService.removeRefreshToken(username, refreshTokenValue);
+        }
+
     }
 }
