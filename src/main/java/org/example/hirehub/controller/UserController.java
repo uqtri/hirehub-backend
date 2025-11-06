@@ -63,7 +63,9 @@ public class UserController {
     @GetMapping("/{id}") public UserDetailDTO findUserById(@PathVariable Long id) {
         return userMapper.toDTO(userService.getUserById(id));
     }
-
+    @GetMapping("/email/{email}") public UserDetailDTO findUserByEmail(@PathVariable String email) {
+        return userMapper.toDTO(userService.getUserByEmail(email));
+    }
     @PostMapping("")
     public ResponseEntity<Map<String, ?>>  createUser(@RequestBody CreateUserRequestDTO request) {
 

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -41,7 +43,7 @@ public class ResumeController {
 
     @PostMapping("")
     public ResponseEntity<ResumeDetailDTO> createResume(
-            @Valid @RequestBody CreateResumeRequestDTO request) {
+            @Valid @ModelAttribute CreateResumeRequestDTO request) throws IOException {
         ResumeDetailDTO resume = resumeMapper.toDTO(resumeService.createResume(request));
         return ResponseEntity.ok(resume);
     }

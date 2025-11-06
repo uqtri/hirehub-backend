@@ -1,6 +1,8 @@
 package org.example.hirehub.controller;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.hirehub.dto.auth.LoginRequest;
 import org.example.hirehub.dto.auth.SignUpRequest;
@@ -11,7 +13,9 @@ import org.example.hirehub.mapper.UserMapper;
 import org.example.hirehub.security.CustomUserDetails;
 import org.example.hirehub.service.AuthService;
 import org.example.hirehub.service.JwtService;
+import org.example.hirehub.service.RedisService;
 import org.example.hirehub.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -20,7 +24,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,13 +37,23 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final RedisService redisService;
+    @Value("${google.client-id}")
+    private String googleClientId;
+    @Value("${google.client-secret}")
+    private String googleClientSecret;
 
-    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService, UserService userService, UserMapper userMapper) {
+    @Value("${google.client-redirect-url}")
+    private String redirectUrl;
+    @Value("${frontend.url}")
+    private String frontendUrl;
+    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService, UserService userService, UserMapper userMapper, RedisService redisService) {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.redisService = redisService;
     }
 
     @PostMapping("/login")
@@ -52,15 +68,27 @@ public class AuthController {
 
         Cookie cookie = new Cookie("jwt", jwtService.generateToken((CustomUserDetails)authentication.getPrincipal()));
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        String refreshToken = jwtService.generateRefreshToken();
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+        response.addCookie(refreshTokenCookie);
         response.addCookie(cookie);
+
+        redisService.addRefreshToken(user.getEmail(), refreshToken);
 
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng nhập thành công", "data", user));
     }
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        authService.clearToken(request, response);
 
         Cookie cookie = new Cookie("jwt", "");
+        Cookie refreshTokenCookie = new Cookie("refresh_token", "");
         response.addCookie(cookie);
+        response.addCookie(refreshTokenCookie);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng xuất thành công"));
     }
     @PostMapping("/send-activation")
@@ -101,6 +129,37 @@ public class AuthController {
         UserDetailDTO user = userMapper.toDTO(authService.getProfile());
 
         return ResponseEntity.status(200).body(Map.of("data", user));
+    }
+
+    @GetMapping("/google")
+    public void redirectToGoogleAuthorization(HttpServletResponse response) throws Exception {
+
+        List<String> scopes = List.of("https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile");
+        String scopeString = scopes.stream().collect(Collectors.joining(" "));
+        String responseType = "code";
+        String url = String.format("https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&prompt=consent", googleClientId, redirectUrl, scopeString);
+
+        response.sendRedirect(url);
+    }
+    @GetMapping("/google/callback")
+    public void googleCallback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+
+        authService.clearToken(request, response);
+
+        User user = authService.handleGoogleCallback(code);
+
+        Cookie cookie = new Cookie("jwt", jwtService.generateToken(new CustomUserDetails(user)));
+        cookie.setPath("/");
+        String refreshToken = jwtService.generateRefreshToken();
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setPath("/");
+
+
+        redisService.addRefreshToken(user.getEmail(), refreshToken);
+        response.addCookie(cookie);
+        response.addCookie(refreshTokenCookie);
+        response.sendRedirect(frontendUrl);
     }
 }
 

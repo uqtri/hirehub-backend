@@ -1,5 +1,6 @@
 package org.example.hirehub.security;
 
+import org.example.hirehub.entity.User;
 import org.example.hirehub.repository.UserRepository;
 import org.example.hirehub.service.UserService;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +17,10 @@ public class CustomUserdetailService implements UserDetailsService {
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        return new CustomUserDetails(this.userRepository.findByEmail(username));
+        User user = this.userRepository.findByEmail(username);
+        if(user == null) {
+            throw new UsernameNotFoundException("Không tìm thấy người dùng");
+        }
+        return new CustomUserDetails(user);
     }
-
 }
