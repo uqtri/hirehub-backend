@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.example.hirehub.dto.job.JobDetailDTO;
 import org.example.hirehub.dto.job.JobSummaryDTO;
 import org.example.hirehub.dto.user.UserSummaryDTO;
 
@@ -23,5 +24,5 @@ public class ResumeDetailDTO {
     private LocalDateTime createdAt;
 
     private UserSummaryDTO user;
-    private JobSummaryDTO job;
+    private JobDetailDTO job;
 }
