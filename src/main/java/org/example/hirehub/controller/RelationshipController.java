@@ -1,9 +1,6 @@
 package org.example.hirehub.controller;
 
-import org.example.hirehub.dto.relationship.CreateRelationshipRequestDTO;
-import org.example.hirehub.dto.relationship.RelationshipDetailDTO;
-import org.example.hirehub.dto.relationship.RelationshipFilter;
-import org.example.hirehub.dto.relationship.UpdateRelationshipRequestDTO;
+import org.example.hirehub.dto.relationship.*;
 import org.example.hirehub.entity.Relationship;
 import org.example.hirehub.mapper.RelationshipMapper;
 import org.example.hirehub.service.RelationshipService;
@@ -35,6 +32,13 @@ public class RelationshipController {
 
         return ResponseEntity.ok().body(Map.of("data", data));
     }
+    @GetMapping("/friends")
+    public ResponseEntity<Map<String, ?>> findFriends(@RequestParam Long userId) {
+        List<FriendDTO> friends = relationshipService.findFriends(userId);
+
+        return ResponseEntity.ok().body(Map.of("data", friends));
+    }
+
     @PostMapping("")
     public ResponseEntity<Map<String, ?>> create(@RequestBody CreateRelationshipRequestDTO request) {
 

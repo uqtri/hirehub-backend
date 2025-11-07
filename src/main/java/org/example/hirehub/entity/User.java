@@ -40,6 +40,7 @@ public class User {
     private String field;
     private String position;
     private String status;
+    private String resumeFileName;
 
     private String resume_name;
 

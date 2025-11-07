@@ -13,7 +13,7 @@ import org.example.hirehub.key.RelationshipKey;
 @AllArgsConstructor
 public class RelationshipSummaryDTO {
 //    private RelationshipKey id;
-    private UserSummaryDTO userA;
-    private UserSummaryDTO userB;
+    private UserSummaryDTO sender;
+    private UserSummaryDTO receiver;
     private String status;
 }

@@ -13,6 +13,9 @@ import org.mapstruct.*;
 public interface RelationshipMapper {
 
 //    @Mapping(target = "id", source = "relationshipKey")
+    @Mapping(target = "sender", source = "userA")
+    @Mapping(target = "receiver", source = "userB")
+
     RelationshipDetailDTO toDTO(Relationship relationship);
 
     UserSummaryDTO toDTO(User user);
