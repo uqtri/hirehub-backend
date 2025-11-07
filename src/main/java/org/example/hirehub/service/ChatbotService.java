@@ -50,21 +50,22 @@ public class ChatbotService {
 
         Map result = (Map)response.get("result");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        User user = userService.getUserByEmail(email);
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String email = auth.getName();
+//        User user = userService.getUserByEmail(email);
         List<String> skills = (List)result.get("SKILL");
         List<String> locations = (List)result.get("LOC");
-        List<JobDetailDTO> jobs = jobService.getAllJobs().stream().map(jobMapper::toDTO).toList();
+        List<JobDetailDTO> jobs = new ArrayList<>(jobService.getAllJobs().stream().map(jobMapper::toDTO).toList());
 
-        jobs = jobs.stream().filter(job -> {
+
+        jobs = new ArrayList<>(jobs.stream().filter(job -> {
             boolean skillFound = false;
             boolean locationFound = false;
 
-            if(locations.size() == 0) {
+            if(locations == null || locations.isEmpty()) {
                 locationFound = true;
             }
-            if(skills.size() == 0) {
+            if(skills == null || skills.isEmpty()) {
                 skillFound = true;
             }
             List<String> jobSkills = job.getSkills().stream().map(SkillSummaryDTO::getName).toList();
@@ -80,7 +81,7 @@ public class ChatbotService {
                     locationFound = true;
             }
             return skillFound && locationFound;
-        }).toList();
+        }).toList());
 
         Collections.shuffle(jobs);
         jobs = jobs.subList(0, Math.min(jobs.size(), 5));
