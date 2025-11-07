@@ -30,4 +30,6 @@ public class CreateUserRequestDTO {
     private String field;
     private String position;
     private String status;
+    private String resumeFileName;
+
 }

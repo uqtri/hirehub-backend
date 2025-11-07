@@ -34,6 +34,7 @@ public class UserDetailDTO {
     private String github;
     private String resume_link;
     private String field;
+    private String resumeFileName;
 
     private RoleDetailDTO role;
     private List<SkillSummaryDTO> skills;
