@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -81,6 +82,7 @@ public class ChatbotService {
             return skillFound && locationFound;
         }).toList();
 
+        Collections.shuffle(jobs);
         jobs = jobs.subList(0, Math.min(jobs.size(), 5));
         return jobs;
     }

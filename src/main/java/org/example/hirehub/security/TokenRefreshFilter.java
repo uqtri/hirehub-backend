@@ -53,7 +53,11 @@ public class TokenRefreshFilter extends OncePerRequestFilter {
                 newCookie.setPath("/");
                 newCookie.setHttpOnly(true);
                 response.addCookie(newCookie);
+
                 String newRefreshToken = jwtService.generateRefreshToken();
+                Cookie newRefreshCookie = new Cookie("refresh_token", newRefreshToken);
+                newRefreshCookie.setPath("/");
+                response.addCookie(newRefreshCookie);
                 redisService.removeRefreshToken(email, refreshToken);
                 redisService.addRefreshToken(email, newRefreshToken);
             }

@@ -32,7 +32,7 @@ public class JwtService {
     }
 
     public String generateToken (CustomUserDetails user) {
-        return Jwts.builder().setSubject(user.getUsername()).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 )).signWith(getSignKey()).compact();
+        return Jwts.builder().setSubject(user.getUsername()).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 1000 *  60 * 60 * 60 )).signWith(getSignKey()).compact();
     }
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(getSignKey()).requireExpiration(null).build().parseClaimsJws(token).getBody();

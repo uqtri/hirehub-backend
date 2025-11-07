@@ -14,8 +14,8 @@ import org.example.hirehub.key.RelationshipKey;
 public class RelationshipDetailDTO {
 
 //    private RelationshipKey id;
-    private UserSummaryDTO userA;
-    private UserSummaryDTO userB;
+    private UserSummaryDTO sender;
+    private UserSummaryDTO receiver;
     private String status;
 
 }

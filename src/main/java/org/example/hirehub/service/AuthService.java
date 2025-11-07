@@ -244,6 +244,8 @@ public class AuthService {
                     .findFirst()
                     .orElse(null);
 
+             if(accessToken == null) return;
+
             String username = jwtService.extractSubject(accessToken);
 
             refreshTokenValue = Arrays.stream(cookies)
