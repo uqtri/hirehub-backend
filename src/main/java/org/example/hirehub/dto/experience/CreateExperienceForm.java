@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateExperienceForm {
+public class  CreateExperienceForm {
 
     private Long userId;
     private Long companyId;
@@ -22,4 +22,5 @@ public class CreateExperienceForm {
     private LocalDate endDate;
     private String description;
     private MultipartFile image;
+    private String type;
 }

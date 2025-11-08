@@ -5,6 +5,8 @@ import org.example.hirehub.repository.UniversityRepository;
 import org.example.hirehub.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UniversityService {
 
@@ -17,5 +19,5 @@ public class UniversityService {
     public University findById(Long id) {
         return universityRepository.findById(id).orElse(null);
     }
-
+    public List<University> findAll() { return universityRepository.findAll();}
 }

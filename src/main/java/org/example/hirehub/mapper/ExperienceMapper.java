@@ -11,7 +11,6 @@ public interface ExperienceMapper {
 
     @Mapping(target = "image", ignore = true)
     Experience toEntity(CreateExperienceForm form);
-
     ExperienceDetailDTO toDTO(Experience experience);
 
     @Mapping(target = "image", ignore = true)

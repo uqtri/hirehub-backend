@@ -21,4 +21,6 @@ public class UpdateExperienceForm {
     private LocalDate endDate;
     private String description;
     private MultipartFile image;
+    private String type;
+
 }
