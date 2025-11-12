@@ -42,6 +42,6 @@ public class MessageController {
 
     @GetMapping("/history")
     public List<Message> getHistory(@RequestParam Long userA, @RequestParam Long userB) {
-        return messageRepository.findConservation(userA, userB, Sort.by("createdAt").ascending());
+        return messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending());
     }
 }

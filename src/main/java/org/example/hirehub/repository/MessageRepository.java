@@ -11,6 +11,11 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    @Query("SELECT m FROM Message m WHERE (m.receiver_id = ?1 AND m.sender_id = ?2) OR (m.sender_id = ?2 AND m.receiver_id = ?1)")
-    List<Message> findConservation(Long userA, Long userB, Sort sort);
+    @Query("SELECT m FROM Message m " +
+            "JOIN m.sender s " +
+            "JOIN m.receiver r " +
+            "WHERE (r.id = ?1 AND s.id = ?2) " +
+            "   OR (s.id = ?1 AND r.id = ?2)")
+    List<Message> findConversation(Long userA, Long userB, Sort sort);
+
 }
