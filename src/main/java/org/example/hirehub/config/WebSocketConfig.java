@@ -14,10 +14,11 @@ public class WebSocketConfig  implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
 
         // from server to client
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/topic", "/queue"); //topic: public/group msg; queue: private msg
 
         // from client to server
-        config.setApplicationDestinationPrefixes("/app");
+        config.setApplicationDestinationPrefixes("/app"); // public/group msg
+        config.setUserDestinationPrefix("/user"); //private
     }
 
     @Override
