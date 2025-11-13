@@ -31,6 +31,7 @@ public class Experience {
   private LocalDate endDate;
   private String description;
   private String image;
+  private String type;
 
   private boolean isDeleted = false;
 

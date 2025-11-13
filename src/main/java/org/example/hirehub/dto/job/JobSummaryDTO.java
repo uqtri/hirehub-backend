@@ -16,5 +16,6 @@ public class JobSummaryDTO {
     private String level;
     private String description;
     private String address;
+    private boolean isDeleted;
 
 }
