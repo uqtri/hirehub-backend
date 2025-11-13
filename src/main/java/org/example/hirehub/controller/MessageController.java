@@ -3,6 +3,7 @@ package org.example.hirehub.controller;
 import org.example.hirehub.dto.message.CreateMessageDTO;
 import org.example.hirehub.dto.message.MessageDetailDTO;
 import org.example.hirehub.entity.Message;
+import org.example.hirehub.mapper.MessageMapper;
 import org.example.hirehub.repository.MessageRepository;
 import org.example.hirehub.service.MessageService;
 import org.springframework.data.domain.Sort;
@@ -25,11 +26,13 @@ public class MessageController {
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageRepository messageRepository;
     private final MessageService messageService;
+    private final MessageMapper messageMapper;
 
-    public MessageController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, MessageService messageService) {
+    public MessageController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, MessageService messageService, MessageMapper messageMapper) {
         this.messageRepository = messageRepository;
         this.messagingTemplate = messagingTemplate;
         this.messageService = messageService;
+        this.messageMapper = messageMapper;
     }
 
     @MessageMapping("/chat/private") //client send to /app/chat/private
@@ -41,7 +44,7 @@ public class MessageController {
     }
 
     @GetMapping("/history")
-    public List<Message> getHistory(@RequestParam Long userA, @RequestParam Long userB) {
-        return messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending());
+    public List<MessageDetailDTO> getHistory(@RequestParam Long userA, @RequestParam Long userB) {
+        return  messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending()).stream().map(messageMapper::toDTO).toList();
     }
 }
