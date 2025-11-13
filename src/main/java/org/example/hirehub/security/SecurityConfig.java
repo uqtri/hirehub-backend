@@ -49,7 +49,8 @@ public class SecurityConfig  {
                                 .requestMatchers("/api/users").permitAll()
                                 .requestMatchers("/api/jobs").permitAll()
                                 .requestMatchers("/api/**").permitAll()
-                        )
+                                .requestMatchers("/ws/**").permitAll()
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).addFilterBefore(tokenRefreshFilter, JwtAuthenticationFilter.class).build();
     }
     @Bean
