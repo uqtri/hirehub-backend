@@ -24,12 +24,10 @@ import java.util.List;
 @Controller
 public class MessageController {
     private final SimpMessagingTemplate messagingTemplate;
-    private final MessageRepository messageRepository;
     private final MessageService messageService;
     private final MessageMapper messageMapper;
 
     public MessageController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, MessageService messageService, MessageMapper messageMapper) {
-        this.messageRepository = messageRepository;
         this.messagingTemplate = messagingTemplate;
         this.messageService = messageService;
         this.messageMapper = messageMapper;
@@ -45,6 +43,11 @@ public class MessageController {
 
     @GetMapping("/history")
     public List<MessageDetailDTO> getHistory(@RequestParam Long userA, @RequestParam Long userB) {
-        return  messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending()).stream().map(messageMapper::toDTO).toList();
+        return  messageService.getHistory(userA, userB).stream().map(messageMapper::toDTO).toList();
+    }
+
+    @GetMapping("/chat-list")
+    public List<MessageDetailDTO> getChatList(@RequestParam Long userId) {
+        return messageService.getChatList(userId).stream().map(messageMapper::toDTO).toList();
     }
 }
