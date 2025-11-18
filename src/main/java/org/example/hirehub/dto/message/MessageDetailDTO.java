@@ -24,5 +24,5 @@ public class MessageDetailDTO {
     private UserSummaryDTO sender;
     private UserSummaryDTO receiver;
 
-    private List<UserDetailDTO> seenUsers;
+    private List<UserSummaryDTO> seenUsers;
 }
