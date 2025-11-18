@@ -13,11 +13,13 @@ import java.util.Optional;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    @Query("SELECT m FROM Message m " +
+    @Query("SELECT DISTINCT m FROM Message m " +
             "JOIN m.sender s " +
             "JOIN m.receiver r " +
-            "WHERE (r.id = ?1 AND s.id = ?2) " +
-            "   OR (s.id = ?1 AND r.id = ?2)")
+            "LEFT JOIN FETCH m.seenBy u " +
+            "WHERE (r.id = :userA AND s.id = :userB) " +
+            "   OR (s.id = :userA AND r.id = :userB) " +
+            "ORDER BY m.createdAt ASC")
     List<Message> findConversation(Long userA, Long userB, Sort sort);
 
     @Query("""
