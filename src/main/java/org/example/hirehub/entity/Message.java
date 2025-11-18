@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,5 +34,7 @@ public class Message {
     private boolean isDeleted = false;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "message")
+    private List<UserMessage> seenBy;
 
 }
