@@ -52,7 +52,7 @@ public class MessageController {
         return messageService.getChatList(userId).stream().map(messageMapper::toDTO).toList();
     }
 
-    @MessageMapping("/queue/message-seen")
+    @MessageMapping("/message/seen")
     public void markSeen(
             @RequestParam Long userId,
             @RequestParam Long messageId

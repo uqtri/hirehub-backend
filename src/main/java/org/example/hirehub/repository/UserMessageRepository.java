@@ -19,5 +19,5 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, UserMe
         SELECT um FROM UserMessage um
         WHERE um.user.id = :userId AND um.message.id = :messageId
     """)
-    Optional<UserMessage> findRecord(Long userId, Long messageId);
+    Optional<UserMessage> findUsersSeen(Long userId, Long messageId);
 }

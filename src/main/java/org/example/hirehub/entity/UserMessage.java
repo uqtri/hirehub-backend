@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.hirehub.key.ExperienceSkillKey;
+import org.example.hirehub.key.JobSkillKey;
 import org.example.hirehub.key.UserMessageKey;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,9 @@ public class UserMessage {
     private Message message;
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    private boolean seen;
-
+    public UserMessage(User user, Message message) {
+        this.user = user;
+        this.message = message;
+        this.userMessageKey = new UserMessageKey(user.getId(), message.getId());
+    }
 }

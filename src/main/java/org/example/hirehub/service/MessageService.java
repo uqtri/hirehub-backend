@@ -65,17 +65,18 @@ public class MessageService {
 
         return result;
     }
-
     public void markSeen(Long userId, Long messageId) {
-        UserMessageKey key = new UserMessageKey(userId, messageId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
-        UserMessage record = userMessageRepository
-                .findById(key)
-                .orElseThrow(() -> new RuntimeException("Record not found"));
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found: " + messageId));
 
-        record.setSeen(true);
-        record.setCreatedAt(LocalDateTime.now());
+        UserMessage newRecord = new UserMessage(user, message);
+        newRecord.setCreatedAt(LocalDateTime.now());
 
-        userMessageRepository.save(record);
+        userMessageRepository.save(newRecord);
+
     }
+
 }
