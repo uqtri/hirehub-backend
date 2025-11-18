@@ -6,8 +6,11 @@ import lombok.Setter;
 import org.example.hirehub.dto.message.CreateMessageDTO;
 import org.example.hirehub.entity.Message;
 import org.example.hirehub.entity.User;
+import org.example.hirehub.entity.UserMessage;
 import org.example.hirehub.exception.UserHandlerException;
+import org.example.hirehub.key.UserMessageKey;
 import org.example.hirehub.repository.MessageRepository;
+import org.example.hirehub.repository.UserMessageRepository;
 import org.example.hirehub.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,10 +25,12 @@ import java.util.List;
 public class MessageService {
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+    private final UserMessageRepository userMessageRepository;
 
-    public MessageService(UserRepository userRepository, MessageRepository messageRepository){
+    public MessageService(UserRepository userRepository, MessageRepository messageRepository, UserMessageRepository userMessageRepository){
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
+        this.userMessageRepository = userMessageRepository;
 
     }
     @Transactional
@@ -61,4 +66,16 @@ public class MessageService {
         return result;
     }
 
+    public void markSeen(Long userId, Long messageId) {
+        UserMessageKey key = new UserMessageKey(userId, messageId);
+
+        UserMessage record = userMessageRepository
+                .findById(key)
+                .orElseThrow(() -> new RuntimeException("Record not found"));
+
+        record.setSeen(true);
+        record.setCreatedAt(LocalDateTime.now());
+
+        userMessageRepository.save(record);
+    }
 }

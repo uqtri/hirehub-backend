@@ -1,5 +1,6 @@
 package org.example.hirehub.repository;
 
+import org.example.hirehub.entity.UserMessage;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.example.hirehub.entity.Message;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
@@ -56,6 +58,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         )
 """)
     Message getLatestMessageBetween(Long userA, Long userB);
+
+    @Query("""
+        SELECT um FROM UserMessage um
+        WHERE um.user.id = :userId AND um.message.id = :messageId
+    """)
+    Optional<UserMessage> findRecord(Long userId, Long messageId);
 
 
 
