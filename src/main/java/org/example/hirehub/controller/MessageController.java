@@ -59,7 +59,7 @@ public class MessageController {
         messageService.markSeen(msg.getUserId(), msg.getMessageId());
 
         User user = userService.getUserById(msg.getUserId());
-        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-seen", msg.getMessageId());
+        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-seen", msg);
     }
 
     @MessageMapping("/message/react")
@@ -69,6 +69,6 @@ public class MessageController {
         messageService.reactMessage(msg.getUserId(), msg.getMessageId(), msg.getEmoji());
 
         User user = userService.getUserById(msg.getUserId());
-        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-react", msg.getMessageId());
+        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-react", msg);
     }
 }
