@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Setter
 @Getter
@@ -65,6 +66,7 @@ public class MessageService {
 
         return result;
     }
+
     public void markSeen(Long userId, Long messageId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
@@ -76,7 +78,34 @@ public class MessageService {
         newRecord.setCreatedAt(LocalDateTime.now());
 
         userMessageRepository.save(newRecord);
+    }
 
+    public void reactMessage(Long userId, Long messageId, String emoji) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found: " + messageId));
+
+        UserMessageKey key = new UserMessageKey(userId, messageId);
+        Optional<UserMessage> existing = userMessageRepository.findById(key);
+
+        if (existing.isEmpty()) {
+            UserMessage newReaction = new UserMessage(user, message);
+            newReaction.setEmoji(emoji);
+            userMessageRepository.save(newReaction);
+            return;
+        }
+
+        UserMessage userMsg = existing.get();
+
+        if (userMsg.getEmoji() != null && userMsg.getEmoji().equals(emoji)) {
+            userMessageRepository.delete(userMsg);
+        } else {
+            userMsg.setEmoji(emoji);
+            userMessageRepository.save(userMsg);
+        }
     }
 
 }

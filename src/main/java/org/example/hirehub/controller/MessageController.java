@@ -3,6 +3,7 @@ package org.example.hirehub.controller;
 import org.example.hirehub.dto.message.CreateMessageDTO;
 import org.example.hirehub.dto.message.MessageDetailDTO;
 
+import org.example.hirehub.dto.message.ReactMessageDTO;
 import org.example.hirehub.dto.message.SeenMessageDTO;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.mapper.MessageMapper;
@@ -58,7 +59,16 @@ public class MessageController {
         messageService.markSeen(msg.getUserId(), msg.getMessageId());
 
         User user = userService.getUserById(msg.getUserId());
-        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-seen", msg.getMessageId());
+        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-seen", msg);
     }
 
+    @MessageMapping("/message/react")
+    public void reactEmoji(
+            @Payload ReactMessageDTO msg
+    ) {
+        messageService.reactMessage(msg.getUserId(), msg.getMessageId(), msg.getEmoji());
+
+        User user = userService.getUserById(msg.getUserId());
+        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-react", msg);
+    }
 }

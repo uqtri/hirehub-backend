@@ -28,9 +28,12 @@ public class UserMessage {
     @MapsId("userId")
     private User user;
     @ManyToOne
+
     @MapsId("messageId")
     private Message message;
+
     private LocalDateTime createdAt = LocalDateTime.now();
+    private String emoji;
 
     public UserMessage(User user, Message message) {
         this.user = user;
