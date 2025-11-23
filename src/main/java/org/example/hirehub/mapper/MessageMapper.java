@@ -1,5 +1,8 @@
 package org.example.hirehub.mapper;
 
+import org.example.hirehub.dto.message.SeenMessageDTO;
+import org.example.hirehub.dto.message.SeenUserDTO;
+import org.example.hirehub.entity.User;
 import org.example.hirehub.entity.UserMessage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,18 +20,14 @@ public interface MessageMapper {
     MessageDetailDTO toDTO(Message message);
 
     @Named("mapSeenUsers")
-    default List<UserSummaryDTO> mapSeenUsers(List<UserMessage> seenBy) {
+    default List<SeenUserDTO> mapSeenUsers(List<UserMessage> seenBy) {
         if (seenBy == null) return List.of();
         return seenBy.stream().map(um -> {
-            UserSummaryDTO dto = new UserSummaryDTO();
+            SeenUserDTO dto = new SeenUserDTO();
             dto.setId(um.getUser().getId());
             dto.setEmail(um.getUser().getEmail());
-            dto.setName(um.getUser().getName());
-            dto.setAddress(um.getUser().getAddress());
-            dto.setAvatar(um.getUser().getAvatar());
-            dto.setPosition(um.getUser().getPosition());
-            dto.setStatus(um.getUser().getStatus());
-            dto.setResume_name(um.getUser().getResume_name());
+            dto.setEmoji(um.getEmoji());
+
             return dto;
         }).collect(Collectors.toList());
     }

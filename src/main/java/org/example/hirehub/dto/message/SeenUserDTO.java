@@ -1,18 +1,16 @@
 package org.example.hirehub.dto.message;
 
-
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class SeenMessageDTO {
-    private Long messageId;
-    private Long userId;
+@Setter
+@Getter
+public class SeenUserDTO {
+    private Long id;
+    private String email;
+    private String emoji;
 }

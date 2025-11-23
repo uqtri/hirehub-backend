@@ -12,7 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class SeenMessageDTO {
+public class ReactMessageDTO {
     private Long messageId;
     private Long userId;
+
+    private String emoji;
 }
