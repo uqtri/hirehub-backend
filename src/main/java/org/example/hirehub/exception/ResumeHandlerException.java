@@ -11,4 +11,11 @@ public class ResumeHandlerException {
         }
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static class ResumeAlreadyApplied extends RuntimeException {
+        public ResumeAlreadyApplied(Long id) {
+            super("Đã nộp công việc với id:" + id);
+        }
+    }
+
 }

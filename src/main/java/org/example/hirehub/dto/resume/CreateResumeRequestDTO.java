@@ -20,7 +20,7 @@ public class CreateResumeRequestDTO {
 //    @NotNull(message = "Resume là bắt buộc.")
 //    private String link;
 
-    @NotNull
+//    @NotNull
     private MultipartFile resumeFile;
 
     @Size(max = 500, message = "Thư giới thiệu không được dài quá 500 ký tự.")
@@ -28,4 +28,6 @@ public class CreateResumeRequestDTO {
 
     private Long jobId;
     private Long userId;
+    private String openAiResumeId;
+    private String link;
 }
