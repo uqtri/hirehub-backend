@@ -32,15 +32,17 @@ public class ResumeService {
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
     private final CloudinaryService cloudinaryService;
+    private final OpenAiFileService openAiFileService;
 
     public ResumeService(ResumeRepository resumeRepository, ResumeMapper resumeMapper,
                          UserRepository userRepository,
-                         JobRepository jobRepository, CloudinaryService cloudinaryService){
+                         JobRepository jobRepository, CloudinaryService cloudinaryService, OpenAiFileService openAiFileService){
         this.resumeRepository = resumeRepository;
         this.resumeMapper = resumeMapper;
         this.userRepository = userRepository;
         this.jobRepository = jobRepository;
         this.cloudinaryService = cloudinaryService;
+        this.openAiFileService = openAiFileService;
     }
 
     public List<Resume> getAllResumes(Long user, Long job, Long recruiter) {
@@ -55,13 +57,26 @@ public class ResumeService {
     public Resume createResume(CreateResumeRequestDTO request) throws IOException {
         Resume resume = new Resume();
 
+        List<Resume> existingResume = resumeRepository.searchResumesDynamic(request.getUserId(), request.getJobId(), null);
+
+        if(!existingResume.isEmpty()) {
+            throw new ResumeHandlerException.ResumeAlreadyApplied(request.getJobId());
+
+        }
         resumeMapper.createResumeFromDTO(resume, request);
 
         MultipartFile resumeFile = request.getResumeFile();
         if(resumeFile != null && !resumeFile.isEmpty()) {
             String url = cloudinaryService.uploadAndGetUrl(resumeFile, Map.of());
+            String openAiResumeId = openAiFileService.uploadFile(resumeFile);
             resume.setLink(url);
+            resume.setOpenAiResumeId(openAiResumeId);
         }
+        else {
+            resume.setLink(request.getLink());
+            resume.setOpenAiResumeId(request.getOpenAiResumeId());
+        }
+
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Job job = jobRepository.findById(request.getJobId()).orElseThrow(() -> new JobHandlerException.JobNotFoundException(request.getJobId()));
