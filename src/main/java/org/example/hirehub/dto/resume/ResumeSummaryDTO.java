@@ -18,5 +18,7 @@ public class ResumeSummaryDTO {
     private String status;
     private String coverLetter;
     private UserSummaryDTO user;
+    private String openAiResumeId;
+
 
 }
