@@ -28,7 +28,6 @@ public class JobInteractionController {
     @GetMapping("")
     Page<JobInteractionDetailDTO> getJobInteractions(@ModelAttribute JobInteractionFilter filter, Pageable pageable) {
 
-
         return jobInteractionService.findAll(filter, pageable).map(jobInteractionMapper::toDTO);
     }
     @PostMapping("")
