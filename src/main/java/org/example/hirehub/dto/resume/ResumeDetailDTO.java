@@ -22,6 +22,7 @@ public class ResumeDetailDTO {
     private String status;
     private String coverLetter;
     private LocalDateTime createdAt;
+    private String openAiResumeId;
 
     private UserSummaryDTO user;
     private JobDetailDTO job;

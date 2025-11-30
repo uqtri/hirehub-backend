@@ -28,6 +28,5 @@ public class Resume {
     private String cover_letter;
     private boolean isDeleted = false;
     private LocalDateTime createdAt = LocalDateTime.now();
-
-
+    private String openAiResumeId;
 }
