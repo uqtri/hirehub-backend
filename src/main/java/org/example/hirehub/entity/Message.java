@@ -21,7 +21,9 @@ public class Message {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
-    private String message;
+    private String type;
+    private String content;
+
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User sender;

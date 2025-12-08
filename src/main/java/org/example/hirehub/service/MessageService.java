@@ -42,7 +42,8 @@ public class MessageService {
         Message newMsg = new Message();
         newMsg.setSender(sender);
         newMsg.setReceiver(receiver);
-        newMsg.setMessage(message.getMessage());
+        newMsg.setContent(message.getContent());
+        newMsg.setType(message.getType());
         newMsg.setCreatedAt(LocalDateTime.now());
 
         return messageRepository.save(newMsg);
@@ -108,4 +109,8 @@ public class MessageService {
         }
     }
 
+    public Message getMessageById(Long id) {
+        return messageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Message not found with id: " + id));
+    }
 }
