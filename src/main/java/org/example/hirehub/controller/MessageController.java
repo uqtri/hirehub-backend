@@ -5,6 +5,7 @@ import org.example.hirehub.dto.message.MessageDetailDTO;
 
 import org.example.hirehub.dto.message.ReactMessageDTO;
 import org.example.hirehub.dto.message.SeenMessageDTO;
+import org.example.hirehub.entity.Message;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.mapper.MessageMapper;
 import org.example.hirehub.repository.MessageRepository;
@@ -58,8 +59,12 @@ public class MessageController {
             ) {
         messageService.markSeen(msg.getUserId(), msg.getMessageId());
 
-        User user = userService.getUserById(msg.getUserId());
-        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-seen", msg);
+        Message message = messageService.getMessageById(msg.getMessageId());
+        User sender = message.getSender();
+        User receiver = message.getReceiver();
+        messagingTemplate.convertAndSendToUser(sender.getEmail(), "/queue/message-seen", msg);
+        messagingTemplate.convertAndSendToUser(receiver.getEmail(), "/queue/message-seen", msg);
+
     }
 
     @MessageMapping("/message/react")
@@ -68,7 +73,11 @@ public class MessageController {
     ) {
         messageService.reactMessage(msg.getUserId(), msg.getMessageId(), msg.getEmoji());
 
-        User user = userService.getUserById(msg.getUserId());
-        messagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/message-react", msg);
+        Message message = messageService.getMessageById(msg.getMessageId());
+        User sender = message.getSender();
+        User receiver = message.getReceiver();
+
+        messagingTemplate.convertAndSendToUser(sender.getEmail(), "/queue/message-react", msg);
+        messagingTemplate.convertAndSendToUser(receiver.getEmail(), "/queue/message-react", msg);
     }
 }

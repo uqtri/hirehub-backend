@@ -109,4 +109,8 @@ public class MessageService {
         }
     }
 
+    public Message getMessageById(Long id) {
+        return messageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Message not found with id: " + id));
+    }
 }
