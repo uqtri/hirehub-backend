@@ -18,7 +18,8 @@ import java.util.List;
 
 public class MessageDetailDTO {
     private Long id;
-    private String message;
+    private String type;
+    private String content;
     private LocalDateTime createdAt;
 
     private UserSummaryDTO sender;

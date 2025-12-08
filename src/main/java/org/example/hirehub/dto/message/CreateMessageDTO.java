@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 
 public class CreateMessageDTO {
-    private String message;
+    private String content;
+    private String type;
 
     private String senderEmail;
     private String receiverEmail;
