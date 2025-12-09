@@ -1,5 +1,6 @@
 package org.example.hirehub.controller;
 
+import jakarta.mail.Multipart;
 import org.example.hirehub.dto.message.CreateMessageDTO;
 import org.example.hirehub.dto.message.MessageDetailDTO;
 
@@ -9,15 +10,21 @@ import org.example.hirehub.entity.Message;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.mapper.MessageMapper;
 import org.example.hirehub.repository.MessageRepository;
+import org.example.hirehub.service.CloudinaryService;
 import org.example.hirehub.service.MessageService;
 import org.example.hirehub.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/messages")
 
@@ -27,16 +34,19 @@ public class MessageController {
     private final MessageService messageService;
     private final MessageMapper messageMapper;
     private final UserService userService;
+    private final CloudinaryService cloudinaryService;
 
-    public MessageController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, MessageService messageService, MessageMapper messageMapper, UserService userService) {
+    public MessageController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, MessageService messageService, MessageMapper messageMapper, UserService userService, CloudinaryService cloudinaryService) {
         this.messagingTemplate = messagingTemplate;
         this.messageService = messageService;
         this.messageMapper = messageMapper;
         this.userService = userService;
+        this.cloudinaryService = cloudinaryService;
+
     }
 
     @MessageMapping("/chat/private") //client send to /app/chat/private
-    public void processPrivateMessage(@Payload CreateMessageDTO chatMsg) {
+    public void processPrivateMessage(@Payload CreateMessageDTO chatMsg) throws IOException {
         messageService.createMessage(chatMsg);
 
         messagingTemplate.convertAndSendToUser(chatMsg.getSenderEmail(),"/queue/messages", chatMsg);
@@ -80,4 +90,11 @@ public class MessageController {
         messagingTemplate.convertAndSendToUser(sender.getEmail(), "/queue/message-react", msg);
         messagingTemplate.convertAndSendToUser(receiver.getEmail(), "/queue/message-react", msg);
     }
+
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> upload(@RequestParam("file") MultipartFile file) throws IOException {
+        String url = cloudinaryService.uploadAndGetUrl(file, Map.of());
+        return ResponseEntity.ok(Map.of("url", url));
+    }
+
 }

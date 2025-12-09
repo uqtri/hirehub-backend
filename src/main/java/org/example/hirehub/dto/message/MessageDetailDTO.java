@@ -20,6 +20,7 @@ public class MessageDetailDTO {
     private Long id;
     private String type;
     private String content;
+    private String fileName;
     private LocalDateTime createdAt;
 
     private UserSummaryDTO sender;

@@ -14,10 +14,13 @@ import org.example.hirehub.repository.UserMessageRepository;
 import org.example.hirehub.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Setter
@@ -32,22 +35,24 @@ public class MessageService {
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
         this.userMessageRepository = userMessageRepository;
-
     }
     @Transactional
-    public Message createMessage(CreateMessageDTO message) {
-        User sender = userRepository.findByEmail(message.getSenderEmail());
-        User receiver = userRepository.findByEmail(message.getReceiverEmail());
+    public Message createMessage(CreateMessageDTO dto) throws IOException {
+
+        User sender = userRepository.findByEmail(dto.getSenderEmail());
+        User receiver = userRepository.findByEmail(dto.getReceiverEmail());
 
         Message newMsg = new Message();
         newMsg.setSender(sender);
         newMsg.setReceiver(receiver);
-        newMsg.setContent(message.getContent());
-        newMsg.setType(message.getType());
+        newMsg.setType(dto.getType());
         newMsg.setCreatedAt(LocalDateTime.now());
 
+        newMsg.setContent(dto.getContent());
+        newMsg.setFileName(dto.getFileName());
         return messageRepository.save(newMsg);
     }
+
 
     public List<Message> getHistory(Long userA, Long userB) {
         return messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending());
