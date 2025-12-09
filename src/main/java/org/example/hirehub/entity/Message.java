@@ -22,6 +22,8 @@ public class Message {
 
     private Long id;
     private String type;
+
+    private String fileName;
     private String content;
 
     @ManyToOne
@@ -38,5 +40,4 @@ public class Message {
     private LocalDateTime createdAt = LocalDateTime.now();
     @OneToMany(mappedBy = "message")
     private List<UserMessage> seenBy;
-
 }
