@@ -43,7 +43,7 @@ public class User {
     private String resumeFileName;
 
     private String resume_name;
-
+    private String openAiResumeId;
     @ManyToMany
     private List<LanguageLevel> languages;
 

@@ -19,5 +19,6 @@ public class UserSummaryDTO {
     private String position;
     private String status;
     private String resume_name;
+    private String openAiResumeId;
 
 }

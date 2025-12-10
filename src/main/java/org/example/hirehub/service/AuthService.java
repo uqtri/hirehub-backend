@@ -54,7 +54,6 @@ public class AuthService {
     private final EmailProducer emailProducer;
     private final HttpClientService httpClientService;
     private final JwtService jwtService;
-    private final RedisService redisService;
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -66,7 +65,7 @@ public class AuthService {
     @Value("${google.client-redirect-url}")
     private String redirectUrl;
 
-    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository, EmailProducer emailProducer, HttpClientService httpClientService, JwtService jwtService, RedisService redisService) {
+    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository, EmailProducer emailProducer, HttpClientService httpClientService, JwtService jwtService) {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
         this.tokenService = tokenService;
@@ -80,7 +79,6 @@ public class AuthService {
         this.emailProducer = emailProducer;
         this.httpClientService = httpClientService;
         this.jwtService = jwtService;
-        this.redisService = redisService;
     }
 
     public User login(@RequestBody(required = false) LoginRequest loginRequest) {
@@ -244,7 +242,7 @@ public class AuthService {
                     .findFirst()
                     .orElse(null);
 
-             if(accessToken == null) return;
+             if(accessToken == null || accessToken.isEmpty()) return;
 
             String username = jwtService.extractSubject(accessToken);
 
@@ -254,7 +252,6 @@ public class AuthService {
                     .findFirst()
                     .orElse(null);
 
-           var result = redisService.removeRefreshToken(username, refreshTokenValue);
         }
 
     }

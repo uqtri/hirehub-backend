@@ -9,6 +9,7 @@ import org.example.hirehub.entity.Skill;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.mapper.JobMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,18 +29,24 @@ public class ChatbotService {
     private final FuzzyMatchService fuzzyMatchService;
     private final JobMapper jobMapper;
     private final double THRESHOLD = 0.7;
+    private final OpenAiFileService openAiFileService;
+    private final AssistantRunService assistantRunService;
+    private final AuthenticationManager authenticationManager;
 
     @Value("${ai.ner-url}")
     private String nerUrl;
 
     private final HttpClientService httpClientService;
 
-    public ChatbotService(HttpClientService httpClientService, UserService userService, JobService jobService, FuzzyMatchService fuzzyMatchService, JobMapper jobMapper) {
+    public ChatbotService(HttpClientService httpClientService, UserService userService, JobService jobService, FuzzyMatchService fuzzyMatchService, JobMapper jobMapper, OpenAiFileService openAiFileService, AssistantRunService assistantRunService, AuthenticationManager authenticationManager) {
         this.httpClientService = httpClientService;
         this.userService = userService;
         this.jobService = jobService;
         this.fuzzyMatchService = fuzzyMatchService;
         this.jobMapper = jobMapper;
+        this.openAiFileService = openAiFileService;
+        this.assistantRunService = assistantRunService;
+        this.authenticationManager = authenticationManager;
     }
     public List<JobDetailDTO> findJob(ChatbotRequestDTO request) {
 
@@ -68,17 +75,20 @@ public class ChatbotService {
             if(skills == null || skills.isEmpty()) {
                 skillFound = true;
             }
-            List<String> jobSkills = job.getSkills().stream().map(SkillSummaryDTO::getName).toList();
-
-            for(String skill : skills) {
-                for(String jobSkill : jobSkills) {
-                    if(fuzzyMatchService.isSimilar(skill, jobSkill, THRESHOLD))
-                        skillFound = true;
+            if(skills != null) {
+                List<String> jobSkills = job.getSkills().stream().map(SkillSummaryDTO::getName).toList();
+                for(String skill : skills) {
+                    for(String jobSkill : jobSkills) {
+                        if(fuzzyMatchService.isSimilar(skill, jobSkill, THRESHOLD))
+                            skillFound = true;
+                    }
                 }
             }
-            for (String location : locations) {
-                if(fuzzyMatchService.isSimilar(location, job.getAddress(), THRESHOLD))
-                    locationFound = true;
+            if(locations != null) {
+                for (String location : locations) {
+                    if(fuzzyMatchService.isSimilar(location, job.getAddress(), THRESHOLD))
+                        locationFound = true;
+                }
             }
             return skillFound && locationFound;
         }).toList());
@@ -86,5 +96,27 @@ public class ChatbotService {
         Collections.shuffle(jobs);
         jobs = jobs.subList(0, Math.min(jobs.size(), 5));
         return jobs;
+    }
+    public String analyzeResume(ChatbotRequestDTO request) {
+
+        String prompt = request.getMessage();
+
+        String fileId;
+        if(request.getResume() != null && !request.getResume().isEmpty())
+            fileId = openAiFileService.uploadFile(request.getResume());
+        else {
+            fileId = request.getResumeId();
+        }
+        String threadId = assistantRunService.createThread();
+
+        assistantRunService.postMessageWithFile(threadId, fileId, prompt);
+
+        String runId = assistantRunService.runAssistant(threadId);
+
+        assistantRunService.pollRunUntilDone(threadId, runId, 60_000);
+
+        List<Map> messages = assistantRunService.fetchMessages(threadId);
+
+        return assistantRunService.extractAnswerFromMessages(messages);
     }
 }

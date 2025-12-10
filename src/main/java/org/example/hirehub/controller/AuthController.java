@@ -13,7 +13,7 @@ import org.example.hirehub.mapper.UserMapper;
 import org.example.hirehub.security.CustomUserDetails;
 import org.example.hirehub.service.AuthService;
 import org.example.hirehub.service.JwtService;
-import org.example.hirehub.service.RedisService;
+//import org.example.hirehub.service.RedisService;
 import org.example.hirehub.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,7 +37,6 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final UserMapper userMapper;
-    private final RedisService redisService;
     @Value("${google.client-id}")
     private String googleClientId;
     @Value("${google.client-secret}")
@@ -47,13 +46,12 @@ public class AuthController {
     private String redirectUrl;
     @Value("${frontend.url}")
     private String frontendUrl;
-    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService, UserService userService, UserMapper userMapper, RedisService redisService) {
+    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService, UserService userService, UserMapper userMapper) {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
         this.userService = userService;
         this.userMapper = userMapper;
-        this.redisService = redisService;
     }
 
     @PostMapping("/login")
@@ -77,8 +75,6 @@ public class AuthController {
         response.addCookie(refreshTokenCookie);
         response.addCookie(cookie);
 
-        redisService.addRefreshToken(user.getEmail(), refreshToken);
-
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng nhập thành công", "data", user));
     }
     @PostMapping("/logout")
@@ -87,6 +83,10 @@ public class AuthController {
 
         Cookie cookie = new Cookie("jwt", "");
         Cookie refreshTokenCookie = new Cookie("refresh_token", "");
+        cookie.setMaxAge(0);
+        refreshTokenCookie.setMaxAge(0);
+        refreshTokenCookie.setPath("/");
+        cookie.setPath("/");
         response.addCookie(cookie);
         response.addCookie(refreshTokenCookie);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng xuất thành công"));
@@ -155,8 +155,6 @@ public class AuthController {
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setPath("/");
 
-
-        redisService.addRefreshToken(user.getEmail(), refreshToken);
         response.addCookie(cookie);
         response.addCookie(refreshTokenCookie);
         response.sendRedirect(frontendUrl);

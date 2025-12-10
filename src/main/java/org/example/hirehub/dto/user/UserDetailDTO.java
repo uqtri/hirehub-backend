@@ -35,6 +35,7 @@ public class UserDetailDTO {
     private String resume_link;
     private String field;
     private String resumeFileName;
+    private String openAiResumeId;
 
     private RoleDetailDTO role;
     private List<SkillSummaryDTO> skills;

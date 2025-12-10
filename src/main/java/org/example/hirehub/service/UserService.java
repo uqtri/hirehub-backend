@@ -29,14 +29,16 @@ public class UserService {
     private final CloudinaryService cloudinaryService;
     private final SkillService skillService;
     private final LanguageLevelService languageLevelService;
+    private final OpenAiFileService openAiFileService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService, SkillService skillService, LanguageLevelService languageLevelService) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService, SkillService skillService, LanguageLevelService languageLevelService, OpenAiFileService openAiFileService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.cloudinaryService = cloudinaryService;
         this.skillService = skillService;
         this.languageLevelService = languageLevelService;
+        this.openAiFileService = openAiFileService;
     }
 
     public Page<User> getAllUsers(String keyword, String province, String role, Pageable pageable) {
@@ -76,6 +78,8 @@ public class UserService {
         MultipartFile resume = request.getResume();
         if(resume != null && !resume.isEmpty()) {
             String url = cloudinaryService.uploadAndGetUrl(resume, ObjectUtils.emptyMap());
+            String openAiResumeId = openAiFileService.uploadFile(resume);
+            user.setOpenAiResumeId(openAiResumeId);
             user.setResume_link(url);
         }
         userMapper.updateUserFromDTO(user, request);
