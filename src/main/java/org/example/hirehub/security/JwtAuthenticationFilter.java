@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (cookies != null) {
             token = Arrays.stream(cookies).filter(cookie -> Objects.equals(cookie.getName(), "jwt")).map(Cookie::getValue).findFirst().orElse(null);
         }
-        if(token != null && jwtService.validateToken(token)) {
+        if(token != null && !token.isEmpty() && jwtService.validateToken(token)) {
             CustomUserDetails user = customUserdetailService.loadUserByUsername(jwtService.extractSubject(token));
             Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
