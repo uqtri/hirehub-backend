@@ -32,4 +32,5 @@ public class JobDetailDTO {
     private CompanySummaryDTO recruiter;
     private List<ResumeDetailDTO> resumes;
     private Integer hit_counter;
+    private boolean isDeleted;
 }

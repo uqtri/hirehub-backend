@@ -14,7 +14,14 @@ public class UserHandlerException {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public static class UserNotFoundException extends RuntimeException {
         public UserNotFoundException(Long id) {
-            super("Không tìm thấy ứng viên với: " + id);
+            super("Không tìm thấy người dùng với: " + id);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public static class UserEmailNotFoundException extends RuntimeException {
+        public UserEmailNotFoundException(String email) {
+            super("Không tìm thấy người dùng với: " + email);
         }
     }
 }

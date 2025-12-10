@@ -24,4 +24,6 @@ public class ExperienceDetailDTO {
     private String description;
     private String image;
     private List<SkillSummaryDTO> skills;
+    private String type;
+    private boolean isDeleted;
 }

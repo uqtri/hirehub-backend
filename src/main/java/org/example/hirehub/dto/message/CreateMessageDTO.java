@@ -1,30 +1,27 @@
 package org.example.hirehub.dto.message;
 
-import org.example.hirehub.dto.user.UserDetailDTO;
+import jakarta.validation.constraints.NotNull;
 import org.example.hirehub.dto.user.UserSummaryDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 
-public class MessageDetailDTO {
-    private Long id;
-    private String type;
+public class CreateMessageDTO {
     private String content;
     private String fileName;
-    private LocalDateTime createdAt;
 
-    private UserSummaryDTO sender;
-    private UserSummaryDTO receiver;
+    private String type;
 
-    private List<SeenUserDTO> seenUsers;
+    private String senderEmail;
+    private String receiverEmail;
 }
