@@ -25,7 +25,6 @@ public class PermissionController {
     private final RoleService roleService;
 
     PermissionController(PermissionMapper permissionMapper, PermissionService permissionService, RoleService roleService) {
-
         this.permissionMapper = permissionMapper;
         this.permissionService = permissionService;
         this.roleService = roleService;
