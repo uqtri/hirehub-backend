@@ -72,6 +72,7 @@ public class RelationshipService {
 
         return relationshipRepository.save(relationship);
     }
+
     public void delete(Long userId1, Long userId2) {
 
         RelationshipKey relationshipKey = new RelationshipKey(userId1, userId2);
