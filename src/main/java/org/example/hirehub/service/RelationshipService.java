@@ -22,14 +22,16 @@ public class RelationshipService {
 
     private final RelationshipRepository relationshipRepository;
     private final RelationshipMapper relationshipMapper;
+    private final FirebaseNotificationService firebaseNotificationService;
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper, UserService userService, UserMapper userMapper) {
+    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper, UserService userService, UserMapper userMapper, FirebaseNotificationService firebaseNotificationService) {
         this.relationshipRepository = relationshipRepository;
         this.relationshipMapper = relationshipMapper;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.firebaseNotificationService = firebaseNotificationService;
     }
 
     public List<Relationship> findRelationshipsByUserId(Long userId) {
@@ -66,8 +68,11 @@ public class RelationshipService {
 
         Relationship relationship = new Relationship(sender, receiver);
 
+        firebaseNotificationService.notifyUser(receiver.getId(), "HireHub", "Bạn có lời mời kết nối từ " + sender.getName());
+
         return relationshipRepository.save(relationship);
     }
+
     public void delete(Long userId1, Long userId2) {
 
         RelationshipKey relationshipKey = new RelationshipKey(userId1, userId2);

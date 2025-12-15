@@ -2,6 +2,7 @@ package org.example.hirehub.controller;
 
 import org.example.hirehub.dto.relationship.*;
 import org.example.hirehub.entity.Relationship;
+import org.example.hirehub.entity.User;
 import org.example.hirehub.mapper.RelationshipMapper;
 import org.example.hirehub.service.RelationshipService;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,7 @@ public class RelationshipController {
     public ResponseEntity<Map<String, ?>> update(@PathVariable Long userId1, @PathVariable Long userId2, @RequestBody UpdateRelationshipRequestDTO request) {
 
         relationshipService.update(userId1, userId2, request);
-        return ResponseEntity.ok().body(Map.of("message", "Cập nhập quan hệ thành công"));
+
+        return ResponseEntity.ok().body(Map.of("message", "Cập nhật quan hệ thành công"));
     }
 }
