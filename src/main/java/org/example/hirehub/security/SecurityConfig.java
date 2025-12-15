@@ -43,7 +43,7 @@ public class SecurityConfig  {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter, TokenRefreshFilter tokenRefreshFilter) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable).cors(cors->cors.configurationSource(corsConfigurationSource())).authorizeHttpRequests(auth->
                         auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/users").permitAll()
@@ -51,7 +51,7 @@ public class SecurityConfig  {
                                 .requestMatchers("/api/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).addFilterBefore(tokenRefreshFilter, JwtAuthenticationFilter.class).build();
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
     @Bean
     PasswordEncoder passwordEncoder() {
