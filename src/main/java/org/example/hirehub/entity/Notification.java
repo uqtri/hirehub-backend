@@ -24,27 +24,21 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Loại notification
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NotificationType type;
 
-    // Tiêu đề ngắn (hiện trên toast)
     @Column(nullable = false)
     private String title;
 
-    // Nội dung chi tiết
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    // Link click vào (job detail, request detail…)
     private String redirectUrl;
 
-    // Đã đọc hay chưa (badge đỏ sống nhờ cái này)
     @Column(nullable = false)
     private boolean isRead = false;
 
-    // Thời điểm tạo
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
