@@ -1,5 +1,6 @@
 package org.example.hirehub.controller;
 
+import jakarta.annotation.Nullable;
 import jakarta.mail.Multipart;
 import org.example.hirehub.dto.message.CreateMessageDTO;
 import org.example.hirehub.dto.message.MessageDetailDTO;
@@ -54,8 +55,8 @@ public class MessageController {
     }
 
     @GetMapping("/history")
-    public List<MessageDetailDTO> getHistory(@RequestParam Long userA, @RequestParam Long userB) {
-        return  messageService.getHistory(userA, userB).stream().map(messageMapper::toDTO).toList();
+    public List<MessageDetailDTO> getHistory(@RequestParam Long userA, @RequestParam Long userB, @Nullable @RequestParam List<String> messageTypes) {
+        return  messageService.getHistory(userA, userB, messageTypes).stream().map(messageMapper::toDTO).toList();
     }
 
     @GetMapping("/chat-list")
@@ -96,5 +97,4 @@ public class MessageController {
         String url = cloudinaryService.uploadAndGetUrl(file, Map.of());
         return ResponseEntity.ok(Map.of("url", url));
     }
-
 }

@@ -22,6 +22,17 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "ORDER BY m.createdAt ASC")
     List<Message> findConversation(Long userA, Long userB, Sort sort);
 
+    @Query("SELECT DISTINCT m FROM Message m " +
+            "JOIN m.sender s " +
+            "JOIN m.receiver r " +
+            "LEFT JOIN FETCH m.seenBy u " +
+            "WHERE (r.id = :userA AND s.id = :userB) " +
+            "   OR (s.id = :userA AND r.id = :userB) " +
+            "   AND (:messageType is NULL OR m.type in :messageType)" +
+            "ORDER BY m.createdAt ASC")
+    List<Message> findConversation(Long userA, Long userB, Sort sort, List<String> messageType);
+
+
     @Query("""
             SELECT\s
                   CASE

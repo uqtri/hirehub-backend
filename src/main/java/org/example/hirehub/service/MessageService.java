@@ -53,9 +53,9 @@ public class MessageService {
         return messageRepository.save(newMsg);
     }
 
+    public List<Message> getHistory(Long userA, Long userB, List<String> messageType) {
 
-    public List<Message> getHistory(Long userA, Long userB) {
-        return messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending());
+        return messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending(), messageType);
     }
 
     public List<Message> getChatList(Long userId) {
