@@ -7,6 +7,7 @@ import org.example.hirehub.dto.notification.CreateNotificationDTO;
 import org.example.hirehub.entity.Notification;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.enums.NotificationType;
+import org.example.hirehub.mapper.UserMapper;
 import org.example.hirehub.repository.NotificationRepository;
 import org.example.hirehub.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -25,12 +26,14 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final UserMapper userMapper;
 
 
-    public NotificationService (NotificationRepository notificationRepository,  UserRepository userRepository, SimpMessagingTemplate messagingTemplate){
+    public NotificationService (NotificationRepository notificationRepository, UserRepository userRepository, SimpMessagingTemplate messagingTemplate, UserMapper userMapper){
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
         this.messagingTemplate = messagingTemplate;
+        this.userMapper = userMapper;
     }
 
     public Notification createNotification(
@@ -42,7 +45,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setType(
-                NotificationType.valueOf(data.getType())
+                NotificationType.valueOf(data.getType().toUpperCase())
         );
         notification.setTitle(data.getTitle());
         notification.setContent(data.getContent());
@@ -54,7 +57,8 @@ public class NotificationService {
         messagingTemplate.convertAndSendToUser(
                 data.getUserId().toString(),
                 "/queue/notifications",
-                notification
+                userMapper.toDTO(user)
+
         );
 
         return notificationRepository.save(notification);

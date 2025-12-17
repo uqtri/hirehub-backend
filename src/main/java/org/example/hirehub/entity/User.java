@@ -63,5 +63,9 @@ public class User {
     @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Study> studies;
 
+    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications;
+
+
     private LocalDateTime createdAt = LocalDateTime.now();
 }
