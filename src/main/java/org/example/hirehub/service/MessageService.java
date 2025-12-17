@@ -4,11 +4,13 @@ import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.hirehub.dto.message.CreateMessageDTO;
+import org.example.hirehub.entity.Conversation;
 import org.example.hirehub.entity.Message;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.entity.UserMessage;
 import org.example.hirehub.exception.UserHandlerException;
 import org.example.hirehub.key.UserMessageKey;
+import org.example.hirehub.repository.ConversationRepository;
 import org.example.hirehub.repository.MessageRepository;
 import org.example.hirehub.repository.UserMessageRepository;
 import org.example.hirehub.repository.UserRepository;
@@ -30,47 +32,62 @@ public class MessageService {
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
     private final UserMessageRepository userMessageRepository;
+    private final ConversationRepository conversationRepository;
+    private final ConversationService conversationService;
 
-    public MessageService(UserRepository userRepository, MessageRepository messageRepository, UserMessageRepository userMessageRepository){
+    public MessageService(
+            UserRepository userRepository, 
+            MessageRepository messageRepository, 
+            UserMessageRepository userMessageRepository,
+            ConversationRepository conversationRepository,
+            ConversationService conversationService
+    ){
         this.userRepository = userRepository;
         this.messageRepository = messageRepository;
         this.userMessageRepository = userMessageRepository;
+        this.conversationRepository = conversationRepository;
+        this.conversationService = conversationService;
     }
+    
     @Transactional
     public Message createMessage(CreateMessageDTO dto) throws IOException {
-
         User sender = userRepository.findByEmail(dto.getSenderEmail());
-        User receiver = userRepository.findByEmail(dto.getReceiverEmail());
+        if (sender == null) {
+            throw new RuntimeException("Sender not found: " + dto.getSenderEmail());
+        }
+
+        Conversation conversation = conversationRepository.findById(dto.getConversationId())
+                .orElseThrow(() -> new RuntimeException("Conversation not found: " + dto.getConversationId()));
+
+        // Verify sender is a participant
+        conversationService.getConversationById(dto.getConversationId(), sender.getId());
 
         Message newMsg = new Message();
         newMsg.setSender(sender);
-        newMsg.setReceiver(receiver);
+        newMsg.setConversation(conversation);
         newMsg.setType(dto.getType());
         newMsg.setCreatedAt(LocalDateTime.now());
-
         newMsg.setContent(dto.getContent());
         newMsg.setFileName(dto.getFileName());
-        return messageRepository.save(newMsg);
+        
+        Message savedMessage = messageRepository.save(newMsg);
+        
+        // Update conversation updatedAt
+        conversation.setUpdatedAt(LocalDateTime.now());
+        conversationRepository.save(conversation);
+        
+        return savedMessage;
     }
 
-    public List<Message> getHistory(Long userA, Long userB, List<String> messageType) {
-
-        return messageRepository.findConversation(userA, userB, Sort.by("createdAt").ascending(), messageType);
-    }
-
-    public List<Message> getChatList(Long userId) {
-        List<Object[]> pairs = messageRepository.getLatestTimestamps(userId);
-        List<Message> result = new ArrayList<>();
-
-        for (Object[] row : pairs) {
-            Long userA = ((Number) row[0]).longValue();
-            Long userB = ((Number) row[1]).longValue();
-
-            Message msg = messageRepository.getLatestMessageBetween(userA, userB);
-            result.add(msg);
+    public List<Message> getHistory(Long conversationId, Long userId, List<String> messageTypes) {
+        // Verify user is a participant
+        conversationService.getConversationById(conversationId, userId);
+        
+        if (messageTypes == null || messageTypes.isEmpty()) {
+            return messageRepository.findByConversationId(conversationId, Sort.by("createdAt").ascending());
+        } else {
+            return messageRepository.findByConversationId(conversationId, messageTypes, Sort.by("createdAt").ascending());
         }
-
-        return result;
     }
 
     public void markSeen(Long userId, Long messageId) {
@@ -80,19 +97,31 @@ public class MessageService {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new RuntimeException("Message not found: " + messageId));
 
-        UserMessage newRecord = new UserMessage(user, message);
-        newRecord.setCreatedAt(LocalDateTime.now());
+        // Verify user is a participant of the conversation
+        conversationService.getConversationById(message.getConversation().getId(), userId);
 
-        userMessageRepository.save(newRecord);
+        UserMessageKey key = new UserMessageKey(userId, messageId);
+        Optional<UserMessage> existing = userMessageRepository.findById(key);
+        
+        if (existing.isEmpty()) {
+            UserMessage newRecord = new UserMessage(user, message);
+            newRecord.setCreatedAt(LocalDateTime.now());
+            userMessageRepository.save(newRecord);
+        }
+        
+        // Update last read time
+        conversationService.updateLastReadAt(message.getConversation().getId(), userId);
     }
 
     public void reactMessage(Long userId, Long messageId, String emoji) {
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new RuntimeException("Message not found: " + messageId));
+
+        // Verify user is a participant of the conversation
+        conversationService.getConversationById(message.getConversation().getId(), userId);
 
         UserMessageKey key = new UserMessageKey(userId, messageId);
         Optional<UserMessage> existing = userMessageRepository.findById(key);
