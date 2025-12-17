@@ -23,5 +23,6 @@ public class CreateMessageDTO {
     private String type;
 
     private String senderEmail;
-    private String receiverEmail;
+    @NotNull
+    private Long conversationId;
 }
