@@ -24,7 +24,7 @@ public class MessageDetailDTO {
     private LocalDateTime createdAt;
 
     private UserSummaryDTO sender;
-    private UserSummaryDTO receiver;
+    private Long conversationId;
 
     private List<SeenUserDTO> seenUsers;
 }
