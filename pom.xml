@@ -150,8 +150,7 @@
             <artifactId>java-jwt</artifactId>
             <version>4.2.1</version>
         </dependency>
-<<<<<<< Updated upstream
-=======
+
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>sockjs-client</artifactId>
@@ -167,8 +166,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-
->>>>>>> Stashed changes
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
