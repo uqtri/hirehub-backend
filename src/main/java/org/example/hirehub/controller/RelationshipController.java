@@ -4,6 +4,7 @@ import org.example.hirehub.dto.relationship.*;
 import org.example.hirehub.entity.Relationship;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.mapper.RelationshipMapper;
+import org.example.hirehub.service.NotificationService;
 import org.example.hirehub.service.RelationshipService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

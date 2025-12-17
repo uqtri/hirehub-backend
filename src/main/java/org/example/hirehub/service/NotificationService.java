@@ -41,7 +41,9 @@ public class NotificationService {
 
         Notification notification = new Notification();
         notification.setUser(user);
-        notification.setType(data.getType());
+        notification.setType(
+                NotificationType.valueOf(data.getType())
+        );
         notification.setTitle(data.getTitle());
         notification.setContent(data.getContent());
         notification.setRedirectUrl(data.getRedirectUrl());

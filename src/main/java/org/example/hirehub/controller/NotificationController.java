@@ -23,7 +23,7 @@ public class NotificationController {
 
     @GetMapping
     public Page<Notification> getMyNotifications(
-            @RequestAttribute("userId") Long userId,
+            @RequestParam("userId") Long userId,
             Pageable pageable
     ) {
         return notificationService.getMyNotifications(userId, pageable);

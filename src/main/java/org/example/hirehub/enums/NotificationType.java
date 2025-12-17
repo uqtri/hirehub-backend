@@ -6,5 +6,6 @@ public enum NotificationType {
     INTERVIEW,
     SYSTEM,
     JOB_UPDATE,
-    APPLICATION_STATUS
+    APPLICATION_STATUS,
+    FRIEND_REQUEST
 }

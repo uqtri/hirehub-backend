@@ -1,5 +1,6 @@
 package org.example.hirehub.service;
 
+import org.example.hirehub.dto.notification.CreateNotificationDTO;
 import org.example.hirehub.dto.relationship.CreateRelationshipRequestDTO;
 import org.example.hirehub.dto.relationship.FriendDTO;
 import org.example.hirehub.dto.relationship.RelationshipFilter;
@@ -25,13 +26,15 @@ public class RelationshipService {
     private final FirebaseNotificationService firebaseNotificationService;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final NotificationService notificationService;
 
-    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper, UserService userService, UserMapper userMapper, FirebaseNotificationService firebaseNotificationService) {
+    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper, UserService userService, UserMapper userMapper, FirebaseNotificationService firebaseNotificationService, NotificationService notificationService) {
         this.relationshipRepository = relationshipRepository;
         this.relationshipMapper = relationshipMapper;
         this.userService = userService;
         this.userMapper = userMapper;
         this.firebaseNotificationService = firebaseNotificationService;
+        this.notificationService = notificationService;
     }
 
     public List<Relationship> findRelationshipsByUserId(Long userId) {
@@ -69,7 +72,15 @@ public class RelationshipService {
         Relationship relationship = new Relationship(sender, receiver);
 
         firebaseNotificationService.notifyUser(receiver.getId(), "HireHub", "Bạn có lời mời kết nối từ " + sender.getName());
-
+        notificationService.createNotification(
+                CreateNotificationDTO.builder()
+                        .userId(receiver.getId())
+                        .type("FRIEND_REQUEST")
+                        .title("Lời mời kết bạn")
+                        .content(sender.getId().toString())
+                        .redirectUrl("/relationships/requests")
+                        .build()
+        );
         return relationshipRepository.save(relationship);
     }
 
