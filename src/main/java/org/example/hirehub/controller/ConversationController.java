@@ -46,8 +46,7 @@ public class ConversationController {
     @GetMapping("/{conversationId}")
     public ResponseEntity<ConversationDetailDTO> getConversation(
             @PathVariable Long conversationId,
-            @RequestParam Long userId
-    ) {
+            @RequestParam Long userId) {
         Conversation conversation = conversationService.getConversationById(conversationId, userId);
         ConversationDetailDTO dto = conversationMapper.toDTO(conversation);
         dto.setUnreadCount(conversationService.getUnreadCount(conversationId, userId));
@@ -58,8 +57,7 @@ public class ConversationController {
     public ResponseEntity<ConversationDetailDTO> addParticipants(
             @PathVariable Long conversationId,
             @RequestBody AddParticipantsDTO dto,
-            @RequestParam Long userId
-    ) {
+            @RequestParam Long userId) {
         Conversation conversation = conversationService.addParticipants(conversationId, dto, userId);
         ConversationDetailDTO result = conversationMapper.toDTO(conversation);
         result.setUnreadCount(conversationService.getUnreadCount(conversationId, userId));
@@ -70,19 +68,50 @@ public class ConversationController {
     public ResponseEntity<Void> removeParticipant(
             @PathVariable Long conversationId,
             @PathVariable Long participantId,
-            @RequestParam Long userId
-    ) {
+            @RequestParam Long userId) {
         conversationService.removeParticipant(conversationId, participantId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Leader kick một participant ra khỏi group
+     */
+    @PostMapping("/{conversationId}/kick/{participantId}")
+    public ResponseEntity<Void> kickParticipant(
+            @PathVariable Long conversationId,
+            @PathVariable Long participantId,
+            @RequestParam Long userId) {
+        conversationService.kickParticipant(conversationId, participantId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * User tự rời khỏi group
+     */
+    @PostMapping("/{conversationId}/leave")
+    public ResponseEntity<Void> leaveGroup(
+            @PathVariable Long conversationId,
+            @RequestParam Long userId) {
+        conversationService.leaveGroup(conversationId, userId);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{conversationId}/read")
     public ResponseEntity<Void> markAsRead(
             @PathVariable Long conversationId,
-            @RequestParam Long userId
-    ) {
+            @RequestParam Long userId) {
         conversationService.updateLastReadAt(conversationId, userId);
         return ResponseEntity.ok().build();
     }
-}
 
+    /**
+     * Leader giải tán nhóm
+     */
+    @DeleteMapping("/{conversationId}/disband")
+    public ResponseEntity<Void> disbandGroup(
+            @PathVariable Long conversationId,
+            @RequestParam Long userId) {
+        conversationService.disbandGroup(conversationId, userId);
+        return ResponseEntity.ok().build();
+    }
+}
