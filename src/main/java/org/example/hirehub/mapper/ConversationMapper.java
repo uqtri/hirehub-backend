@@ -27,7 +27,7 @@ public interface ConversationMapper {
     default List<UserSummaryDTO> mapParticipants(List<ConversationParticipant> participants) {
         if (participants == null) return List.of();
         return participants.stream()
-                .filter(p -> !p.isDeleted())
+                .filter(p -> !p.isDeleted() && p.getLeavedAt() == null) // Chỉ lấy những người còn active
                 .map(p -> {
                     UserSummaryDTO dto = new UserSummaryDTO();
                     dto.setId(p.getUser().getId());
@@ -43,7 +43,7 @@ public interface ConversationMapper {
     default Long mapLeaderId(List<ConversationParticipant> participants) {
         if (participants == null) return null;
         return participants.stream()
-                .filter(p -> !p.isDeleted() && p.isLeader())
+                .filter(p -> !p.isDeleted() && p.getLeavedAt() == null && p.isLeader())
                 .map(p -> p.getUser().getId())
                 .findFirst()
                 .orElse(null);

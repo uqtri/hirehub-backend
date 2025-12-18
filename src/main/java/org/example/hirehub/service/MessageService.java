@@ -83,10 +83,16 @@ public class MessageService {
         // Verify user is a participant
         conversationService.getConversationById(conversationId, userId);
         
+        // Lấy deletedAt của participant để filter messages
+        LocalDateTime deletedAt = conversationService.getParticipantDeletedAt(conversationId, userId);
+
+        if(deletedAt == null) {
+            deletedAt = LocalDateTime.of(1970, 1, 1, 0, 0);
+        }
         if (messageTypes == null || messageTypes.isEmpty()) {
-            return messageRepository.findByConversationId(conversationId, Sort.by("createdAt").ascending());
+            return messageRepository.findByConversationIdAfterDeletedAt(conversationId, deletedAt, Sort.by("createdAt").ascending());
         } else {
-            return messageRepository.findByConversationId(conversationId, messageTypes, Sort.by("createdAt").ascending());
+            return messageRepository.findByConversationIdAfterDeletedAt(conversationId, deletedAt, messageTypes, Sort.by("createdAt").ascending());
         }
     }
 

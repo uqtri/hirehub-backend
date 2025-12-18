@@ -12,11 +12,13 @@ import java.util.Optional;
 @Repository
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
 
+    // Chỉ lấy conversations mà user còn active (chưa rời và chưa bị xóa)
     @Query("""
         SELECT DISTINCT c FROM Conversation c
         JOIN c.participants p
         WHERE p.user.id = :userId
         AND p.isDeleted = false
+        AND p.leavedAt IS NULL
         ORDER BY c.updatedAt DESC
     """)
     List<Conversation> findByUserId(@Param("userId") Long userId);
@@ -30,6 +32,8 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
         AND p2.user.id = :user2Id
         AND p1.isDeleted = false
         AND p2.isDeleted = false
+        AND p1.leavedAt IS NULL
+        AND p2.leavedAt IS NULL
         AND SIZE(c.participants) = 2
     """)
     Optional<Conversation> findDirectConversationBetween(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id);
