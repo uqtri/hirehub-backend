@@ -39,6 +39,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         @Param("province") String province,
                         Pageable pageable);
 
+        Page<Job> findByRecruiterIdAndIsDeletedFalse(Long recruiterId, Pageable pageable);
+
         List<Job> findAllByIsDeletedFalse();
 
         @Query("""

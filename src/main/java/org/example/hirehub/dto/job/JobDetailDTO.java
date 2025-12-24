@@ -33,4 +33,5 @@ public class JobDetailDTO {
     private List<ResumeDetailDTO> resumes;
     private Integer hit_counter;
     private boolean isDeleted;
+    private Integer candidatesCount;
 }

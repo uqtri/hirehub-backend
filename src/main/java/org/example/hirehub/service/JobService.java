@@ -54,7 +54,12 @@ public class JobService {
 
     public Page<Job> getAllJobs(String postingDate, String company, String title,
             String location, String level, String workspace,
-            String keyword, String province, Pageable pageable) {
+            String keyword, String province, Long recruiterId, Pageable pageable) {
+
+        // If recruiterId is provided, filter by recruiter
+        if (recruiterId != null) {
+            return jobRepository.findByRecruiterIdAndIsDeletedFalse(recruiterId, pageable);
+        }
 
         LocalDateTime dateFilter = null;
         if (postingDate != null) {
