@@ -14,35 +14,39 @@ import org.example.hirehub.entity.Job;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
-    @Query("SELECT j FROM Job j " +
-            "JOIN j.recruiter r " +
-            "WHERE (:title IS NULL OR j.title = :title) " +
-            "AND (:company IS NULL OR r.name = :company) " +
-            "AND (:location IS NULL OR r.address LIKE %:location%) " +
-            "AND (:level IS NULL OR j.level = :level) " +
-            "AND (:workspace IS NULL OR j.workspace = :workspace) " +
-            "AND (:province IS NULL OR j.address LIKE %:province%) " +
-//            "AND (:postingDate IS NULL OR j.postingDate >= :postingDate) " +
-            "AND (:keyword IS NULL OR (" +
-            "       j.title LIKE %:keyword% " +
-            "    OR r.name LIKE %:keyword% " +
-            "    OR j.level LIKE %:keyword%" +
-            ")) " +
-            "ORDER BY j.postingDate DESC")
-    Page<Job> searchJobsDynamic(@Param("title") String title,
-                                @Param("company") String company,
-                                @Param("location") String location,
-                                @Param("level") String level,
-                                @Param("workspace") String workspace,
-                                @Param("postingDate") LocalDateTime postingDate,
-                                @Param("keyword") String keyword,
-                                @Param("province") String province,
-                                Pageable pageable
-    );
+        @Query("SELECT j FROM Job j " +
+                        "JOIN j.recruiter r " +
+                        "WHERE (:title IS NULL OR j.title = :title) " +
+                        "AND (:company IS NULL OR r.name = :company) " +
+                        "AND (:location IS NULL OR r.address LIKE %:location%) " +
+                        "AND (:level IS NULL OR j.level = :level) " +
+                        "AND (:workspace IS NULL OR j.workspace = :workspace) " +
+                        "AND (:province IS NULL OR j.address LIKE %:province%) " +
+                        // "AND (:postingDate IS NULL OR j.postingDate >= :postingDate) " +
+                        "AND (:keyword IS NULL OR (" +
+                        "       j.title LIKE %:keyword% " +
+                        "    OR r.name LIKE %:keyword% " +
+                        "    OR j.level LIKE %:keyword%" +
+                        ")) " +
+                        "ORDER BY j.postingDate DESC")
+        Page<Job> searchJobsDynamic(@Param("title") String title,
+                        @Param("company") String company,
+                        @Param("location") String location,
+                        @Param("level") String level,
+                        @Param("workspace") String workspace,
+                        @Param("postingDate") LocalDateTime postingDate,
+                        @Param("keyword") String keyword,
+                        @Param("province") String province,
+                        Pageable pageable);
 
+        List<Job> findAllByIsDeletedFalse();
 
-
-
-
+        @Query("""
+                        SELECT DISTINCT j FROM Job j
+                        LEFT JOIN FETCH j.skills js
+                        LEFT JOIN FETCH js.skill
+                        LEFT JOIN FETCH j.recruiter
+                        WHERE j.isDeleted = false
+                        """)
+        List<Job> findAllByIsDeletedFalseWithDetails();
 }
-

@@ -34,22 +34,27 @@ public class JobService {
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
     private final JobMapper jobMapper;
+    private final EmbeddingService embeddingService;
 
     public JobService(JobRepository jobRepository,
-                      UserRepository userRepository,
-                      SkillRepository skillRepository, JobMapper jobMapper){
+            UserRepository userRepository,
+            SkillRepository skillRepository,
+            JobMapper jobMapper,
+            EmbeddingService embeddingService) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
         this.skillRepository = skillRepository;
         this.jobMapper = jobMapper;
+        this.embeddingService = embeddingService;
     }
 
     public List<Job> getAllJobs() {
         return jobRepository.findAll();
     }
+
     public Page<Job> getAllJobs(String postingDate, String company, String title,
-                                String location, String level, String workspace,
-                                String keyword, String province, Pageable pageable) {
+            String location, String level, String workspace,
+            String keyword, String province, Pageable pageable) {
 
         LocalDateTime dateFilter = null;
         if (postingDate != null) {
@@ -67,9 +72,8 @@ public class JobService {
             }
         }
 
-       return jobRepository.searchJobsDynamic(
-                title, company, location, level, workspace, dateFilter, keyword, province, pageable
-        );
+        return jobRepository.searchJobsDynamic(
+                title, company, location, level, workspace, dateFilter, keyword, province, pageable);
 
     }
 
@@ -98,9 +102,14 @@ public class JobService {
                 })
                 .toList();
 
-            insertedJob.getSkills().addAll(jobSkills);
+        insertedJob.getSkills().addAll(jobSkills);
 
-        return jobRepository.save(insertedJob);
+        Job savedJob = jobRepository.save(insertedJob);
+
+        // Generate embedding asynchronously
+        embeddingService.generateJobEmbeddingAsync(savedJob);
+
+        return savedJob;
     }
 
     @Transactional
@@ -121,14 +130,23 @@ public class JobService {
             job.getSkills().addAll(jobSkills);
         }
 
-        return jobRepository.save(job);
+        Job savedJob = jobRepository.save(job);
+
+        // Regenerate embedding asynchronously
+        embeddingService.generateJobEmbeddingAsync(savedJob);
+
+        return savedJob;
     }
 
     @Transactional
     public Job deleteJob(Long id) {
-        Job job = jobRepository.findById(id).orElseThrow(()-> new JobHandlerException.JobNotFoundException(id));
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
 
         job.setDeleted(true);
+
+        // Delete embedding when job is soft-deleted
+        embeddingService.deleteJobEmbedding(id);
+
         return jobRepository.save(job);
     }
 }

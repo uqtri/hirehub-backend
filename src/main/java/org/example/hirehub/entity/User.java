@@ -64,4 +64,4 @@ public class User {
     private List<Study> studies;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-}
+}   
