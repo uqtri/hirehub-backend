@@ -1,5 +1,6 @@
 package org.example.hirehub.dto.job;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -34,4 +35,6 @@ public class UpdateJobRequestDTO {
     private Long recruiterId;
     private String type;
 
+    // @JsonProperty("isBanned")
+    private Boolean is_banned;
 }

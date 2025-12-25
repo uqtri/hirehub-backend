@@ -335,6 +335,21 @@ public class ConversationService {
         }
     }
 
+    /**
+     * Xóa (ẩn) cuộc trò chuyện cho một user - chỉ set deletedAt = now
+     * Dùng được cho cả DIRECT và GROUP conversations
+     * User sẽ không thấy tin nhắn trước thời điểm này nữa
+     */
+    @Transactional
+    public void deleteConversation(Long conversationId, Long userId) {
+        ConversationParticipant participant = participantRepository.findByConversationIdAndUserId(
+                conversationId, userId).orElseThrow(() -> new RuntimeException("Participant not found"));
+
+        LocalDateTime now = LocalDateTime.now();
+        participant.setDeletedAt(now);
+        participantRepository.save(participant);
+    }
+
     @Transactional
     @Deprecated
     public void removeParticipant(Long conversationId, Long participantId, Long userId) {

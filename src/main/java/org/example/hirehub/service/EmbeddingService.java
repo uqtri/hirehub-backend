@@ -8,7 +8,9 @@ import dev.langchain4j.model.output.Response;
 import jakarta.transaction.Transactional;
 import org.example.hirehub.entity.*;
 import org.example.hirehub.repository.JobEmbeddingRepository;
+import org.example.hirehub.repository.JobRepository;
 import org.example.hirehub.repository.UserEmbeddingRepository;
+import org.example.hirehub.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -26,31 +28,51 @@ public class EmbeddingService {
     private final GoogleAiEmbeddingModel embeddingModel;
     private final JobEmbeddingRepository jobEmbeddingRepository;
     private final UserEmbeddingRepository userEmbeddingRepository;
+    private final JobRepository jobRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
     public EmbeddingService(GoogleAiEmbeddingModel embeddingModel,
             JobEmbeddingRepository jobEmbeddingRepository,
             UserEmbeddingRepository userEmbeddingRepository,
+            JobRepository jobRepository,
+            UserRepository userRepository,
             ObjectMapper objectMapper) {
         this.embeddingModel = embeddingModel;
         this.jobEmbeddingRepository = jobEmbeddingRepository;
         this.userEmbeddingRepository = userEmbeddingRepository;
+        this.jobRepository = jobRepository;
+        this.userRepository = userRepository;
         this.objectMapper = objectMapper;
     }
 
     // ============ Job Embedding ============
 
+    /**
+     * Generate job embedding asynchronously by ID.
+     * Fetches a fresh entity to avoid session/transaction issues.
+     */
     @Async
-    public void generateJobEmbeddingAsync(Job job) {
+    @Transactional
+    public void generateJobEmbeddingAsync(Long jobId) {
         try {
-            generateJobEmbedding(job);
+            Job job = jobRepository.findByIdWithDetails(jobId).orElse(null);
+            if (job == null) {
+                log.warn("Job {} not found for embedding generation", jobId);
+                return;
+            }
+            generateJobEmbeddingInternal(job);
         } catch (Exception e) {
-            log.error("Failed to generate embedding for job {}: {}", job.getId(), e.getMessage());
+            log.error("Failed to generate embedding for job {}: {}", jobId, e.getMessage());
         }
     }
 
     @Transactional
     public void generateJobEmbedding(Job job) {
+        generateJobEmbeddingInternal(job);
+    }
+
+    private void generateJobEmbeddingInternal(Job job) {
         String embeddingText = buildJobEmbeddingText(job);
         float[] vector = callEmbeddingApi(embeddingText);
 
@@ -82,17 +104,31 @@ public class EmbeddingService {
 
     // ============ User Embedding ============
 
+    /**
+     * Generate user embedding asynchronously by ID.
+     * Fetches a fresh entity to avoid session/transaction issues.
+     */
     @Async
-    public void generateUserEmbeddingAsync(User user) {
+    @Transactional
+    public void generateUserEmbeddingAsync(Long userId) {
         try {
-            generateUserEmbedding(user);
+            User user = userRepository.findByIdWithDetails(userId).orElse(null);
+            if (user == null) {
+                log.warn("User {} not found for embedding generation", userId);
+                return;
+            }
+            generateUserEmbeddingInternal(user);
         } catch (Exception e) {
-            log.error("Failed to generate embedding for user {}: {}", user.getId(), e.getMessage());
+            log.error("Failed to generate embedding for user {}: {}", userId, e.getMessage());
         }
     }
 
     @Transactional
     public void generateUserEmbedding(User user) {
+        generateUserEmbeddingInternal(user);
+    }
+
+    private void generateUserEmbeddingInternal(User user) {
         String embeddingText = buildUserEmbeddingText(user);
         float[] vector = callEmbeddingApi(embeddingText);
 
@@ -193,18 +229,23 @@ public class EmbeddingService {
             sb.append("Skills: ").append(skills).append("\n");
         }
 
-        if (user.getExperiences() != null && !user.getExperiences().isEmpty()) {
-            StringBuilder expBuilder = new StringBuilder();
-            for (Experience exp : user.getExperiences()) {
-                if (exp.getPosition() != null) {
-                    expBuilder.append(exp.getPosition());
+        // Experiences may not be loaded (lazy), so we wrap in try-catch
+        try {
+            if (user.getExperiences() != null && !user.getExperiences().isEmpty()) {
+                StringBuilder expBuilder = new StringBuilder();
+                for (Experience exp : user.getExperiences()) {
+                    if (exp.getPosition() != null) {
+                        expBuilder.append(exp.getPosition());
+                    }
+                    if (exp.getCompany() != null && exp.getCompany().getName() != null) {
+                        expBuilder.append(" at ").append(exp.getCompany().getName());
+                    }
+                    expBuilder.append("; ");
                 }
-                if (exp.getCompany() != null && exp.getCompany().getName() != null) {
-                    expBuilder.append(" at ").append(exp.getCompany().getName());
-                }
-                expBuilder.append("; ");
+                sb.append("Experience: ").append(expBuilder).append("\n");
             }
-            sb.append("Experience: ").append(expBuilder).append("\n");
+        } catch (Exception e) {
+            // Ignore if experiences can't be loaded (lazy loading in async context)
         }
 
         return sb.toString().trim();

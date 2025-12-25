@@ -40,7 +40,7 @@ public class EmbeddingScheduler {
      * Regenerate embeddings for all jobs and users
      * Default: every 5 minutes (configurable via embedding.scheduler.cron)
      */
-    @Scheduled(cron = "${embedding.scheduler.cron:0 */5 * * * *}")
+    @Scheduled(cron = "${embedding.scheduler.cron:0 */1 * * * *}")
     public void regenerateEmbeddings() {
         if (!schedulerEnabled) {
             log.debug("Embedding scheduler is disabled");
@@ -65,7 +65,8 @@ public class EmbeddingScheduler {
         int count = 0;
         for (Job job : jobs) {
             try {
-                embeddingService.generateJobEmbeddingAsync(job);
+                // Pass ID instead of entity to avoid session/transaction issues
+                embeddingService.generateJobEmbeddingAsync(job.getId());
                 count++;
 
                 // Add small delay to avoid rate limiting
@@ -86,7 +87,8 @@ public class EmbeddingScheduler {
         int count = 0;
         for (User user : users) {
             try {
-                embeddingService.generateUserEmbeddingAsync(user);
+                // Pass ID instead of entity to avoid session/transaction issues
+                embeddingService.generateUserEmbeddingAsync(user.getId());
                 count++;
 
                 // Add small delay to avoid rate limiting

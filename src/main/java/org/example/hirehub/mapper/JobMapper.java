@@ -12,13 +12,18 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface JobMapper {
 
+//    @Mapping(target = "is_banned", source = "is_banned")
+//    @Mapping(target = "resumes", ignore = true)
+//    @Mapping(target = "candidatesCount", ignore = true)
     JobDetailDTO toDTO(Job job);
+
     CompanySummaryDTO toDTO(User user);
+
     ResumeSummaryDTO toDTO(Resume resume);
 
     @Mapping(target = "id", source = "skill.id")
     @Mapping(target = "name", source = "skill.name")
-    SkillSummaryDTO toDTO (JobSkill skill);
+    SkillSummaryDTO toDTO(JobSkill skill);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateJobFromDTO(@MappingTarget Job job, UpdateJobRequestDTO updateJobRequestDTO);

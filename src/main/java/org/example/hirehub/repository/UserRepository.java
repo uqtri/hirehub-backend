@@ -39,11 +39,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         SELECT DISTINCT u FROM User u
                         LEFT JOIN FETCH u.userSkills us
                         LEFT JOIN FETCH us.skill
-                        LEFT JOIN FETCH u.experiences e
-                        LEFT JOIN FETCH e.company
-                        LEFT JOIN FETCH u.studies st
-                        LEFT JOIN FETCH st.university
                         WHERE u.isDeleted = false
                         """)
         List<User> findAllByIsDeletedFalseWithDetails();
+
+        @Query("""
+                        SELECT u FROM User u
+                        LEFT JOIN FETCH u.userSkills us
+                        LEFT JOIN FETCH us.skill
+                        WHERE u.id = :id
+                        """)
+        java.util.Optional<User> findByIdWithDetails(@Param("id") Long id);
 }

@@ -4,9 +4,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.example.hirehub.dto.notification.CreateNotificationDTO;
+import org.example.hirehub.dto.notification.NotificationSummaryDTO;
 import org.example.hirehub.entity.Notification;
 import org.example.hirehub.entity.User;
 import org.example.hirehub.enums.NotificationType;
+import org.example.hirehub.mapper.NotificationMapper;
 import org.example.hirehub.repository.NotificationRepository;
 import org.example.hirehub.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -25,25 +27,25 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationMapper notificationMapper;
 
-
-    public NotificationService (NotificationRepository notificationRepository,  UserRepository userRepository, SimpMessagingTemplate messagingTemplate){
+    public NotificationService(NotificationRepository notificationRepository, UserRepository userRepository,
+            SimpMessagingTemplate messagingTemplate, NotificationMapper notificationMapper) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
         this.messagingTemplate = messagingTemplate;
+        this.notificationMapper = notificationMapper;
     }
 
     public Notification createNotification(
-            CreateNotificationDTO data
-    ) {
+            CreateNotificationDTO data) {
         User user = userRepository.findById(data.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setType(
-                NotificationType.valueOf(data.getType())
-        );
+                NotificationType.valueOf(data.getType()));
         notification.setTitle(data.getTitle());
         notification.setContent(data.getContent());
         notification.setRedirectUrl(data.getRedirectUrl());
@@ -51,13 +53,18 @@ public class NotificationService {
         notification.setIsDeleted(false);
         notification.setCreatedAt(LocalDateTime.now());
 
+        // Save first to get ID
+        Notification savedNotification = notificationRepository.save(notification);
+
+        // Convert to DTO before sending via websocket to avoid lazy loading issues
+        NotificationSummaryDTO notificationDTO = notificationMapper.toDTO(savedNotification);
+
         messagingTemplate.convertAndSendToUser(
                 data.getUserId().toString(),
                 "/queue/notifications",
-                notification
-        );
+                notificationDTO);
 
-        return notificationRepository.save(notification);
+        return savedNotification;
     }
 
     public Page<Notification> getMyNotifications(Long userId, Pageable pageable) {

@@ -14,9 +14,12 @@ import org.example.hirehub.entity.Job;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
+        // User query - excludes banned and deleted jobs
         @Query("SELECT j FROM Job j " +
                         "JOIN j.recruiter r " +
-                        "WHERE (:title IS NULL OR j.title = :title) " +
+                        "WHERE j.isDeleted = false " +
+                        "AND (j.is_banned IS NULL OR j.is_banned = false) " +
+                        "AND (:title IS NULL OR j.title = :title) " +
                         "AND (:company IS NULL OR r.name = :company) " +
                         "AND (:location IS NULL OR r.address LIKE %:location%) " +
                         "AND (:level IS NULL OR j.level = :level) " +
@@ -39,6 +42,17 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         @Param("province") String province,
                         Pageable pageable);
 
+        // Admin query - includes ALL jobs (including banned)
+        @Query("SELECT j FROM Job j " +
+                        "JOIN j.recruiter r " +
+                        "WHERE j.isDeleted = false " +
+                        "AND (:keyword IS NULL OR (" +
+                        "       j.title LIKE %:keyword% " +
+                        "    OR r.name LIKE %:keyword% " +
+                        ")) " +
+                        "ORDER BY j.postingDate DESC")
+        Page<Job> searchJobsAdmin(@Param("keyword") String keyword, Pageable pageable);
+
         Page<Job> findByRecruiterIdAndIsDeletedFalse(Long recruiterId, Pageable pageable);
 
         List<Job> findAllByIsDeletedFalse();
@@ -51,4 +65,13 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         WHERE j.isDeleted = false
                         """)
         List<Job> findAllByIsDeletedFalseWithDetails();
+
+        @Query("""
+                        SELECT j FROM Job j
+                        LEFT JOIN FETCH j.skills js
+                        LEFT JOIN FETCH js.skill
+                        LEFT JOIN FETCH j.recruiter
+                        WHERE j.id = :id
+                        """)
+        java.util.Optional<Job> findByIdWithDetails(@Param("id") Long id);
 }

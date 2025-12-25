@@ -28,7 +28,7 @@ public class Job {
     @ManyToOne
     private User recruiter;
     private String level;
-    private boolean is_banned;
+    private Boolean is_banned;
     private String workspace;
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobSkill> skills = new ArrayList<>();

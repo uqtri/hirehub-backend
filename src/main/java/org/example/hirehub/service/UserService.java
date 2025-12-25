@@ -68,8 +68,8 @@ public class UserService {
     public User createUser(User user) {
         User savedUser = userRepository.save(user);
 
-        // Generate embedding asynchronously
-        embeddingService.generateUserEmbeddingAsync(savedUser);
+        // Generate embedding asynchronously (pass ID to avoid session issues)
+        embeddingService.generateUserEmbeddingAsync(savedUser.getId());
 
         return savedUser;
     }
@@ -77,8 +77,8 @@ public class UserService {
     public User updateUser(User user) {
         User savedUser = userRepository.save(user);
 
-        // Regenerate embedding asynchronously
-        embeddingService.generateUserEmbeddingAsync(savedUser);
+        // Regenerate embedding asynchronously (pass ID to avoid session issues)
+        embeddingService.generateUserEmbeddingAsync(savedUser.getId());
 
         return savedUser;
     }
@@ -120,8 +120,8 @@ public class UserService {
         }
         User savedUser = userRepository.save(user);
 
-        // Regenerate embedding asynchronously
-        embeddingService.generateUserEmbeddingAsync(savedUser);
+        // Regenerate embedding asynchronously (pass ID to avoid session issues)
+        embeddingService.generateUserEmbeddingAsync(savedUser.getId());
 
         return savedUser;
     }

@@ -86,6 +86,11 @@ public class JobService {
         return jobRepository.findById(id).orElse(null);
     }
 
+    // Admin method - returns all jobs including banned
+    public Page<Job> getAllJobsAdmin(String keyword, Pageable pageable) {
+        return jobRepository.searchJobsAdmin(keyword, pageable);
+    }
+
     @Transactional
     public Job createJob(CreateJobRequestDTO request) {
         Job job = new Job();
@@ -111,8 +116,8 @@ public class JobService {
 
         Job savedJob = jobRepository.save(insertedJob);
 
-        // Generate embedding asynchronously
-        embeddingService.generateJobEmbeddingAsync(savedJob);
+        // Generate embedding asynchronously (pass ID to avoid session issues)
+        embeddingService.generateJobEmbeddingAsync(savedJob.getId());
 
         return savedJob;
     }
@@ -122,6 +127,12 @@ public class JobService {
         Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
 
         jobMapper.updateJobFromDTO(job, request);
+
+        // Explicitly handle is_banned since MapStruct IGNORE strategy may not work for
+        // Boolean -> boolean
+        if (request.getIs_banned() != null) {
+            job.setIs_banned(request.getIs_banned());
+        }
 
         if (request.getSkillIds() != null) {
             job.getSkills().clear();
@@ -137,8 +148,8 @@ public class JobService {
 
         Job savedJob = jobRepository.save(job);
 
-        // Regenerate embedding asynchronously
-        embeddingService.generateJobEmbeddingAsync(savedJob);
+        // Regenerate embedding asynchronously (pass ID to avoid session issues)
+        embeddingService.generateJobEmbeddingAsync(savedJob.getId());
 
         return savedJob;
     }

@@ -23,17 +23,17 @@ public class RelationshipService {
 
     private final RelationshipRepository relationshipRepository;
     private final RelationshipMapper relationshipMapper;
-    private final FirebaseNotificationService firebaseNotificationService;
+//    private final FirebaseNotificationService firebaseNotificationService;
     private final UserService userService;
     private final UserMapper userMapper;
     private final NotificationService notificationService;
 
-    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper, UserService userService, UserMapper userMapper, FirebaseNotificationService firebaseNotificationService, NotificationService notificationService) {
+    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper, UserService userService, UserMapper userMapper, NotificationService notificationService) {
         this.relationshipRepository = relationshipRepository;
         this.relationshipMapper = relationshipMapper;
         this.userService = userService;
         this.userMapper = userMapper;
-        this.firebaseNotificationService = firebaseNotificationService;
+        //this.firebaseNotificationService = firebaseNotificationService;
         this.notificationService = notificationService;
     }
 
@@ -71,7 +71,7 @@ public class RelationshipService {
 
         Relationship relationship = new Relationship(sender, receiver);
 
-        firebaseNotificationService.notifyUser(receiver.getId(), "HireHub", "Bạn có lời mời kết nối từ " + sender.getName());
+//        firebaseNotificationService.notifyUser(receiver.getId(), "HireHub", "Bạn có lời mời kết nối từ " + sender.getName());
         notificationService.createNotification(
                 CreateNotificationDTO.builder()
                         .userId(receiver.getId())

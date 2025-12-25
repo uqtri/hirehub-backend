@@ -17,5 +17,5 @@ public class JobSummaryDTO {
     private String description;
     private String address;
     private boolean isDeleted;
-
+    private Boolean is_banned;
 }

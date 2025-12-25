@@ -55,6 +55,20 @@ public class JobController {
         });
     }
 
+    // Admin endpoint - shows all jobs including banned ones
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<JobDetailDTO> getAllJobsAdmin(
+            @RequestParam(required = false) String keyword,
+            @PageableDefault(page = 0, size = 10, sort = "postingDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Job> jobs = jobService.getAllJobsAdmin(keyword, pageable);
+        return jobs.map(job -> {
+            JobDetailDTO dto = jobMapper.toDTO(job);
+            dto.setCandidatesCount(resumeRepository.countByJobId(job.getId()));
+            return dto;
+        });
+    }
+
     @GetMapping("/{id}")
     public JobDetailDTO getById(@PathVariable Long id) {
         return jobMapper.toDTO(jobService.getJobById(id));

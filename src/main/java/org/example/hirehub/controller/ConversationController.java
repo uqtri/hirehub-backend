@@ -114,4 +114,16 @@ public class ConversationController {
         conversationService.disbandGroup(conversationId, userId);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * User xóa (ẩn) một cuộc trò chuyện - set deletedAt = now
+     * Dùng cho cả DIRECT và GROUP conversations
+     */
+    @DeleteMapping("/{conversationId}")
+    public ResponseEntity<Void> deleteConversation(
+            @PathVariable Long conversationId,
+            @RequestParam Long userId) {
+        conversationService.deleteConversation(conversationId, userId);
+        return ResponseEntity.ok().build();
+    }
 }
