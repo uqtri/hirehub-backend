@@ -27,12 +27,12 @@ public class Message {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    private User receiver;
+    @JoinColumn(name = "conversation_id", nullable = false)
+    private Conversation conversation;
 
     private LocalDateTime createdTime;
     private boolean isDeleted = false;

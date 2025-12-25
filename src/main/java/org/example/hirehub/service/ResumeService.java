@@ -68,9 +68,9 @@ public class ResumeService {
         MultipartFile resumeFile = request.getResumeFile();
         if(resumeFile != null && !resumeFile.isEmpty()) {
             String url = cloudinaryService.uploadAndGetUrl(resumeFile, Map.of());
-            String openAiResumeId = openAiFileService.uploadFile(resumeFile);
+//            String openAiResumeId = openAiFileService.uploadFile(resumeFile);
             resume.setLink(url);
-            resume.setOpenAiResumeId(openAiResumeId);
+//            resume.setOpenAiResumeId(openAiResumeId);
         }
         else {
             resume.setLink(request.getLink());

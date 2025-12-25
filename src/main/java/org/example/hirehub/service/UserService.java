@@ -30,8 +30,16 @@ public class UserService {
     private final SkillService skillService;
     private final LanguageLevelService languageLevelService;
     private final OpenAiFileService openAiFileService;
+    private final EmbeddingService embeddingService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService, SkillService skillService, LanguageLevelService languageLevelService, OpenAiFileService openAiFileService) {
+    public UserService(UserRepository userRepository,
+            UserMapper userMapper,
+            PasswordEncoder passwordEncoder,
+            CloudinaryService cloudinaryService,
+            SkillService skillService,
+            LanguageLevelService languageLevelService,
+            OpenAiFileService openAiFileService,
+            EmbeddingService embeddingService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -39,6 +47,7 @@ public class UserService {
         this.skillService = skillService;
         this.languageLevelService = languageLevelService;
         this.openAiFileService = openAiFileService;
+        this.embeddingService = embeddingService;
     }
 
     public Page<User> getAllUsers(String keyword, String province, String role, Pageable pageable) {
@@ -57,26 +66,37 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Generate embedding asynchronously
+        embeddingService.generateUserEmbeddingAsync(savedUser);
+
+        return savedUser;
     }
 
     public User updateUser(User user) {
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Regenerate embedding asynchronously
+        embeddingService.generateUserEmbeddingAsync(savedUser);
+
+        return savedUser;
     }
+
     public User updateUserById(Long id, UpdateUserRequestDTO request) throws IOException {
         User user = userRepository.findById(id).orElse(null);
-        if(user == null)
+        if (user == null)
             return null;
-        if(request.getPassword() != null) {
+        if (request.getPassword() != null) {
             request.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         MultipartFile avatar = request.getAvatar();
-        if(avatar != null && !avatar.isEmpty()) {
+        if (avatar != null && !avatar.isEmpty()) {
             String url = cloudinaryService.uploadAndGetUrl(avatar, ObjectUtils.emptyMap());
             user.setAvatar(url);
         }
         MultipartFile resume = request.getResume();
-        if(resume != null && !resume.isEmpty()) {
+        if (resume != null && !resume.isEmpty()) {
             String url = cloudinaryService.uploadAndGetUrl(resume, ObjectUtils.emptyMap());
             String openAiResumeId = openAiFileService.uploadFile(resume);
             user.setOpenAiResumeId(openAiResumeId);
@@ -85,7 +105,7 @@ public class UserService {
         userMapper.updateUserFromDTO(user, request);
         List<Long> skillIds = request.getSkillIds();
         List<Long> languageLevelIds = request.getLanguageLevelIds();
-        if(skillIds != null && !skillIds.isEmpty()) {
+        if (skillIds != null && !skillIds.isEmpty()) {
 
             user.getUserSkills().clear();
 
@@ -93,24 +113,33 @@ public class UserService {
                 user.getUserSkills().add(new UserSkill(user, skill));
             });
         }
-        if(languageLevelIds != null && !languageLevelIds.isEmpty()) {
+        if (languageLevelIds != null && !languageLevelIds.isEmpty()) {
             user.getUserSkills().clear();
 
             user.setLanguages(languageLevelService.findByIds(languageLevelIds));
         }
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Regenerate embedding asynchronously
+        embeddingService.generateUserEmbeddingAsync(savedUser);
+
+        return savedUser;
     }
+
     public User save(User user) {
         return userRepository.save(user);
     }
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElse(null);
-        if(user == null) {
+        if (user == null) {
             return;
         }
 
         user.setDeleted(true);
         userRepository.save(user);
+
+        // Delete embedding when user is soft-deleted
+        embeddingService.deleteUserEmbedding(id);
     }
 }

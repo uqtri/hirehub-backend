@@ -1,6 +1,7 @@
 package org.example.hirehub.controller;
 
 import org.example.hirehub.dto.job.UpdateJobRequestDTO;
+import org.example.hirehub.repository.ResumeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,10 +26,12 @@ public class JobController {
 
     private final JobService jobService;
     private final JobMapper jobMapper;
+    private final ResumeRepository resumeRepository;
 
-    public JobController(JobService jobService, JobMapper jobMapper) {
+    public JobController(JobService jobService, JobMapper jobMapper, ResumeRepository resumeRepository) {
         this.jobService = jobService;
         this.jobMapper = jobMapper;
+        this.resumeRepository = resumeRepository;
     }
 
     @GetMapping("")
@@ -41,12 +44,16 @@ public class JobController {
             @RequestParam(required = false) String workspace,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String province,
-            @PageableDefault(page = 0, size = 10, sort = "postingDate", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-        Page<Job> jobs = jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword, province, pageable);
-        return jobs.map(jobMapper::toDTO);
+            @RequestParam(required = false) Long recruiterId,
+            @PageableDefault(page = 0, size = 10, sort = "postingDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Job> jobs = jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword,
+                province, recruiterId, pageable);
+        return jobs.map(job -> {
+            JobDetailDTO dto = jobMapper.toDTO(job);
+            dto.setCandidatesCount(resumeRepository.countByJobId(job.getId()));
+            return dto;
+        });
     }
-
 
     @GetMapping("/{id}")
     public JobDetailDTO getById(@PathVariable Long id) {
