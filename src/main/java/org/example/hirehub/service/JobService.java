@@ -54,11 +54,11 @@ public class JobService {
 
     public Page<Job> getAllJobs(String postingDate, String company, String title,
             String location, String level, String workspace,
-            String keyword, String province, Long recruiterId, Pageable pageable) {
+            String keyword, String province, Long recruiterId, String status, Pageable pageable) {
 
-        // If recruiterId is provided, filter by recruiter
+        // If recruiterId is provided, filter by recruiter with status and keyword
         if (recruiterId != null) {
-            return jobRepository.findByRecruiterIdAndIsDeletedFalse(recruiterId, pageable);
+            return jobRepository.findByRecruiterWithFilters(recruiterId, status, keyword, pageable);
         }
 
         LocalDateTime dateFilter = null;
@@ -159,9 +159,30 @@ public class JobService {
         Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
 
         job.setDeleted(true);
+        job.setStatus("CLOSED");
 
         // Delete embedding when job is soft-deleted
         embeddingService.deleteJobEmbedding(id);
+
+        return jobRepository.save(job);
+    }
+
+    @Transactional
+    public Job updateJobStatus(Long id, String status) {
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
+
+        if (!status.equals("ACTIVE") && !status.equals("CLOSED") && !status.equals("UNACTIVE")) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+
+        job.setStatus(status);
+
+        // If status is CLOSED, also set isDeleted to true
+        if (status.equals("CLOSED")) {
+            job.setDeleted(true);
+        } else {
+            job.setDeleted(false);
+        }
 
         return jobRepository.save(job);
     }

@@ -45,9 +45,10 @@ public class JobController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String province,
             @RequestParam(required = false) Long recruiterId,
+            @RequestParam(required = false) String status,
             @PageableDefault(page = 0, size = 10, sort = "postingDate", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Job> jobs = jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword,
-                province, recruiterId, pageable);
+                province, recruiterId, status, pageable);
         return jobs.map(job -> {
             JobDetailDTO dto = jobMapper.toDTO(job);
             dto.setCandidatesCount(resumeRepository.countByJobId(job.getId()));
@@ -94,6 +95,15 @@ public class JobController {
     public ResponseEntity<JobDetailDTO> deleteJob(@PathVariable Long id) {
         Job deletedJob = jobService.deleteJob(id);
         return ResponseEntity.ok(jobMapper.toDTO(deletedJob));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<JobDetailDTO> updateJobStatus(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, String> request) {
+        String status = request.get("status");
+        Job updatedJob = jobService.updateJobStatus(id, status);
+        return ResponseEntity.ok(jobMapper.toDTO(updatedJob));
     }
 
 }

@@ -19,7 +19,8 @@ import java.util.List;
 
 public class Job {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     @Column(columnDefinition = "TEXT")
@@ -39,6 +40,7 @@ public class Job {
     private Long hit_counter = 0L;
     private LocalDateTime postingDate = LocalDateTime.now();
     private String type;
+    private String status = "ACTIVE"; // ACTIVE, CLOSED, UNACTIVE
     private LocalDateTime createdAt = LocalDateTime.now();
 
 }

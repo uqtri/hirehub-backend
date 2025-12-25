@@ -55,6 +55,19 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
         Page<Job> findByRecruiterIdAndIsDeletedFalse(Long recruiterId, Pageable pageable);
 
+        @Query("""
+                        SELECT j FROM Job j
+                        WHERE j.recruiter.id = :recruiterId
+                        AND (:status IS NULL OR j.status = :status)
+                        AND (:keyword IS NULL OR j.title LIKE %:keyword%)
+                        ORDER BY j.postingDate DESC
+                        """)
+        Page<Job> findByRecruiterWithFilters(
+                        @Param("recruiterId") Long recruiterId,
+                        @Param("status") String status,
+                        @Param("keyword") String keyword,
+                        Pageable pageable);
+
         List<Job> findAllByIsDeletedFalse();
 
         @Query("""
