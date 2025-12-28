@@ -18,7 +18,8 @@ import java.util.List;
 @Setter
 
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
     private String email;
@@ -60,8 +61,9 @@ public class User {
 
     private boolean isDeleted = false;
 
-    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Study> studies;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-}   
+    private LocalDateTime lastLogin;
+}

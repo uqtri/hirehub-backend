@@ -59,8 +59,9 @@ public class UserController {
     public Page<UserDetailDTO> findAllUsers(@RequestParam(required = false) String keyword,
             @RequestParam(required = false) String province,
             @RequestParam(required = false) String role,
+            @RequestParam(required = false) String status,
             @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
-        return userService.getAllUsers(keyword, province, role, pageable).map(userMapper::toDTO);
+        return userService.getAllUsers(keyword, province, role, status, pageable).map(userMapper::toDTO);
     }
 
     @GetMapping("/{id}")

@@ -38,6 +38,7 @@ public class UserDetailDTO {
     private String resumeFileName;
     private String openAiResumeId;
     private LocalDateTime createdAt;
+    private LocalDateTime lastLogin;
 
     private RoleDetailDTO role;
     private List<SkillSummaryDTO> skills;

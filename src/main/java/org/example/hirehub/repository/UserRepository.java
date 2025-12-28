@@ -29,10 +29,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         "AND (:province IS NULL OR j.address LIKE %:province%) " +
                         "AND (:keyword IS NULL OR (" +
                         "j.name LIKE %:keyword% " +
-                        ")) ")
+                        ")) " +
+                        "AND (:status IS NULL " +
+                        "OR (:status = 'verified' AND j.isVerified = true AND j.isBanned = false) " +
+                        "OR (:status = 'pending' AND j.isVerified = false AND j.isBanned = false) " +
+                        "OR (:status = 'banned' AND j.isBanned = true)) ")
         Page<User> findAll(@Param("keyword") String keyword,
                         @Param("province") String province,
                         @Param("role") String role,
+                        @Param("status") String status,
                         Pageable pageable);
 
         @Query("""

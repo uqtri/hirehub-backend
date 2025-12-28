@@ -50,8 +50,8 @@ public class UserService {
         this.embeddingService = embeddingService;
     }
 
-    public Page<User> getAllUsers(String keyword, String province, String role, Pageable pageable) {
-        return userRepository.findAll(keyword, province, role, pageable);
+    public Page<User> getAllUsers(String keyword, String province, String role, String status, Pageable pageable) {
+        return userRepository.findAll(keyword, province, role, status, pageable);
     }
 
     public User getUserById(Long id) {

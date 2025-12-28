@@ -65,7 +65,11 @@ public class AuthService {
     @Value("${google.client-redirect-url}")
     private String redirectUrl;
 
-    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService, UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper, AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper, UserRepository userRepository, EmailProducer emailProducer, HttpClientService httpClientService, JwtService jwtService) {
+    AuthService(EmailService emailService, TemplateEngine templateEngine, TokenService tokenService,
+            UserService userService, PasswordEncoder passwordEncoder, AuthMapper authMapper,
+            AuthenticationManager authenticationManager, RoleService roleService, UserMapper userMapper,
+            UserRepository userRepository, EmailProducer emailProducer, HttpClientService httpClientService,
+            JwtService jwtService) {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
         this.tokenService = tokenService;
@@ -84,15 +88,19 @@ public class AuthService {
     public User login(@RequestBody(required = false) LoginRequest loginRequest) {
 
         Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAnonymous =
-                currentAuthentication == null ||
-                        !currentAuthentication.isAuthenticated() ||
-                        currentAuthentication instanceof AnonymousAuthenticationToken;
+        boolean isAnonymous = currentAuthentication == null ||
+                !currentAuthentication.isAuthenticated() ||
+                currentAuthentication instanceof AnonymousAuthenticationToken;
 
-        if(!isAnonymous) {
-            return userService.getUserByEmail(currentAuthentication.getName());
+        if (!isAnonymous) {
+            User user = userService.getUserByEmail(currentAuthentication.getName());
+            // Update lastLogin for already authenticated user
+            user.setLastLogin(LocalDateTime.now());
+            userService.save(user);
+            return user;
         }
-        Authentication authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+                loginRequest.getPassword());
 
         Authentication result = authenticationManager.authenticate(authentication);
 
@@ -100,7 +108,11 @@ public class AuthService {
             return null;
         }
         SecurityContextHolder.getContext().setAuthentication(result);
-        return userService.getUserByEmail(loginRequest.getEmail());
+        User user = userService.getUserByEmail(loginRequest.getEmail());
+        // Update lastLogin after successful login
+        user.setLastLogin(LocalDateTime.now());
+        userService.save(user);
+        return user;
     }
 
     public void sendActivationEmail(String email) throws MessagingException {
@@ -114,10 +126,13 @@ public class AuthService {
         context.setVariable("activationLink", activationLink);
         String htmlContent = templateEngine.process("email/activation", context);
 
-//        emailService.sendEmail(email, "Kích hoạt tài khoản", htmlContent, true, "HireHub Support");
-        EmailMessage emailMessage = new EmailMessage.Builder().to(email).body(htmlContent).isHtml(true).type("activation").subject("Kích hoạt tài khoản").build();
+        // emailService.sendEmail(email, "Kích hoạt tài khoản", htmlContent, true,
+        // "HireHub Support");
+        EmailMessage emailMessage = new EmailMessage.Builder().to(email).body(htmlContent).isHtml(true)
+                .type("activation").subject("Kích hoạt tài khoản").build();
         emailProducer.sendEmail(emailMessage);
     }
+
     public void sendPasswordResetEmail(String email) throws MessagingException {
         Context context = new Context();
         String token = TokenUtil.generateToken(32, true);
@@ -128,32 +143,35 @@ public class AuthService {
         context.setVariable("resetLink", resetLink);
         String htmlContent = templateEngine.process("email/reset-password", context);
 
-        EmailMessage emailMessage = new EmailMessage.Builder().to(email).body(htmlContent).isHtml(true).type("reset-password").subject("Thay đổi mật khẩu").build();
+        EmailMessage emailMessage = new EmailMessage.Builder().to(email).body(htmlContent).isHtml(true)
+                .type("reset-password").subject("Thay đổi mật khẩu").build();
         emailProducer.sendEmail(emailMessage);
     }
+
     public void activate(String token, String email) throws Exception {
 
         Token code = tokenService.findTokenByIdAndType(token, "activation");
         User user = userService.getUserByEmail(email);
 
-        if(code == null || Duration.between(code.getCreatedAt(), LocalDateTime.now()).toDays() >= 1) {
+        if (code == null || Duration.between(code.getCreatedAt(), LocalDateTime.now()).toDays() >= 1) {
             throw new Exception("Mã không hợp lệ hoặc đã hết hạn");
         }
-        if(user == null) {
+        if (user == null) {
             throw new Exception("Không tìm thấy người dùng");
         }
         user.setIsVerified(true);
         userService.save(user);
         tokenService.delete(code);
     }
+
     public void resetPassword(String token, String email, String newPassword) throws Exception {
         Token code = tokenService.findTokenByIdAndType(token, "reset-password");
         User user = userService.getUserByEmail(email);
 
-        if(code == null || Duration.between(code.getCreatedAt(), LocalDateTime.now()).toDays() >= 1) {
+        if (code == null || Duration.between(code.getCreatedAt(), LocalDateTime.now()).toDays() >= 1) {
             throw new Exception("Mã không hợp lệ hoặc đã hết hạn");
         }
-        if(user == null) {
+        if (user == null) {
             throw new Exception("Không tìm thấy người dùng");
         }
         String encodedPassword = passwordEncoder.encode(newPassword);
@@ -161,9 +179,10 @@ public class AuthService {
         tokenService.delete(code);
         userService.save(user);
     }
+
     public User signUp(CreateUserRequestDTO data) throws Exception {
         User user = userService.getUserByEmail(data.getEmail());
-        if(user != null) {
+        if (user != null) {
             throw new AuthHandlerException.UserAlreadyExistException("Đã tồn tại email");
         }
 
@@ -171,34 +190,38 @@ public class AuthService {
         User newUser = userMapper.toEntity(data);
         Role defaultRole = roleService.getRoleByName("user").orElse(null);
 
-        Role role = (data.getRoleId() != null ? roleService.getRoleById(data.getRoleId()).orElse(defaultRole) : defaultRole);
+        Role role = (data.getRoleId() != null ? roleService.getRoleById(data.getRoleId()).orElse(defaultRole)
+                : defaultRole);
         newUser.setRole(role);
         userService.save(newUser);
-        if(role != null && role.getName().equals("user")) {
+        if (role != null && role.getName().equals("user")) {
 
             this.sendActivationEmail(data.getEmail());
         }
         return newUser;
     }
+
     public User getProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         boolean isAnonymous = authentication.getPrincipal().equals("anonymousUser");
 
-        if(isAnonymous) {
+        if (isAnonymous) {
             return null;
         }
         String email = authentication.getName();
         return userRepository.findByEmail(email);
     }
+
     public User handleGoogleCallback(String token) {
 
-
-        List<String> scopes = List.of("https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile");
+        List<String> scopes = List.of("https://www.googleapis.com/auth/userinfo.email",
+                "https://www.googleapis.com/auth/userinfo.profile");
 
         String scopeString = scopes.stream().collect(Collectors.joining(" "));
         String responseType = "code";
-        Map<String, ?> data = Map.of("grant_type", "authorization_code","code", token, "redirect_uri", redirectUrl, "client_id", googleClientId, "client_secret", googleClientSecret);
+        Map<String, ?> data = Map.of("grant_type", "authorization_code", "code", token, "redirect_uri", redirectUrl,
+                "client_id", googleClientId, "client_secret", googleClientSecret);
         String url = "https://oauth2.googleapis.com/token";
 
         Map response = httpClientService.post(url, data, Map.class);
@@ -214,12 +237,12 @@ public class AuthService {
 
         String email = (String) result.get("email");
 
-        String familyName = Optional.ofNullable((String)result.get("family_name")).orElse("");
-        String givenName = Optional.ofNullable((String)result.get("given_name")).orElse("");
+        String familyName = Optional.ofNullable((String) result.get("family_name")).orElse("");
+        String givenName = Optional.ofNullable((String) result.get("given_name")).orElse("");
         String fullName = familyName + givenName;
         User user = userRepository.findByEmail(email);
 
-        if(user != null)
+        if (user != null)
             return user;
 
         User newUser = new User();
@@ -230,19 +253,21 @@ public class AuthService {
         userService.save(newUser);
         return newUser;
     }
+
     public void clearToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String refreshTokenValue = null;
         String accessToken = null;
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null) {
-             accessToken = Arrays.stream(cookies)
+            accessToken = Arrays.stream(cookies)
                     .filter(c -> Objects.equals(c.getName(), "jwt"))
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);
 
-             if(accessToken == null || accessToken.isEmpty()) return;
+            if (accessToken == null || accessToken.isEmpty())
+                return;
 
             String username = jwtService.extractSubject(accessToken);
 
