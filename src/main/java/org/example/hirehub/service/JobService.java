@@ -87,8 +87,8 @@ public class JobService {
     }
 
     // Admin method - returns all jobs including banned
-    public Page<Job> getAllJobsAdmin(String keyword, Pageable pageable) {
-        return jobRepository.searchJobsAdmin(keyword, pageable);
+    public Page<Job> getAllJobsAdmin(String keyword, String level, String status, String recruiter, Pageable pageable) {
+        return jobRepository.searchJobsAdmin(keyword, level, status, recruiter, pageable);
     }
 
     @Transactional

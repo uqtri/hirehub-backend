@@ -61,8 +61,11 @@ public class JobController {
     @PreAuthorize("hasRole('ADMIN')")
     public Page<JobDetailDTO> getAllJobsAdmin(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String level,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String recruiter,
             @PageableDefault(page = 0, size = 10, sort = "postingDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Job> jobs = jobService.getAllJobsAdmin(keyword, pageable);
+        Page<Job> jobs = jobService.getAllJobsAdmin(keyword, level, status, recruiter, pageable);
         return jobs.map(job -> {
             JobDetailDTO dto = jobMapper.toDTO(job);
             dto.setCandidatesCount(resumeRepository.countByJobId(job.getId()));

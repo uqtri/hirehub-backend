@@ -73,7 +73,7 @@ public class JwtService {
     public String extractSubject (String token) {
 
         if(token == null || token.isEmpty())  {
-           return null;
+            return null;
         }
         DecodedJWT decodedJWT = JWT.decode(token);
         return decodedJWT.getSubject();

@@ -50,8 +50,17 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         "       j.title LIKE %:keyword% " +
                         "    OR r.name LIKE %:keyword% " +
                         ")) " +
+                        "AND (:level IS NULL OR j.level = :level) " +
+                        "AND (:recruiter IS NULL OR r.name LIKE %:recruiter%) " +
+                        "AND (:status IS NULL " +
+                        "   OR (:status = 'active' AND (j.is_banned IS NULL OR j.is_banned = false)) " +
+                        "   OR (:status = 'banned' AND j.is_banned = true)) " +
                         "ORDER BY j.postingDate DESC")
-        Page<Job> searchJobsAdmin(@Param("keyword") String keyword, Pageable pageable);
+        Page<Job> searchJobsAdmin(@Param("keyword") String keyword,
+                        @Param("level") String level,
+                        @Param("status") String status,
+                        @Param("recruiter") String recruiter,
+                        Pageable pageable);
 
         Page<Job> findByRecruiterIdAndIsDeletedFalse(Long recruiterId, Pageable pageable);
 
