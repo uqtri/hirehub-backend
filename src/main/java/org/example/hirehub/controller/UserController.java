@@ -42,36 +42,43 @@ public class UserController {
     private final CloudinaryService cloudinaryService;
     private final LanguageLevelRepository languageLevelRepository;
 
-    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager, RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder, CloudinaryService cloudinaryService, LanguageLevelRepository languageLevelRepository) {
+    public UserController(UserService userService, UserMapper userMapper, EntityManager entityManager,
+            RoleService roleService, SkillRepository skillRepository, PasswordEncoder passwordEncoder,
+            CloudinaryService cloudinaryService, LanguageLevelRepository languageLevelRepository) {
         this.userService = userService;
         this.userMapper = userMapper;
-//        this.entityManager = entityManager;
+        // this.entityManager = entityManager;
         this.roleService = roleService;
         this.skillRepository = skillRepository;
         this.passwordEncoder = passwordEncoder;
         this.cloudinaryService = cloudinaryService;
         this.languageLevelRepository = languageLevelRepository;
     }
+
     @GetMapping("")
-    public Page<UserDetailDTO> findAllUsers (@RequestParam(required = false) String keyword,
-                                             @RequestParam(required = false) String province,
-                                             @RequestParam(required = false) String role,
-                                             @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.DESC) Pageable pageable ) {
+    public Page<UserDetailDTO> findAllUsers(@RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String province,
+            @RequestParam(required = false) String role,
+            @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
         return userService.getAllUsers(keyword, province, role, pageable).map(userMapper::toDTO);
     }
 
-    @GetMapping("/{id}") public UserDetailDTO findUserById(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public UserDetailDTO findUserById(@PathVariable Long id) {
         return userMapper.toDTO(userService.getUserById(id));
     }
-    @GetMapping("/email/{email}") public UserDetailDTO findUserByEmail(@PathVariable String email) {
+
+    @GetMapping("/email/{email}")
+    public UserDetailDTO findUserByEmail(@PathVariable String email) {
         return userMapper.toDTO(userService.getUserByEmail(email));
     }
+
     @PostMapping("")
-    public ResponseEntity<Map<String, ?>>  createUser(@RequestBody CreateUserRequestDTO request) {
+    public ResponseEntity<Map<String, ?>> createUser(@RequestBody CreateUserRequestDTO request) {
 
         try {
             User user = userService.getUserByEmail(request.getEmail());
-            if(user != null) {
+            if (user != null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Người dùng đã tồn tại"));
             }
 
@@ -84,20 +91,45 @@ public class UserController {
 
             userService.save(newUser);
             return ResponseEntity.status(201).body(Map.of("message", "User added"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, ?>>  updateUser(@PathVariable Long id, @ModelAttribute UpdateUserRequestDTO request) throws IOException {
+    public ResponseEntity<Map<String, ?>> updateUser(@PathVariable Long id,
+            @ModelAttribute UpdateUserRequestDTO request) throws IOException {
 
         User user = userService.updateUserById(id, request);
 
-        if(user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Không tìm thấy người dùng"));
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Không tìm thấy người dùng"));
         }
-        return ResponseEntity.status(201).body(Map.of("message", "Cập nhập thông tin thành công", "data", userMapper.toDTO(user)));
+        return ResponseEntity.status(201)
+                .body(Map.of("message", "Cập nhập thông tin thành công", "data", userMapper.toDTO(user)));
+    }
+
+    // Admin endpoint to update user status (ban/verify) - accepts JSON
+    @PatchMapping("/{id}")
+    public ResponseEntity<Map<String, ?>> updateUserStatus(@PathVariable Long id,
+            @RequestBody UpdateUserRequestDTO request) throws IOException {
+        User user = userService.getUserById(id);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Không tìm thấy người dùng"));
+        }
+
+        // Only update ban and verify status
+        if (request.getIsBanned() != null) {
+            user.setIsBanned(request.getIsBanned());
+        }
+        if (request.getIsVerified() != null) {
+            user.setIsVerified(request.getIsVerified());
+        }
+
+        User savedUser = userService.save(user);
+        return ResponseEntity.status(200)
+                .body(Map.of("message", "Cập nhập trạng thái thành công", "data", userMapper.toDTO(savedUser)));
     }
 
 }

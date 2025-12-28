@@ -46,7 +46,9 @@ public class AuthController {
     private String redirectUrl;
     @Value("${frontend.url}")
     private String frontendUrl;
-    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService, UserService userService, UserMapper userMapper) {
+
+    public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, AuthService authService,
+            UserService userService, UserMapper userMapper) {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
@@ -59,12 +61,18 @@ public class AuthController {
 
         UserDetailDTO user = userMapper.toDTO(authService.login(loginRequest));
 
-        if(user == null) {
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
+        // Check if user is banned
+        if (user.getIsBanned() != null && user.getIsBanned()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Tài khoản của bạn đã bị cấm"));
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Cookie cookie = new Cookie("jwt", jwtService.generateToken((CustomUserDetails)authentication.getPrincipal()));
+        Cookie cookie = new Cookie("jwt", jwtService.generateToken((CustomUserDetails) authentication.getPrincipal()));
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 
@@ -77,8 +85,10 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng nhập thành công", "data", user));
     }
+
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         authService.clearToken(request, response);
 
         Cookie cookie = new Cookie("jwt", "");
@@ -91,40 +101,49 @@ public class AuthController {
         response.addCookie(refreshTokenCookie);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Đăng xuất thành công"));
     }
+
     @PostMapping("/send-activation")
     public ResponseEntity<Map<String, String>> sendActivation(@RequestParam("email") String email) throws Exception {
 
         authService.sendActivationEmail(email);
         return ResponseEntity.ok().body(Map.of("message", "Gửi mail xác nhận thành công"));
     }
+
     @PostMapping("/activate")
-    public ResponseEntity<Map<String, String>> activate(@RequestParam("token") String token, @RequestParam("email") String email) throws Exception {
+    public ResponseEntity<Map<String, String>> activate(@RequestParam("token") String token,
+            @RequestParam("email") String email) throws Exception {
 
         authService.activate(token, email);
         return ResponseEntity.ok().body(Map.of("message", "Kích hoạt tài khoản thành công"));
     }
+
     @PostMapping("/send-password-reset")
     public ResponseEntity<Map<String, String>> sendPasswordReset(@RequestParam("email") String email) throws Exception {
 
         authService.sendPasswordResetEmail(email);
         return ResponseEntity.ok().body(Map.of("message", "Gửi mail đổi mật khẩu thành công"));
     }
+
     @PostMapping("/reset-password")
-    public ResponseEntity<Map<String, String>> resetPassword(@RequestParam("token") String token, @RequestParam("email") String email, @RequestBody Map<String, String> body) throws Exception {
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestParam("token") String token,
+            @RequestParam("email") String email, @RequestBody Map<String, String> body) throws Exception {
 
         String newPassword = body.get("newPassword");
 
         authService.resetPassword(token, email, newPassword);
         return ResponseEntity.ok().body(Map.of("message", "Thay đổi mật khẩu thành công"));
     }
+
     @PostMapping("/sign-up")
     public ResponseEntity<Map<String, ?>> signUp(@RequestBody CreateUserRequestDTO data) throws Exception {
         UserDetailDTO user = userMapper.toDTO(authService.signUp(data));
 
-        return ResponseEntity.ok().body(Map.of("message", "Đăng ký thành công, nếu là doanh nghiệp vui lòng chờ duyệt", "data", user));
+        return ResponseEntity.ok()
+                .body(Map.of("message", "Đăng ký thành công, nếu là doanh nghiệp vui lòng chờ duyệt", "data", user));
     }
+
     @GetMapping("/me")
-    public ResponseEntity<Map<String, ?>>  getProfile() {
+    public ResponseEntity<Map<String, ?>> getProfile() {
 
         UserDetailDTO user = userMapper.toDTO(authService.getProfile());
 
@@ -134,16 +153,20 @@ public class AuthController {
     @GetMapping("/google")
     public void redirectToGoogleAuthorization(HttpServletResponse response) throws Exception {
 
-        List<String> scopes = List.of("https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile");
+        List<String> scopes = List.of("https://www.googleapis.com/auth/userinfo.email",
+                "https://www.googleapis.com/auth/userinfo.profile");
         String scopeString = scopes.stream().collect(Collectors.joining(" "));
         String responseType = "code";
-        String url = String.format("https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&prompt=consent", googleClientId, redirectUrl, scopeString);
+        String url = String.format(
+                "https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&prompt=consent",
+                googleClientId, redirectUrl, scopeString);
 
         response.sendRedirect(url);
     }
-    @GetMapping("/google/callback")
-    public void googleCallback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
+    @GetMapping("/google/callback")
+    public void googleCallback(@RequestParam("code") String code, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         authService.clearToken(request, response);
 
@@ -160,4 +183,3 @@ public class AuthController {
         response.sendRedirect(frontendUrl);
     }
 }
-

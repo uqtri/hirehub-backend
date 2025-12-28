@@ -13,6 +13,7 @@ import org.example.hirehub.dto.study.StudyDetailDTO;
 import org.example.hirehub.dto.study.StudySummaryDTO;
 import org.example.hirehub.entity.LanguageLevel;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -36,6 +37,7 @@ public class UserDetailDTO {
     private String field;
     private String resumeFileName;
     private String openAiResumeId;
+    private LocalDateTime createdAt;
 
     private RoleDetailDTO role;
     private List<SkillSummaryDTO> skills;
