@@ -37,19 +37,22 @@ public class JobService {
     private final JobMapper jobMapper;
     private final EmbeddingService embeddingService;
     private final NotificationService notificationService;
+    private final GeminiChatService geminiChatService;
 
     public JobService(JobRepository jobRepository,
             UserRepository userRepository,
             SkillRepository skillRepository,
             JobMapper jobMapper,
             EmbeddingService embeddingService,
-            NotificationService notificationService) {
+            NotificationService notificationService,
+            GeminiChatService geminiChatService) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
         this.skillRepository = skillRepository;
         this.jobMapper = jobMapper;
         this.embeddingService = embeddingService;
         this.notificationService = notificationService;
+        this.geminiChatService = geminiChatService;
     }
 
     public List<Job> getAllJobs() {
@@ -122,6 +125,25 @@ public class JobService {
 
         // Generate embedding asynchronously (pass ID to avoid session issues)
         embeddingService.generateJobEmbeddingAsync(savedJob.getId());
+
+        // Check for violations and auto-approve if none found
+        try {
+            String violationResult = geminiChatService.analyzeJobViolation(
+                    savedJob.getTitle(),
+                    savedJob.getDescription());
+
+            // Parse JSON result to check if there's a violation
+            if (violationResult != null && violationResult.contains("\"hasViolation\": false")) {
+                // No violation - auto approve
+                savedJob.setStatus("APPROVED");
+                savedJob.setIs_banned(false);
+                savedJob = jobRepository.save(savedJob);
+            }
+            // If violation found, status remains PENDING for admin review
+        } catch (Exception e) {
+            // If violation check fails, keep as PENDING for manual review
+            // Log the error but don't fail the job creation
+        }
 
         return savedJob;
     }

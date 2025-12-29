@@ -65,4 +65,19 @@ public class ChatbotController {
         String response = chatbotService.analyzeResume(request);
         return ResponseEntity.ok(Map.of("data", response));
     }
+
+    /**
+     * Check job posting for policy violations
+     * Request body: { "title": "...", "description": "..." }
+     * Response: { "hasViolation": true/false, "violationType": "...",
+     * "explanation": "..." }
+     */
+    @PostMapping("/check-job-violation")
+    public ResponseEntity<Map<String, ?>> checkJobViolation(@RequestBody Map<String, String> request) {
+        String title = request.get("title");
+        String description = request.get("description");
+
+        String result = geminiChatService.analyzeJobViolation(title, description);
+        return ResponseEntity.ok(Map.of("data", result));
+    }
 }

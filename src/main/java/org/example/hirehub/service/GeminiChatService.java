@@ -7,6 +7,7 @@ import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.StreamingResponseHandler;
+import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiStreamingChatModel;
 import dev.langchain4j.model.output.Response;
 import org.example.hirehub.dto.chatbot.MessageDTO;
@@ -29,6 +30,7 @@ public class GeminiChatService {
     private static final Logger log = LoggerFactory.getLogger(GeminiChatService.class);
 
     private final GoogleAiGeminiStreamingChatModel streamingModel;
+    private final GoogleAiGeminiChatModel chatModel;
     private final RAGService ragService;
     @Value("${frontend.url}")
     private String feUrl;
@@ -49,7 +51,7 @@ public class GeminiChatService {
               * Luôn đề cập ID của công việc
               * Bọc **tiêu đề công việc** thành link có thể click
               * Link có dạng: %s/job-details/{jobId}
-                            
+
 
             Quy tắc định dạng (BẮT BUỘC):
             - Sử dụng Markdown để format text
@@ -69,13 +71,41 @@ public class GeminiChatService {
 
             * Item A
             * Item B
-            
+
             """;
 
-    public GeminiChatService(GoogleAiGeminiStreamingChatModel streamingModel, RAGService ragService) {
+    public GeminiChatService(GoogleAiGeminiStreamingChatModel streamingModel,
+            GoogleAiGeminiChatModel chatModel,
+            RAGService ragService) {
         this.streamingModel = streamingModel;
+        this.chatModel = chatModel;
         this.ragService = ragService;
     }
+
+    private static final String JOB_VIOLATION_PROMPT = """
+            Bạn là hệ thống kiểm duyệt nội dung tin tuyển dụng.
+            Phân tích nội dung công việc sau và kiểm tra xem có vi phạm chính sách không.
+
+            Các loại vi phạm cần kiểm tra:
+            1. INAPPROPRIATE_LANGUAGE: Ngôn ngữ không phù hợp, thô tục, xúc phạm
+            2. DISCRIMINATION: Phân biệt đối xử về giới tính, tuổi tác, tôn giáo, chủng tộc, tình trạng hôn nhân
+            3. SCAM: Dấu hiệu lừa đảo (yêu cầu đặt cọc, hứa hẹn lương cao bất thường, không rõ ràng về công việc)
+            4. ILLEGAL: Hoạt động bất hợp pháp hoặc vi phạm pháp luật
+            5. MISLEADING: Thông tin sai lệch, không chính xác
+            6. PERSONAL_DATA: Yêu cầu thông tin cá nhân nhạy cảm không cần thiết
+            7. SPAM: Nội dung spam, quảng cáo không liên quan
+
+            Trả về JSON với format chính xác như sau (không có text khác):
+            {
+              "hasViolation": true/false,
+              "violationType": "LOẠI_VI_PHẠM" hoặc null nếu không có,
+              "explanation": "Giải thích ngắn gọn bằng tiếng Việt"
+            }
+
+            Nội dung công việc cần kiểm tra:
+            Tiêu đề: %s
+            Mô tả: %s
+            """;
 
     /**
      * Stream chat với conversation history và RAG context (tự động detect khi cần)
@@ -257,5 +287,37 @@ public class GeminiChatService {
         }
 
         return false;
+    }
+
+    /**
+     * Analyze job posting for policy violations using AI
+     * 
+     * @param title       Job title
+     * @param description Job description
+     * @return JSON string with violation analysis result
+     */
+    public String analyzeJobViolation(String title, String description) {
+        String prompt = String.format(JOB_VIOLATION_PROMPT,
+                title != null ? title : "",
+                description != null ? description : "");
+
+        try {
+            List<ChatMessage> messages = new ArrayList<>();
+            messages.add(UserMessage.from(prompt));
+
+            Response<AiMessage> response = chatModel.generate(messages);
+            String result = response.content().text();
+
+            // Clean up response - remove markdown code blocks if present
+            result = result.replaceAll("```json\\s*", "")
+                    .replaceAll("```\\s*", "")
+                    .trim();
+
+            log.info("Job violation analysis completed for: {}", title);
+            return result;
+        } catch (Exception e) {
+            log.error("Error analyzing job violation: {}", e.getMessage());
+            return "{\"hasViolation\": false, \"violationType\": null, \"explanation\": \"Không thể phân tích nội dung. Vui lòng thử lại.\"}";
+        }
     }
 }
