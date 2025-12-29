@@ -133,19 +133,50 @@ public class JobService {
                     savedJob.getDescription());
 
             // Parse JSON result to check if there's a violation
-            if (violationResult != null && violationResult.contains("\"hasViolation\": false")) {
-                // No violation - auto approve
-                savedJob.setStatus("APPROVED");
-                savedJob.setIs_banned(false);
+            if (violationResult != null) {
+                boolean hasViolation = violationResult.contains("\"hasViolation\": true")
+                        || violationResult.contains("\"hasViolation\":true");
+
+                if (!hasViolation) {
+                    // No violation - auto approve
+                    savedJob.setStatus("APPROVED");
+                    savedJob.setIs_banned(false);
+                    savedJob.setViolationType(null);
+                    savedJob.setViolationExplanation(null);
+                } else {
+                    // Has violation - save violation info for admin review
+                    // Extract violationType
+                    String violationType = extractJsonField(violationResult, "violationType");
+                    String explanation = extractJsonField(violationResult, "explanation");
+
+                    savedJob.setViolationType(violationType);
+                    savedJob.setViolationExplanation(explanation);
+                }
                 savedJob = jobRepository.save(savedJob);
             }
-            // If violation found, status remains PENDING for admin review
         } catch (Exception e) {
             // If violation check fails, keep as PENDING for manual review
             // Log the error but don't fail the job creation
         }
 
         return savedJob;
+    }
+
+    /**
+     * Helper method to extract field value from JSON string
+     */
+    private String extractJsonField(String json, String fieldName) {
+        try {
+            String pattern = "\"" + fieldName + "\"\\s*:\\s*\"([^\"]+)\"";
+            java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+            java.util.regex.Matcher m = p.matcher(json);
+            if (m.find()) {
+                return m.group(1);
+            }
+        } catch (Exception e) {
+            // Ignore parsing errors
+        }
+        return null;
     }
 
     @Transactional
@@ -253,6 +284,7 @@ public class JobService {
 
         job.setStatus("BANNED");
         job.setIs_banned(true);
+        job.setBanReason(reason);
 
         // Delete embedding when job is rejected
         embeddingService.deleteJobEmbedding(id);
@@ -282,6 +314,7 @@ public class JobService {
 
         job.setStatus("BANNED");
         job.setIs_banned(true);
+        job.setBanReason(reason);
 
         // Delete embedding when job is banned
         embeddingService.deleteJobEmbedding(id);

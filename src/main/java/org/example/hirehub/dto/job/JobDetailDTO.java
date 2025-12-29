@@ -35,4 +35,11 @@ public class JobDetailDTO {
     private boolean isDeleted;
     private String status;
     private Integer candidatesCount;
+
+    // AI violation check results
+    private String violationType;
+    private String violationExplanation;
+
+    // Admin ban reason
+    private String banReason;
 }

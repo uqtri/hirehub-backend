@@ -30,7 +30,7 @@ public class Job {
     private User recruiter;
     private String level;
 
-    private Boolean is_banned = false;
+    private boolean is_banned = false;
     private String workspace;
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobSkill> skills = new ArrayList<>();
@@ -44,4 +44,21 @@ public class Job {
     private String status = "PENDING"; // PENDING, APPROVED, BANNED, CLOSED, DRAFT
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // AI violation check results
+    private String violationType;
+    @Column(columnDefinition = "TEXT")
+    private String violationExplanation;
+
+    // Admin ban reason
+    @Column(columnDefinition = "TEXT")
+    private String banReason;
+
+    // Explicit getter/setter for is_banned to fix naming convention issues
+    public boolean getIs_banned() {
+        return is_banned;
+    }
+
+    public void setIs_banned(boolean is_banned) {
+        this.is_banned = is_banned;
+    }
 }
