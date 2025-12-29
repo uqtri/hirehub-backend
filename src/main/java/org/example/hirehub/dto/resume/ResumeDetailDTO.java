@@ -24,6 +24,8 @@ public class ResumeDetailDTO {
     private LocalDateTime createdAt;
     private String openAiResumeId;
 
+    private String banReason;
+
     private UserSummaryDTO user;
     private JobDetailDTO job;
 }

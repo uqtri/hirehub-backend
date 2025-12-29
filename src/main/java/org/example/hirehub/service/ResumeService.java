@@ -151,4 +151,29 @@ public class ResumeService {
         resume.setDeleted(true);
         return resumeRepository.save(resume);
     }
+
+    @Transactional
+    public Resume banResume(Long id, String reason) {
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found with id " + id));
+
+        // Store status before banning
+        resume.setPreviousStatus(resume.getStatus());
+        resume.setStatus("BANNED");
+        resume.setBanReason(reason);
+        return resumeRepository.save(resume);
+    }
+
+    @Transactional
+    public Resume unbanResume(Long id) {
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found with id " + id));
+
+        // Restore previous status or fallback to "NOT VIEW"
+        String previousStatus = resume.getPreviousStatus();
+        resume.setStatus(previousStatus != null ? previousStatus : "NOT VIEW");
+        resume.setPreviousStatus(null);
+        resume.setBanReason(null);
+        return resumeRepository.save(resume);
+    }
 }

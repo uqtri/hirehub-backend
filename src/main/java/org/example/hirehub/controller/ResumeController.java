@@ -62,4 +62,18 @@ public class ResumeController {
         return ResponseEntity.ok(resumeMapper.toDTO(deletedResume));
     }
 
+    @PatchMapping("/{id}/ban")
+    public ResponseEntity<ResumeDetailDTO> banResume(
+            @PathVariable Long id,
+            @RequestParam(required = false) String reason) {
+        Resume bannedResume = resumeService.banResume(id, reason);
+        return ResponseEntity.ok(resumeMapper.toDTO(bannedResume));
+    }
+
+    @PatchMapping("/{id}/unban")
+    public ResponseEntity<ResumeDetailDTO> unbanResume(@PathVariable Long id) {
+        Resume unbannedResume = resumeService.unbanResume(id);
+        return ResponseEntity.ok(resumeMapper.toDTO(unbannedResume));
+    }
+
 }

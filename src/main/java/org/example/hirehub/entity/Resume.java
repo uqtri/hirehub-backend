@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 @Getter
 
 public class Resume {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String link;
     @ManyToOne
@@ -27,6 +28,10 @@ public class Resume {
     @Column(columnDefinition = "TEXT")
     private String cover_letter;
     private boolean isDeleted = false;
+    private String previousStatus; // Store status before banning for restoration
+    @Column(columnDefinition = "TEXT")
+    private String banReason;
     private LocalDateTime createdAt = LocalDateTime.now();
     private String openAiResumeId;
+
 }
