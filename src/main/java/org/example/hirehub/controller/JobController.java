@@ -17,8 +17,6 @@ import org.example.hirehub.dto.job.JobDetailDTO;
 import org.example.hirehub.service.JobService;
 import org.example.hirehub.mapper.JobMapper;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/jobs")
 
@@ -107,6 +105,43 @@ public class JobController {
         String status = request.get("status");
         Job updatedJob = jobService.updateJobStatus(id, status);
         return ResponseEntity.ok(jobMapper.toDTO(updatedJob));
+    }
+
+    @PutMapping("/{id}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<JobDetailDTO> approveJob(
+            @PathVariable Long id,
+            @RequestBody(required = false) java.util.Map<String, String> request) {
+        String reason = request != null ? request.get("reason") : null;
+        Job approvedJob = jobService.approveJob(id, reason);
+        return ResponseEntity.ok(jobMapper.toDTO(approvedJob));
+    }
+
+    @PutMapping("/{id}/reject")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<JobDetailDTO> rejectJob(
+            @PathVariable Long id,
+            @RequestBody(required = false) java.util.Map<String, String> request) {
+        String reason = request != null ? request.get("reason") : null;
+        Job rejectedJob = jobService.rejectJob(id, reason);
+        return ResponseEntity.ok(jobMapper.toDTO(rejectedJob));
+    }
+
+    @PutMapping("/{id}/ban")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<JobDetailDTO> banJob(
+            @PathVariable Long id,
+            @RequestBody(required = false) java.util.Map<String, String> request) {
+        String reason = request != null ? request.get("reason") : null;
+        Job bannedJob = jobService.banJob(id, reason);
+        return ResponseEntity.ok(jobMapper.toDTO(bannedJob));
+    }
+
+    @PutMapping("/{id}/unban")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<JobDetailDTO> unbanJob(@PathVariable Long id) {
+        Job unbannedJob = jobService.unbanJob(id);
+        return ResponseEntity.ok(jobMapper.toDTO(unbannedJob));
     }
 
 }

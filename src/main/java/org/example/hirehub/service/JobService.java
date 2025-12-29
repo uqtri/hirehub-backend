@@ -16,6 +16,7 @@ import org.example.hirehub.exception.UserHandlerException;
 import org.example.hirehub.exception.JobHandlerException;
 import org.example.hirehub.dto.job.CreateJobRequestDTO;
 import org.example.hirehub.dto.job.UpdateJobRequestDTO;
+import org.example.hirehub.dto.notification.CreateNotificationDTO;
 import org.example.hirehub.repository.SkillRepository;
 import org.example.hirehub.repository.UserRepository;
 import org.example.hirehub.repository.JobRepository;
@@ -35,17 +36,20 @@ public class JobService {
     private final SkillRepository skillRepository;
     private final JobMapper jobMapper;
     private final EmbeddingService embeddingService;
+    private final NotificationService notificationService;
 
     public JobService(JobRepository jobRepository,
             UserRepository userRepository,
             SkillRepository skillRepository,
             JobMapper jobMapper,
-            EmbeddingService embeddingService) {
+            EmbeddingService embeddingService,
+            NotificationService notificationService) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
         this.skillRepository = skillRepository;
         this.jobMapper = jobMapper;
         this.embeddingService = embeddingService;
+        this.notificationService = notificationService;
     }
 
     public List<Job> getAllJobs() {
@@ -171,7 +175,8 @@ public class JobService {
     public Job updateJobStatus(Long id, String status) {
         Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
 
-        if (!status.equals("ACTIVE") && !status.equals("CLOSED") && !status.equals("UNACTIVE")) {
+        if (!status.equals("PENDING") && !status.equals("APPROVED") && !status.equals("BANNED")
+                && !status.equals("CLOSED") && !status.equals("DRAFT")) {
             throw new IllegalArgumentException("Invalid status: " + status);
         }
 
@@ -184,6 +189,122 @@ public class JobService {
             job.setDeleted(false);
         }
 
+        // If status is BANNED, also set is_banned to true
+        if (status.equals("BANNED")) {
+            job.setIs_banned(true);
+        } else if (status.equals("APPROVED")) {
+            job.setIs_banned(false);
+        }
+
         return jobRepository.save(job);
+    }
+
+    @Transactional
+    public Job approveJob(Long id, String reason) {
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
+
+        job.setStatus("APPROVED");
+        job.setIs_banned(false);
+
+        Job savedJob = jobRepository.save(job);
+
+        // Send notification to recruiter
+        User recruiter = job.getRecruiter();
+        if (recruiter != null) {
+            CreateNotificationDTO notification = CreateNotificationDTO.builder()
+                    .userId(recruiter.getId())
+                    .type("JOB_UPDATE")
+                    .title("Công việc đã được duyệt")
+                    .content("Công việc \"" + job.getTitle() + "\" đã được duyệt." +
+                            (reason != null && !reason.isEmpty() ? " Lý do: " + reason : ""))
+                    .redirectUrl("/recruiter/jobs")
+                    .build();
+            notificationService.createNotification(notification);
+        }
+
+        return savedJob;
+    }
+
+    @Transactional
+    public Job rejectJob(Long id, String reason) {
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
+
+        job.setStatus("BANNED");
+        job.setIs_banned(true);
+
+        // Delete embedding when job is rejected
+        embeddingService.deleteJobEmbedding(id);
+
+        Job savedJob = jobRepository.save(job);
+
+        // Send notification to recruiter
+        User recruiter = job.getRecruiter();
+        if (recruiter != null) {
+            CreateNotificationDTO notification = CreateNotificationDTO.builder()
+                    .userId(recruiter.getId())
+                    .type("JOB_UPDATE")
+                    .title("Công việc bị từ chối")
+                    .content("Công việc \"" + job.getTitle() + "\" đã bị từ chối." +
+                            (reason != null && !reason.isEmpty() ? " Lý do: " + reason : ""))
+                    .redirectUrl("/recruiter/jobs")
+                    .build();
+            notificationService.createNotification(notification);
+        }
+
+        return savedJob;
+    }
+
+    @Transactional
+    public Job banJob(Long id, String reason) {
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
+
+        job.setStatus("BANNED");
+        job.setIs_banned(true);
+
+        // Delete embedding when job is banned
+        embeddingService.deleteJobEmbedding(id);
+
+        Job savedJob = jobRepository.save(job);
+
+        // Send notification to recruiter
+        User recruiter = job.getRecruiter();
+        if (recruiter != null) {
+            CreateNotificationDTO notification = CreateNotificationDTO.builder()
+                    .userId(recruiter.getId())
+                    .type("JOB_UPDATE")
+                    .title("Công việc bị cấm")
+                    .content("Công việc \"" + job.getTitle() + "\" đã bị cấm." +
+                            (reason != null && !reason.isEmpty() ? " Lý do: " + reason : ""))
+                    .redirectUrl("/recruiter/jobs")
+                    .build();
+            notificationService.createNotification(notification);
+        }
+
+        return savedJob;
+    }
+
+    @Transactional
+    public Job unbanJob(Long id) {
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobHandlerException.JobNotFoundException(id));
+
+        job.setStatus("APPROVED");
+        job.setIs_banned(false);
+
+        Job savedJob = jobRepository.save(job);
+
+        // Send notification to recruiter
+        User recruiter = job.getRecruiter();
+        if (recruiter != null) {
+            CreateNotificationDTO notification = CreateNotificationDTO.builder()
+                    .userId(recruiter.getId())
+                    .type("JOB_UPDATE")
+                    .title("Công việc đã được bỏ cấm")
+                    .content("Công việc \"" + job.getTitle() + "\" đã được bỏ cấm và hoạt động trở lại.")
+                    .redirectUrl("/recruiter/jobs")
+                    .build();
+            notificationService.createNotification(notification);
+        }
+
+        return savedJob;
     }
 }

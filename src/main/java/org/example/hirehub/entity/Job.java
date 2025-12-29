@@ -29,7 +29,8 @@ public class Job {
     @ManyToOne
     private User recruiter;
     private String level;
-    private Boolean is_banned;
+
+    private Boolean is_banned = false;
     private String workspace;
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobSkill> skills = new ArrayList<>();
@@ -40,7 +41,7 @@ public class Job {
     private Long hit_counter = 0L;
     private LocalDateTime postingDate = LocalDateTime.now();
     private String type;
-    private String status = "ACTIVE"; // ACTIVE, CLOSED, UNACTIVE
+    private String status = "PENDING"; // PENDING, APPROVED, BANNED, CLOSED, DRAFT
     private LocalDateTime createdAt = LocalDateTime.now();
 
 }

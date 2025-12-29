@@ -14,10 +14,12 @@ import org.example.hirehub.entity.Job;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
-        // User query - excludes banned and deleted jobs
+        // User query - only shows APPROVED jobs (excludes PENDING, DRAFT, BANNED,
+        // CLOSED)
         @Query("SELECT j FROM Job j " +
                         "JOIN j.recruiter r " +
                         "WHERE j.isDeleted = false " +
+                        "AND j.status = 'APPROVED' " +
                         "AND (j.is_banned IS NULL OR j.is_banned = false) " +
                         "AND (:title IS NULL OR j.title = :title) " +
                         "AND (:company IS NULL OR r.name = :company) " +
@@ -42,10 +44,11 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         @Param("province") String province,
                         Pageable pageable);
 
-        // Admin query - includes ALL jobs (including banned)
+        // Admin query - includes ALL jobs except DRAFT (PENDING, APPROVED, BANNED)
         @Query("SELECT j FROM Job j " +
                         "JOIN j.recruiter r " +
                         "WHERE j.isDeleted = false " +
+                        "AND j.status != 'DRAFT' " +
                         "AND (:keyword IS NULL OR (" +
                         "       j.title LIKE %:keyword% " +
                         "    OR r.name LIKE %:keyword% " +
@@ -53,8 +56,9 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         "AND (:level IS NULL OR j.level = :level) " +
                         "AND (:recruiter IS NULL OR r.name LIKE %:recruiter%) " +
                         "AND (:status IS NULL " +
-                        "   OR (:status = 'active' AND (j.is_banned IS NULL OR j.is_banned = false)) " +
-                        "   OR (:status = 'banned' AND j.is_banned = true)) " +
+                        "   OR (:status = 'pending' AND j.status = 'PENDING') " +
+                        "   OR (:status = 'approved' AND j.status = 'APPROVED') " +
+                        "   OR (:status = 'banned' AND j.status = 'BANNED')) " +
                         "ORDER BY j.postingDate DESC")
         Page<Job> searchJobsAdmin(@Param("keyword") String keyword,
                         @Param("level") String level,
