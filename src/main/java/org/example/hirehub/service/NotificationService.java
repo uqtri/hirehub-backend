@@ -106,4 +106,14 @@ public class NotificationService {
         }
         return noti;
     }
+
+    public void deleteNotificationByTypeAndContent(Long userId, String type, String content) {
+        // Find and delete all matching notifications (in case there are duplicates)
+        notificationRepository
+                .findFirstByUserIdAndTypeAndContentAndIsDeletedFalse(userId, NotificationType.valueOf(type), content)
+                .ifPresent(notification -> {
+                    notification.setIsDeleted(true);
+                    notificationRepository.save(notification);
+                });
+    }
 }

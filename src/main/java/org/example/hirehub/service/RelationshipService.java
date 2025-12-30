@@ -23,17 +23,18 @@ public class RelationshipService {
 
     private final RelationshipRepository relationshipRepository;
     private final RelationshipMapper relationshipMapper;
-//    private final FirebaseNotificationService firebaseNotificationService;
+    // private final FirebaseNotificationService firebaseNotificationService;
     private final UserService userService;
     private final UserMapper userMapper;
     private final NotificationService notificationService;
 
-    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper, UserService userService, UserMapper userMapper, NotificationService notificationService) {
+    public RelationshipService(RelationshipRepository relationshipRepository, RelationshipMapper relationshipMapper,
+            UserService userService, UserMapper userMapper, NotificationService notificationService) {
         this.relationshipRepository = relationshipRepository;
         this.relationshipMapper = relationshipMapper;
         this.userService = userService;
         this.userMapper = userMapper;
-        //this.firebaseNotificationService = firebaseNotificationService;
+        // this.firebaseNotificationService = firebaseNotificationService;
         this.notificationService = notificationService;
     }
 
@@ -41,10 +42,14 @@ public class RelationshipService {
 
         return relationshipRepository.findRelationshipsByUserId(userId);
     }
+
     public List<Relationship> findRelationshipsByUserId(Long userId, RelationshipFilter relationshipFilter) {
-        Specification<Relationship> specifications = status(relationshipFilter.getStatus()).and(receiver(userId).or(sender(userId))).and(receiver(relationshipFilter.getReceiverId())).and(sender(relationshipFilter.getSenderId()));
+        Specification<Relationship> specifications = status(relationshipFilter.getStatus())
+                .and(receiver(userId).or(sender(userId))).and(receiver(relationshipFilter.getReceiverId()))
+                .and(sender(relationshipFilter.getSenderId()));
         return relationshipRepository.findAll(specifications);
     }
+
     public List<FriendDTO> findFriends(Long userId) {
         Specification<Relationship> specifications = status("connected").and(receiver(userId).or(sender(userId)));
         List<Relationship> relationships = relationshipRepository.findAll(specifications);
@@ -52,11 +57,10 @@ public class RelationshipService {
         List<FriendDTO> friends = new ArrayList<>();
         for (Relationship relationship : relationships) {
             FriendDTO friendDTO = new FriendDTO();
-            if(relationship.getUserA().getId().equals(userId)) {
+            if (relationship.getUserA().getId().equals(userId)) {
                 friendDTO.setUser(userMapper.toDTO(relationship.getUserB()));
                 friends.add(friendDTO);
-            }
-            else {
+            } else {
                 friendDTO.setUser(userMapper.toDTO(relationship.getUserA()));
                 friends.add(friendDTO);
             }
@@ -71,7 +75,8 @@ public class RelationshipService {
 
         Relationship relationship = new Relationship(sender, receiver);
 
-//        firebaseNotificationService.notifyUser(receiver.getId(), "HireHub", "Bạn có lời mời kết nối từ " + sender.getName());
+        // firebaseNotificationService.notifyUser(receiver.getId(), "HireHub", "Bạn có
+        // lời mời kết nối từ " + sender.getName());
         notificationService.createNotification(
                 CreateNotificationDTO.builder()
                         .userId(receiver.getId())
@@ -79,8 +84,7 @@ public class RelationshipService {
                         .title("Lời mời kết bạn")
                         .content(sender.getId().toString())
                         .redirectUrl("/relationships/requests")
-                        .build()
-        );
+                        .build());
         return relationshipRepository.save(relationship);
     }
 
@@ -88,6 +92,13 @@ public class RelationshipService {
 
         RelationshipKey relationshipKey = new RelationshipKey(userId1, userId2);
         RelationshipKey relationshipKey2 = new RelationshipKey(userId2, userId1);
+
+        // Delete the notification sent to userId2 when userId1 sent the request
+        notificationService.deleteNotificationByTypeAndContent(userId2, "FRIEND_REQUEST", userId1.toString());
+
+        // Delete the notification sent to userId1 when userId2 sent the request
+        notificationService.deleteNotificationByTypeAndContent(userId1, "FRIEND_REQUEST", userId2.toString());
+
         relationshipRepository.deleteById(relationshipKey);
         relationshipRepository.deleteById(relationshipKey2);
     }
@@ -99,13 +110,43 @@ public class RelationshipService {
         Relationship relationship = relationshipRepository.findById(relationshipKey).orElse(null);
         Relationship relationship2 = relationshipRepository.findById(relationshipKey2).orElse(null);
 
-        if(relationship != null) {
-            if(request.getStatus() != null) relationship.setStatus(request.getStatus());
+        if (relationship != null) {
+            // Send notification to sender when request is accepted
+            if (request.getStatus() != null && request.getStatus().equals("connected") &&
+                    relationship.getStatus().equals("pending")) {
+                User receiver = relationship.getUserB();
+                User sender = relationship.getUserA();
+                notificationService.createNotification(
+                        CreateNotificationDTO.builder()
+                                .userId(sender.getId())
+                                .type("FRIEND_ACCEPT")
+                                .title("Lời mời kết bạn được chấp nhận")
+                                .content(receiver.getId().toString())
+                                .redirectUrl("/relationships/friends")
+                                .build());
+            }
+            if (request.getStatus() != null)
+                relationship.setStatus(request.getStatus());
             relationshipRepository.save(relationship);
             return relationship;
         }
-        if(relationship2 != null) {
-            if(request.getStatus() != null) relationship2.setStatus(request.getStatus());
+        if (relationship2 != null) {
+            // Send notification to sender when request is accepted
+            if (request.getStatus() != null && request.getStatus().equals("connected") &&
+                    relationship2.getStatus().equals("pending")) {
+                User receiver = relationship2.getUserA();
+                User sender = relationship2.getUserB();
+                notificationService.createNotification(
+                        CreateNotificationDTO.builder()
+                                .userId(sender.getId())
+                                .type("FRIEND_ACCEPT")
+                                .title("Lời mời kết bạn được chấp nhận")
+                                .content(receiver.getId().toString())
+                                .redirectUrl("/relationships/friends")
+                                .build());
+            }
+            if (request.getStatus() != null)
+                relationship2.setStatus(request.getStatus());
             relationshipRepository.save(relationship2);
             return relationship2;
         }
