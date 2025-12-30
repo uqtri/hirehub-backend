@@ -37,6 +37,7 @@ public class ConversationController {
                 .map(conv -> {
                     ConversationDetailDTO dto = conversationMapper.toDTO(conv);
                     dto.setUnreadCount(conversationService.getUnreadCount(conv.getId(), userId));
+                    dto.setDeletedAt(conversationService.getParticipantDeletedAt(conv.getId(), userId));
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -50,6 +51,7 @@ public class ConversationController {
         Conversation conversation = conversationService.getConversationById(conversationId, userId);
         ConversationDetailDTO dto = conversationMapper.toDTO(conversation);
         dto.setUnreadCount(conversationService.getUnreadCount(conversationId, userId));
+        dto.setDeletedAt(conversationService.getParticipantDeletedAt(conversationId, userId));
         return ResponseEntity.ok(dto);
     }
 

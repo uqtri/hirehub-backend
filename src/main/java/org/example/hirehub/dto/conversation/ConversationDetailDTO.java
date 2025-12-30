@@ -24,6 +24,6 @@ public class ConversationDetailDTO {
     private MessageDetailDTO lastMessage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
     private Long unreadCount;
 }
-
