@@ -26,10 +26,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
         @Query("SELECT j FROM User j " +
                         "JOIN j.role r " +
                         "WHERE (:role IS NULL OR r.name = :role) " +
-                        "AND (:province IS NULL OR j.address LIKE %:province%) " +
-                        "AND (:keyword IS NULL OR (" +
-                        "j.name LIKE %:keyword% " +
-                        ")) " +
+                        "AND (:province IS NULL OR j.address ILIKE %:province%) " +
+                        "AND (:keyword IS NULL OR (j.name ILIKE %:keyword%)) " +
                         "AND (:status IS NULL " +
                         "OR (:status = 'verified' AND j.isVerified = true AND j.isBanned = false) " +
                         "OR (:status = 'pending' AND j.isVerified = false AND j.isBanned = false) " +

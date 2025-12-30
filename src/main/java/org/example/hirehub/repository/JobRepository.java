@@ -23,17 +23,17 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         "AND (j.is_banned IS NULL OR j.is_banned = false) " +
                         "AND (:title IS NULL OR j.title = :title) " +
                         "AND (:company IS NULL OR r.name = :company) " +
-                        "AND (:location IS NULL OR r.address LIKE %:location%) " +
-                        "AND ((:levels) IS NULL OR LOWER(j.level) IN (:levels)) " +
-                        "AND ((:workspaces) IS NULL OR LOWER(j.workspace) IN (:workspaces)) " +
-                        "AND ((:types) IS NULL OR LOWER(j.type) IN (:types)) " +
-                        "AND ((:fields) IS NULL OR LOWER(r.field) IN (:fields)) " +
-                        "AND (:province IS NULL OR j.address LIKE %:province%) " +
+                        "AND (:location IS NULL OR r.address ILIKE %:location%) " +
+                        "AND ((:levels) IS NULL OR LOWER(CAST(j.level AS string)) IN (:levels)) " +
+                        "AND ((:workspaces) IS NULL OR LOWER(CAST(j.workspace AS string)) IN (:workspaces)) " +
+                        "AND ((:types) IS NULL OR LOWER(CAST(j.type AS string)) IN (:types)) " +
+                        "AND ((:fields) IS NULL OR LOWER(CAST(r.field AS string)) IN (:fields)) " +
+                        "AND (:province IS NULL OR j.address ILIKE %:province%) " +
                         // "AND (:postingDate IS NULL OR j.postingDate >= :postingDate) " +
                         "AND (:keyword IS NULL OR (" +
-                        "       j.title LIKE %:keyword% " +
-                        "    OR r.name LIKE %:keyword% " +
-                        "    OR j.level LIKE %:keyword%" +
+                        "       j.title ILIKE %:keyword% " +
+                        "    OR r.name ILIKE %:keyword% " +
+                        "    OR j.level ILIKE %:keyword%" +
                         ")) " +
                         "ORDER BY j.postingDate DESC")
         Page<Job> searchJobsDynamic(@Param("title") String title,
@@ -54,11 +54,11 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         "WHERE j.isDeleted = false " +
                         "AND j.status != 'DRAFT' " +
                         "AND (:keyword IS NULL OR (" +
-                        "       j.title LIKE %:keyword% " +
-                        "    OR r.name LIKE %:keyword% " +
+                        "       j.title ILIKE %:keyword% " +
+                        "    OR r.name ILIKE %:keyword% " +
                         ")) " +
                         "AND (:level IS NULL OR j.level = :level) " +
-                        "AND (:recruiter IS NULL OR r.name LIKE %:recruiter%) " +
+                        "AND (:recruiter IS NULL OR r.name ILIKE %:recruiter%) " +
                         "AND (:status IS NULL " +
                         "   OR (:status = 'pending' AND j.status = 'PENDING') " +
                         "   OR (:status = 'approved' AND j.status = 'APPROVED') " +
@@ -76,7 +76,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         SELECT j FROM Job j
                         WHERE j.recruiter.id = :recruiterId
                         AND (:status IS NULL OR j.status = :status)
-                        AND (:keyword IS NULL OR j.title LIKE %:keyword%)
+                        AND (:keyword IS NULL OR j.title ILIKE %:keyword%)
                         ORDER BY j.postingDate DESC
                         """)
         Page<Job> findByRecruiterWithFilters(
