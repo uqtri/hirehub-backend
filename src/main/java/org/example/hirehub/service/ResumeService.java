@@ -161,7 +161,32 @@ public class ResumeService {
         resume.setPreviousStatus(resume.getStatus());
         resume.setStatus("BANNED");
         resume.setBanReason(reason);
-        return resumeRepository.save(resume);
+        Resume savedResume = resumeRepository.save(resume);
+
+        // Send notification to the user
+        sendBanNotification(savedResume, reason);
+
+        return savedResume;
+    }
+
+    private void sendBanNotification(Resume resume, String reason) {
+        User applicant = resume.getUser();
+        Job job = resume.getJob();
+
+        String title = "⚠️ Hồ sơ ứng tuyển bị cấm";
+        String content = String.format(
+                "Hồ sơ ứng tuyển của bạn cho vị trí \"%s\" đã bị cấm bởi quản trị viên.%s",
+                job.getTitle(),
+                reason != null && !reason.isEmpty() ? " Lý do: " + reason : "");
+
+        CreateNotificationDTO notificationDTO = new CreateNotificationDTO();
+        notificationDTO.setUserId(applicant.getId());
+        notificationDTO.setType("RESUME_BANNED");
+        notificationDTO.setTitle(title);
+        notificationDTO.setContent(content);
+        notificationDTO.setRedirectUrl("/my-jobs");
+
+        notificationService.createNotification(notificationDTO);
     }
 
     @Transactional
