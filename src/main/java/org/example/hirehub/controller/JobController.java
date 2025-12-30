@@ -18,6 +18,8 @@ import org.example.hirehub.dto.job.JobDetailDTO;
 import org.example.hirehub.service.JobService;
 import org.example.hirehub.mapper.JobMapper;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/jobs")
 
@@ -39,14 +41,17 @@ public class JobController {
             @RequestParam(required = false) String company,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) String level,
-            @RequestParam(required = false) String workspace,
+            @RequestParam(required = false) List<String> levels,
+            @RequestParam(required = false) List<String> workspaces,
+            @RequestParam(required = false) List<String> types,
+            @RequestParam(required = false) List<String> fields,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String province,
             @RequestParam(required = false) Long recruiterId,
             @RequestParam(required = false) String status,
             @PageableDefault(page = 0, size = 10, sort = "postingDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Job> jobs = jobService.getAllJobs(postingDate, company, title, location, level, workspace, keyword,
+        Page<Job> jobs = jobService.getAllJobs(postingDate, company, title, location, levels, workspaces, types, fields,
+                keyword,
                 province, recruiterId, status, pageable);
         return jobs.map(job -> {
             JobDetailDTO dto = jobMapper.toDTO(job);

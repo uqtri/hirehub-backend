@@ -24,8 +24,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         "AND (:title IS NULL OR j.title = :title) " +
                         "AND (:company IS NULL OR r.name = :company) " +
                         "AND (:location IS NULL OR r.address LIKE %:location%) " +
-                        "AND (:level IS NULL OR j.level = :level) " +
-                        "AND (:workspace IS NULL OR j.workspace = :workspace) " +
+                        "AND ((:levels) IS NULL OR LOWER(j.level) IN (:levels)) " +
+                        "AND ((:workspaces) IS NULL OR LOWER(j.workspace) IN (:workspaces)) " +
+                        "AND ((:types) IS NULL OR LOWER(j.type) IN (:types)) " +
+                        "AND ((:fields) IS NULL OR LOWER(r.field) IN (:fields)) " +
                         "AND (:province IS NULL OR j.address LIKE %:province%) " +
                         // "AND (:postingDate IS NULL OR j.postingDate >= :postingDate) " +
                         "AND (:keyword IS NULL OR (" +
@@ -37,8 +39,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
         Page<Job> searchJobsDynamic(@Param("title") String title,
                         @Param("company") String company,
                         @Param("location") String location,
-                        @Param("level") String level,
-                        @Param("workspace") String workspace,
+                        @Param("levels") List<String> levels,
+                        @Param("workspaces") List<String> workspaces,
+                        @Param("types") List<String> types,
+                        @Param("fields") List<String> fields,
                         @Param("postingDate") LocalDateTime postingDate,
                         @Param("keyword") String keyword,
                         @Param("province") String province,

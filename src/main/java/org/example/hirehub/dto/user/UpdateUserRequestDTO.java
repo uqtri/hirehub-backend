@@ -34,6 +34,7 @@ public class UpdateUserRequestDTO {
     private String status;
     private String resume_name;
     private String openAiResumeId;
+    private Integer foundedYear;
 
 
 }

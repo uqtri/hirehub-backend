@@ -60,8 +60,19 @@ public class JobService {
     }
 
     public Page<Job> getAllJobs(String postingDate, String company, String title,
-            String location, String level, String workspace,
+            String location, List<String> levels, List<String> workspaces, List<String> types, List<String> fields,
             String keyword, String province, Long recruiterId, String status, Pageable pageable) {
+
+        // Sanitize Filter Lists: Convert empty lists to null so the repository query
+        // ignores them
+        if (levels != null && levels.isEmpty())
+            levels = null;
+        if (workspaces != null && workspaces.isEmpty())
+            workspaces = null;
+        if (types != null && types.isEmpty())
+            types = null;
+        if (fields != null && fields.isEmpty())
+            fields = null;
 
         // If recruiterId is provided, filter by recruiter with status and keyword
         if (recruiterId != null) {
@@ -85,7 +96,7 @@ public class JobService {
         }
 
         return jobRepository.searchJobsDynamic(
-                title, company, location, level, workspace, dateFilter, keyword, province, pageable);
+                title, company, location, levels, workspaces, types, fields, dateFilter, keyword, province, pageable);
 
     }
 
