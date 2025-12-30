@@ -26,14 +26,14 @@ public class JobLevelController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobLevelDTO> createLevel(@RequestBody CreateJobLevelDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(jobLevelService.createLevel(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobLevelDTO> updateLevel(
             @PathVariable Long id, 
             @RequestBody CreateJobLevelDTO dto) {
@@ -41,7 +41,7 @@ public class JobLevelController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteLevel(@PathVariable Long id) {
         jobLevelService.deleteLevel(id);
         return ResponseEntity.noContent().build();

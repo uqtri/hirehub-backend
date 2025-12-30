@@ -26,14 +26,14 @@ public class CompanyDomainController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CompanyDomainDTO> createDomain(@RequestBody CreateCompanyDomainDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(companyDomainService.createDomain(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CompanyDomainDTO> updateDomain(
             @PathVariable Long id, 
             @RequestBody CreateCompanyDomainDTO dto) {
@@ -41,7 +41,7 @@ public class CompanyDomainController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteDomain(@PathVariable Long id) {
         companyDomainService.deleteDomain(id);
         return ResponseEntity.noContent().build();
