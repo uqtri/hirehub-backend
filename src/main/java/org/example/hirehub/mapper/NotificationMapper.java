@@ -12,6 +12,7 @@ public interface NotificationMapper {
     @Mapping(target = "type", expression = "java(notification.getType().name())")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "isRead", source = "read")
+    @Mapping(target = "redirectUrl", source = "redirectUrl")
     NotificationSummaryDTO toDTO(Notification notification);
 
     @Mapping(target = "id", source = "id")
