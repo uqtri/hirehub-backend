@@ -111,9 +111,24 @@ public class JobService {
 
     @Transactional
     public Job createJob(CreateJobRequestDTO request) {
-        Job job = new Job();
+        // Check if recruiter has an existing draft job
+        java.util.Optional<Job> existingDraft = jobRepository.findLatestDraftByRecruiterId(request.getRecruiterId());
 
-        jobMapper.createJobFromDTO(job, request);
+        Job job;
+        if (existingDraft.isPresent()) {
+            // Update existing draft instead of creating new job
+            job = existingDraft.get();
+
+            // Update all fields from the request
+            jobMapper.createJobFromDTO(job, request);
+
+            // Update posting date to current time when publishing
+            job.setPostingDate(LocalDateTime.now());
+        } else {
+            // No draft exists, create new job
+            job = new Job();
+            jobMapper.createJobFromDTO(job, request);
+        }
 
         User recruiter = userRepository.findById(request.getRecruiterId())
                 .orElseThrow(() -> new UserHandlerException.RecruiterNotFoundException(request.getRecruiterId()));

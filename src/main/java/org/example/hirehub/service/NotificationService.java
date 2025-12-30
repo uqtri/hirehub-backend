@@ -116,4 +116,18 @@ public class NotificationService {
                     notificationRepository.save(notification);
                 });
     }
+
+    public void markAllAsRead(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        notificationRepository.findByUserAndIsDeletedFalseOrderByCreatedAtDesc(user, Pageable.unpaged())
+                .getContent()
+                .stream()
+                .filter(noti -> !noti.isRead())
+                .forEach(noti -> {
+                    noti.setRead(true);
+                    notificationRepository.save(noti);
+                });
+    }
 }

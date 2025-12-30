@@ -59,6 +59,11 @@ public class NotificationController {
         notificationService.deleteNotification(id, userId);
     }
 
+    @PutMapping("/mark-all-read")
+    public void markAllAsRead(@RequestParam("userId") Long userId) {
+        notificationService.markAllAsRead(userId);
+    }
+
     @PostMapping("")
     public NotificationSummaryDTO createNotification(@Payload CreateNotificationDTO data) throws IOException {
         Notification notification = notificationService.createNotification(data);

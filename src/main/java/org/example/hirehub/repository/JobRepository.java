@@ -104,4 +104,13 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         WHERE j.id = :id
                         """)
         java.util.Optional<Job> findByIdWithDetails(@Param("id") Long id);
+
+        @Query("""
+                        SELECT j FROM Job j
+                        WHERE j.recruiter.id = :recruiterId
+                        AND j.status = 'DRAFT'
+                        AND j.isDeleted = false
+                        ORDER BY j.postingDate DESC
+                        """)
+        java.util.Optional<Job> findLatestDraftByRecruiterId(@Param("recruiterId") Long recruiterId);
 }
