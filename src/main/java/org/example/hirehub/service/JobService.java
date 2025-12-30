@@ -162,6 +162,59 @@ public class JobService {
         return savedJob;
     }
 
+    @Transactional
+    public Job createDraftJob(org.example.hirehub.dto.job.CreateDraftJobRequestDTO request) {
+        Job job = new Job();
+
+        // Set only provided fields
+        job.setTitle(request.getTitle());
+        if (request.getDescription() != null) {
+            job.setDescription(request.getDescription());
+        }
+        if (request.getLevel() != null) {
+            job.setLevel(request.getLevel());
+        }
+        if (request.getWorkspace() != null) {
+            job.setWorkspace(request.getWorkspace());
+        }
+        if (request.getType() != null) {
+            job.setType(request.getType());
+        }
+        if (request.getApplyLink() != null) {
+            job.setApply_link(request.getApplyLink());
+        }
+        if (request.getAddress() != null) {
+            job.setAddress(request.getAddress());
+        }
+
+        // Set status to DRAFT
+        job.setStatus("DRAFT");
+        job.setPostingDate(LocalDateTime.now());
+
+        User recruiter = userRepository.findById(request.getRecruiterId())
+                .orElseThrow(() -> new UserHandlerException.RecruiterNotFoundException(request.getRecruiterId()));
+        job.setRecruiter(recruiter);
+
+        Job insertedJob = jobRepository.save(job);
+
+        // Handle skills if provided
+        if (request.getSkillIds() != null && !request.getSkillIds().isEmpty()) {
+            insertedJob.getSkills().clear();
+            List<JobSkill> jobSkills = request.getSkillIds().stream()
+                    .map(skillId -> {
+                        Skill skill = skillRepository.findById(skillId)
+                                .orElseThrow(() -> new SkillHandlerException.SkillNotFoundException(skillId));
+                        return new JobSkill(insertedJob, skill);
+                    })
+                    .toList();
+
+            insertedJob.getSkills().addAll(jobSkills);
+            return jobRepository.save(insertedJob);
+        }
+
+        return insertedJob;
+    }
+
     /**
      * Helper method to extract field value from JSON string
      */

@@ -13,6 +13,7 @@ import org.example.hirehub.entity.Job;
 import jakarta.validation.Valid;
 
 import org.example.hirehub.dto.job.CreateJobRequestDTO;
+import org.example.hirehub.dto.job.CreateDraftJobRequestDTO;
 import org.example.hirehub.dto.job.JobDetailDTO;
 import org.example.hirehub.service.JobService;
 import org.example.hirehub.mapper.JobMapper;
@@ -81,6 +82,14 @@ public class JobController {
     public ResponseEntity<JobDetailDTO> createJob(
             @Valid @RequestBody CreateJobRequestDTO request) {
         JobDetailDTO job = jobMapper.toDTO(jobService.createJob(request));
+        return ResponseEntity.ok(job);
+    }
+
+    @PreAuthorize("hasRole('RECRUITER') and hasAuthority('CREATE_JOB')")
+    @PostMapping("/draft")
+    public ResponseEntity<JobDetailDTO> createDraftJob(
+            @Valid @RequestBody CreateDraftJobRequestDTO request) {
+        JobDetailDTO job = jobMapper.toDTO(jobService.createDraftJob(request));
         return ResponseEntity.ok(job);
     }
 
