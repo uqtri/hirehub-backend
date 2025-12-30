@@ -7,5 +7,6 @@ public enum NotificationType {
     SYSTEM,
     JOB_UPDATE,
     APPLICATION_STATUS,
-    FRIEND_REQUEST
+    FRIEND_REQUEST,
+    FRIEND_ACCEPT
 }
