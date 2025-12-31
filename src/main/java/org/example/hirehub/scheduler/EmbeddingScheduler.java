@@ -22,7 +22,7 @@ public class EmbeddingScheduler {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
 
-    @Value("${embedding.scheduler.enabled:false}")
+    @Value("${embedding.scheduler.enabled:true}")
     private boolean schedulerEnabled;
 
     @Value("${embedding.scheduler.batch-size:50}")

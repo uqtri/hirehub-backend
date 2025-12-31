@@ -196,6 +196,9 @@ public class EmbeddingService {
             sb.append("Company: ").append(job.getRecruiter().getName()).append("\n");
         }
 
+        if(job.getStatus() != null) {
+            sb.append("Status: ").append(job.getStatus()).append("\n");
+        }
         return sb.toString().trim();
     }
 
