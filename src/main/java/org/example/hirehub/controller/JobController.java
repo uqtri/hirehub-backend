@@ -62,7 +62,6 @@ public class JobController {
 
     // Admin endpoint - shows all jobs including banned ones
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
     public Page<JobDetailDTO> getAllJobsAdmin(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String level,
@@ -82,7 +81,6 @@ public class JobController {
         return jobMapper.toDTO(jobService.getJobById(id));
     }
 
-    @PreAuthorize("hasRole('RECRUITER') and hasAuthority('CREATE_JOB')")
     @PostMapping("")
     public ResponseEntity<JobDetailDTO> createJob(
             @Valid @RequestBody CreateJobRequestDTO request) {
@@ -90,7 +88,6 @@ public class JobController {
         return ResponseEntity.ok(job);
     }
 
-    @PreAuthorize("hasRole('RECRUITER') and hasAuthority('CREATE_JOB')")
     @PostMapping("/draft")
     public ResponseEntity<JobDetailDTO> createDraftJob(
             @Valid @RequestBody CreateDraftJobRequestDTO request) {
@@ -122,7 +119,6 @@ public class JobController {
     }
 
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobDetailDTO> approveJob(
             @PathVariable Long id,
             @RequestBody(required = false) java.util.Map<String, String> request) {
@@ -132,7 +128,6 @@ public class JobController {
     }
 
     @PutMapping("/{id}/reject")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobDetailDTO> rejectJob(
             @PathVariable Long id,
             @RequestBody(required = false) java.util.Map<String, String> request) {
@@ -142,7 +137,6 @@ public class JobController {
     }
 
     @PutMapping("/{id}/ban")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobDetailDTO> banJob(
             @PathVariable Long id,
             @RequestBody(required = false) java.util.Map<String, String> request) {
@@ -152,7 +146,6 @@ public class JobController {
     }
 
     @PutMapping("/{id}/unban")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobDetailDTO> unbanJob(@PathVariable Long id) {
         Job unbannedJob = jobService.unbanJob(id);
         return ResponseEntity.ok(jobMapper.toDTO(unbannedJob));

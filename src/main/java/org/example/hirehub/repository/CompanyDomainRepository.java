@@ -19,3 +19,5 @@ public interface CompanyDomainRepository extends JpaRepository<CompanyDomain, Lo
     boolean existsByDomain(String domain);
 }
 
+
+

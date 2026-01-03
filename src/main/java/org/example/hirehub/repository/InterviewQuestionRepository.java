@@ -1,0 +1,17 @@
+package org.example.hirehub.repository;
+
+import org.example.hirehub.entity.InterviewQuestion;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface InterviewQuestionRepository extends JpaRepository<InterviewQuestion, Long> {
+    List<InterviewQuestion> findByRoomIdOrderByOrderIndexAsc(Long roomId);
+    
+    List<InterviewQuestion> findByRoomIdAndStatus(Long roomId, String status);
+    
+    long countByRoomIdAndStatus(Long roomId, String status);
+}
+

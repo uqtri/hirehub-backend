@@ -26,3 +26,5 @@ public class CompanyDomain {
     private LocalDateTime createdAt = LocalDateTime.now();
 }
 
+
+

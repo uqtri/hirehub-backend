@@ -13,3 +13,5 @@ public class CreateJobTypeDTO {
     private String type;
 }
 
+
+

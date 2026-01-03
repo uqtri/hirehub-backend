@@ -26,14 +26,12 @@ public class WorkTypeController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WorkTypeDTO> createWorkType(@RequestBody CreateWorkTypeDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(workTypeService.createWorkType(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WorkTypeDTO> updateWorkType(
             @PathVariable Long id, 
             @RequestBody CreateWorkTypeDTO dto) {
@@ -41,7 +39,6 @@ public class WorkTypeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteWorkType(@PathVariable Long id) {
         workTypeService.deleteWorkType(id);
         return ResponseEntity.noContent().build();

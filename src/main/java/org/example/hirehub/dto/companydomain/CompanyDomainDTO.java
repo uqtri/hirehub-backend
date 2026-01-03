@@ -14,3 +14,5 @@ public class CompanyDomainDTO {
     private String domain;
 }
 
+
+

@@ -26,3 +26,5 @@ public class JobType {
     private LocalDateTime createdAt = LocalDateTime.now();
 }
 
+
+

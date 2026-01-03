@@ -26,14 +26,12 @@ public class JobTypeController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobTypeDTO> createType(@RequestBody CreateJobTypeDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(jobTypeService.createType(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<JobTypeDTO> updateType(
             @PathVariable Long id, 
             @RequestBody CreateJobTypeDTO dto) {
@@ -41,7 +39,6 @@ public class JobTypeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteType(@PathVariable Long id) {
         jobTypeService.deleteType(id);
         return ResponseEntity.noContent().build();

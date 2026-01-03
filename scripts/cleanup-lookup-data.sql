@@ -24,3 +24,5 @@ SELECT 'Active Work Types:', COUNT(*) FROM work_type WHERE is_deleted = false
 UNION ALL
 SELECT 'Active Job Types:', COUNT(*) FROM job_type WHERE is_deleted = false;
 
+
+

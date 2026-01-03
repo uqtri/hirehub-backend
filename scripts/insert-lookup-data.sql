@@ -65,3 +65,5 @@ SELECT 'Work Types:', COUNT(*) FROM work_type WHERE is_deleted = false
 UNION ALL
 SELECT 'Job Types:', COUNT(*) FROM job_type WHERE is_deleted = false;
 
+
+

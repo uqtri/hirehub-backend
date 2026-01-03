@@ -54,3 +54,5 @@ INSERT INTO job_type (type, is_deleted, created_at) VALUES
 -- SELECT * FROM work_type WHERE is_deleted = false;
 -- SELECT * FROM job_type WHERE is_deleted = false;
 
+
+

@@ -19,3 +19,5 @@ public interface JobLevelRepository extends JpaRepository<JobLevel, Long> {
     boolean existsByLevel(String level);
 }
 
+
+

@@ -115,3 +115,5 @@ VALUES ('Viễn thông', false, NOW());
 - Sử dụng `ON CONFLICT DO NOTHING` để tránh duplicate entries
 - Có thể chỉnh sửa dữ liệu qua Admin UI sau khi insert
 
+
+
