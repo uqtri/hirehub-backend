@@ -22,7 +22,6 @@ public class InterviewRoomController {
     }
     
     @PostMapping
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> createInterviewRoom(
             @RequestBody CreateInterviewRoomDTO dto
     ) {
@@ -53,7 +52,6 @@ public class InterviewRoomController {
     }
     
     @GetMapping("/recruiter/{recruiterId}")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> getRoomsByRecruiterId(
             @PathVariable Long recruiterId
     ) {
@@ -101,7 +99,6 @@ public class InterviewRoomController {
     }
     
     @PostMapping("/results")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> submitResult(
             @RequestBody CreateInterviewResultDTO dto
     ) {
@@ -159,7 +156,6 @@ public class InterviewRoomController {
     }
     
     @PostMapping("/results/async")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> submitAsyncResult(
             @RequestBody CreateInterviewResultDTO dto
     ) {

@@ -38,8 +38,11 @@ public class InterviewRoom {
     @Column(nullable = false)
     private LocalDateTime scheduledTime;
     
+    @Column(nullable = false)
+    private Integer durationMinutes = 60; // Thời lượng phỏng vấn (phút), mặc định 60 phút
+    
     @Column(nullable = false, length = 20)
-    private String status = "SCHEDULED"; // SCHEDULED, ONGOING, FINISHED, CANCELLED
+    private String status = "SCHEDULED"; // SCHEDULED, ONGOING, FINISHED, CANCELLED, EXPIRED
     
     @Column(nullable = false, length = 20)
     private String interviewType = "CHAT"; // CHAT, VIDEO

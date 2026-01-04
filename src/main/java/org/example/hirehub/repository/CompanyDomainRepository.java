@@ -21,3 +21,4 @@ public interface CompanyDomainRepository extends JpaRepository<CompanyDomain, Lo
 
 
 
+

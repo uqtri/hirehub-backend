@@ -22,7 +22,6 @@ public class InterviewScheduleController {
     }
 
     @PostMapping("/request")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> createScheduleRequest(
             @RequestBody CreateScheduleRequestDTO dto) {
         ScheduleRequestDTO scheduleRequest = scheduleService.createScheduleRequest(dto);
@@ -65,7 +64,6 @@ public class InterviewScheduleController {
     }
 
     @GetMapping("/pending/recruiter/{recruiterId}")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> getPendingRequestsByRecruiter(
             @PathVariable Long recruiterId) {
         List<ScheduleRequestDTO> requests = scheduleService.getPendingRequestsByRecruiter(recruiterId);
@@ -86,7 +84,6 @@ public class InterviewScheduleController {
     }
 
     @GetMapping("/all/recruiter/{recruiterId}")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> getAllRequestsByRecruiter(
             @PathVariable Long recruiterId) {
         List<ScheduleRequestDTO> requests = scheduleService.getAllRequestsByRecruiter(recruiterId);

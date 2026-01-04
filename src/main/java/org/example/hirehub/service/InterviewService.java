@@ -79,6 +79,7 @@ public class InterviewService {
         room.setRecruiter(recruiter);
         room.setRoomCode(roomCode);
         room.setScheduledTime(dto.getScheduledTime());
+        room.setDurationMinutes(dto.getDurationMinutes() != null ? dto.getDurationMinutes() : 60);
         room.setStatus("SCHEDULED");
         room.setInterviewType(dto.getInterviewType() != null ? dto.getInterviewType() : "CHAT");
         room.setInterviewMode(dto.getInterviewMode() != null ? dto.getInterviewMode() : "LIVE");
@@ -122,7 +123,7 @@ public class InterviewService {
             e.printStackTrace();
         }
         
-        return interviewMapper.toRoomDTO(savedRoom);
+        return enrichRoomDTO(interviewMapper.toRoomDTO(savedRoom), savedRoom);
     }
     
     private void sendInterviewInvitation(InterviewRoom room) {
@@ -180,27 +181,42 @@ public class InterviewService {
     public InterviewRoomDTO getRoomByCode(String roomCode) {
         InterviewRoom room = roomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
-        return interviewMapper.toRoomDTO(room);
+        return enrichRoomDTO(interviewMapper.toRoomDTO(room), room);
     }
     
     public InterviewRoomDTO getRoomById(Long id) {
         InterviewRoom room = roomRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
-        return interviewMapper.toRoomDTO(room);
+        return enrichRoomDTO(interviewMapper.toRoomDTO(room), room);
     }
     
     public List<InterviewRoomDTO> getRoomsByRecruiterId(Long recruiterId) {
         return roomRepository.findByRecruiterId(recruiterId)
                 .stream()
-                .map(interviewMapper::toRoomDTO)
+                .map(room -> enrichRoomDTO(interviewMapper.toRoomDTO(room), room))
                 .collect(Collectors.toList());
     }
     
     public List<InterviewRoomDTO> getRoomsByApplicantId(Long applicantId) {
         return roomRepository.findByApplicantId(applicantId)
                 .stream()
-                .map(interviewMapper::toRoomDTO)
+                .map(room -> enrichRoomDTO(interviewMapper.toRoomDTO(room), room))
                 .collect(Collectors.toList());
+    }
+    
+    // Helper method to enrich DTO with calculated fields
+    private InterviewRoomDTO enrichRoomDTO(InterviewRoomDTO dto, InterviewRoom room) {
+        dto.setExpired(isRoomExpired(room));
+        return dto;
+    }
+    
+    // Check if room is expired based on scheduled time + duration
+    private boolean isRoomExpired(InterviewRoom room) {
+        if (room.getScheduledTime() == null || room.getDurationMinutes() == null) {
+            return false;
+        }
+        LocalDateTime expirationTime = room.getScheduledTime().plusMinutes(room.getDurationMinutes());
+        return LocalDateTime.now().isAfter(expirationTime);
     }
     
     @Transactional
@@ -219,7 +235,7 @@ public class InterviewService {
         }
         
         InterviewRoom savedRoom = roomRepository.save(room);
-        return interviewMapper.toRoomDTO(savedRoom);
+        return enrichRoomDTO(interviewMapper.toRoomDTO(savedRoom), savedRoom);
     }
     
     @Transactional
@@ -303,12 +319,29 @@ public class InterviewService {
         return interviewMapper.toResultDTO(result);
     }
     
+    @Transactional
     public boolean validateUserAccess(String roomCode, Long userId) {
         InterviewRoom room = roomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
         
-        return room.getApplicant().getId().equals(userId) || 
-               room.getRecruiter().getId().equals(userId);
+        // Check if user is authorized
+        boolean isAuthorized = room.getApplicant().getId().equals(userId) || 
+                               room.getRecruiter().getId().equals(userId);
+        
+        if (!isAuthorized) {
+            return false;
+        }
+        
+        // Check if room is expired and auto-update status
+        if (isRoomExpired(room) && !"FINISHED".equals(room.getStatus()) && !"CANCELLED".equals(room.getStatus())) {
+            room.setStatus("EXPIRED");
+            room.setEndedAt(room.getScheduledTime().plusMinutes(room.getDurationMinutes()));
+            roomRepository.save(room);
+            return false; // Cannot join expired room
+        }
+        
+        // Can only join if room is SCHEDULED or ONGOING
+        return "SCHEDULED".equals(room.getStatus()) || "ONGOING".equals(room.getStatus());
     }
     
     // New methods for async interview

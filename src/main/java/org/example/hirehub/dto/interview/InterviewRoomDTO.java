@@ -23,9 +23,14 @@ public class InterviewRoomDTO {
     private String recruiterAvatar;
     private String roomCode;
     private LocalDateTime scheduledTime;
+    private Integer durationMinutes;
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime startedAt;
     private LocalDateTime endedAt;
+    private boolean isExpired; // Phòng đã hết hạn hay chưa
+    private String interviewType;
+    private String interviewMode;
+    private Integer roundNumber;
 }
 

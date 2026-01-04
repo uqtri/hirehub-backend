@@ -67,3 +67,4 @@ SELECT 'Job Types:', COUNT(*) FROM job_type WHERE is_deleted = false;
 
 
 
+

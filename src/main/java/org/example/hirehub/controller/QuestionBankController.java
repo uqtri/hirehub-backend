@@ -22,7 +22,6 @@ public class QuestionBankController {
     }
     
     @PostMapping
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> createQuestionBank(
             @RequestBody CreateQuestionBankDTO dto
     ) {
@@ -35,7 +34,6 @@ public class QuestionBankController {
     }
     
     @GetMapping("/recruiter/{recruiterId}")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> getQuestionBanksByRecruiterId(
             @PathVariable Long recruiterId
     ) {
@@ -47,7 +45,6 @@ public class QuestionBankController {
     }
     
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> getQuestionBankById(@PathVariable Long id) {
         QuestionBankDTO questionBank = questionBankService.getQuestionBankById(id);
         Map<String, Object> response = new HashMap<>();
@@ -57,7 +54,6 @@ public class QuestionBankController {
     }
     
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> updateQuestionBank(
             @PathVariable Long id,
             @RequestBody CreateQuestionBankDTO dto
@@ -71,7 +67,6 @@ public class QuestionBankController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<Map<String, Object>> deleteQuestionBank(@PathVariable Long id) {
         questionBankService.deleteQuestionBank(id);
         Map<String, Object> response = new HashMap<>();

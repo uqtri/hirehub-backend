@@ -15,6 +15,7 @@ public class CreateInterviewRoomDTO {
     private Long applicantId;
     private Long recruiterId;
     private LocalDateTime scheduledTime;
+    private Integer durationMinutes; // Thời lượng phỏng vấn (phút)
     private String interviewType; // CHAT, VIDEO
     private String interviewMode; // LIVE, ASYNC
     private Integer roundNumber;
