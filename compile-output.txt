@@ -1,0 +1,646 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.example:hirehub:jar:0.0.1-SNAPSHOT
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.springframework.boot:spring-boot-starter-webflux:jar -> duplicate declaration of version (?) @ line 172, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: com.google.firebase:firebase-admin:jar -> duplicate declaration of version 9.2.0 @ line 176, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ------------------------< org.example:hirehub >-------------------------
+[INFO] Building hirehub 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ hirehub ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ hirehub ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 288 source files with javac [debug parameters release 21] to target\classes
+[INFO] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/controller/ConversationController.java: C:\Users\hirehub-combined\hirehub-backend\src\main\java\org\example\hirehub\controller\ConversationController.java uses or overrides a deprecated API.
+[INFO] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/controller/ConversationController.java: Recompile with -Xlint:deprecation for details.
+[INFO] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/ChatbotService.java: Some input files use unchecked or unsafe operations.
+[INFO] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/ChatbotService.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[3,34] cannot access org.example.hirehub.entity.InterviewQuestion
+  bad source file: C:\Users\hirehub-combined\hirehub-backend\src\main\java\org\example\hirehub\entity\InterviewQuestion.java
+    file does not contain class org.example.hirehub.entity.InterviewQuestion
+    Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[10,68] cannot find symbol
+  symbol: class InterviewQuestion
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[11,10] cannot find symbol
+  symbol:   class InterviewQuestion
+  location: interface org.example.hirehub.repository.InterviewQuestionRepository
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[13,10] cannot find symbol
+  symbol:   class InterviewQuestion
+  location: interface org.example.hirehub.repository.InterviewQuestionRepository
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[22,33] cannot find symbol
+  symbol:   method getTo()
+  location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[23,38] cannot find symbol
+  symbol:   method getSubject()
+  location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[24,35] cannot find symbol
+  symbol:   method getBody()
+  location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[25,38] cannot find symbol
+  symbol:   method isHtml()
+  location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/controller/AuthController.java:[69,17] cannot find symbol
+  symbol:   method getIsBanned()
+  location: variable user of type org.example.hirehub.dto.user.UserDetailDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/controller/AuthController.java:[69,47] cannot find symbol
+  symbol:   method getIsBanned()
+  location: variable user of type org.example.hirehub.dto.user.UserDetailDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[98,17] cannot find symbol
+  symbol:   method setLastLogin(java.time.LocalDateTime)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[102,93] cannot find symbol
+  symbol:   method getEmail()
+  location: variable loginRequest of type org.example.hirehub.dto.auth.LoginRequest
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[103,29] cannot find symbol
+  symbol:   method getPassword()
+  location: variable loginRequest of type org.example.hirehub.dto.auth.LoginRequest
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[111,60] cannot find symbol
+  symbol:   method getEmail()
+  location: variable loginRequest of type org.example.hirehub.dto.auth.LoginRequest
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[113,13] cannot find symbol
+  symbol:   method setLastLogin(java.time.LocalDateTime)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[156,50] cannot find symbol
+  symbol:   method getCreatedAt()
+  location: variable code of type org.example.hirehub.entity.Token
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[162,13] cannot find symbol
+  symbol:   method setIsVerified(boolean)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[171,50] cannot find symbol
+  symbol:   method getCreatedAt()
+  location: variable code of type org.example.hirehub.entity.Token
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[178,13] cannot find symbol
+  symbol:   method setPassword(java.lang.String)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[184,52] cannot find symbol
+  symbol:   method getEmail()
+  location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[189,53] cannot find symbol
+  symbol:   method getPassword()
+  location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[193,26] cannot find symbol
+  symbol:   method getRoleId()
+  location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[193,77] cannot find symbol
+  symbol:   method getRoleId()
+  location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[195,16] cannot find symbol
+  symbol:   method setRole(org.example.hirehub.entity.Role)
+  location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[197,33] cannot find symbol
+  symbol:   method getName()
+  location: variable role of type org.example.hirehub.entity.Role
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[199,42] cannot find symbol
+  symbol:   method getEmail()
+  location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[249,16] cannot find symbol
+  symbol:   method setEmail(java.lang.String)
+  location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[250,16] cannot find symbol
+  symbol:   method setName(java.lang.String)
+  location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[251,16] cannot find symbol
+  symbol:   method setIsVerified(boolean)
+  location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[252,16] cannot find symbol
+  symbol:   method setRole(org.example.hirehub.entity.Role)
+  location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[72,62] cannot find symbol
+  symbol:   method getId()
+  location: variable savedUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[81,62] cannot find symbol
+  symbol:   method getId()
+  location: variable savedUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[90,20] cannot find symbol
+  symbol:   method getPassword()
+  location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[91,63] cannot find symbol
+  symbol:   method getPassword()
+  location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[93,39] cannot find symbol
+  symbol:   method getAvatar()
+  location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[96,17] cannot find symbol
+  symbol:   method setAvatar(java.lang.String)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[98,39] cannot find symbol
+  symbol:   method getResume()
+  location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[102,17] cannot find symbol
+  symbol:   method setOpenAiResumeId(java.lang.String)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[103,17] cannot find symbol
+  symbol:   method setResume_link(java.lang.String)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[106,38] cannot find symbol
+  symbol:   method getSkillIds()
+  location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[107,46] cannot find symbol
+  symbol:   method getLanguageLevelIds()
+  location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[110,17] cannot find symbol
+  symbol:   method getUserSkills()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[113,21] cannot find symbol
+  symbol:   method getUserSkills()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[117,17] cannot find symbol
+  symbol:   method getUserSkills()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[119,17] cannot find symbol
+  symbol:   method setLanguages(java.util.List<org.example.hirehub.entity.LanguageLevel>)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[124,62] cannot find symbol
+  symbol:   method getId()
+  location: variable savedUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[139,13] cannot find symbol
+  symbol:   method setDeleted(boolean)
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/RolePermission.java:[35,60] cannot find symbol
+  symbol:   method getId()
+  location: variable role of type org.example.hirehub.entity.Role
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/RolePermission.java:[35,80] cannot find symbol
+  symbol:   method getId()
+  location: variable permission of type org.example.hirehub.entity.Permission
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/UserSkill.java:[39,65] cannot find symbol
+  symbol:   method getId()
+  location: variable skill of type org.example.hirehub.entity.Skill
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/UserSkill.java:[39,50] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/Relationship.java:[39,57] cannot find symbol
+  symbol:   method getId()
+  location: variable userA of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/Relationship.java:[39,72] cannot find symbol
+  symbol:   method getId()
+  location: variable userB of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[80,70] cannot find symbol
+  symbol:   method getId()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[84,75] cannot find symbol
+  symbol:   method getId()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[87,21] cannot find symbol
+  symbol:   method setJob(org.example.hirehub.entity.Job)
+  location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[88,21] cannot find symbol
+  symbol:   method setEmbeddingText(java.lang.String)
+  location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[89,21] cannot find symbol
+  symbol:   method setEmbedding(java.lang.String)
+  location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[90,21] cannot find symbol
+  symbol:   method setDimensions(int)
+  location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[91,21] cannot find symbol
+  symbol:   method setModel(java.lang.String)
+  location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[94,74] cannot find symbol
+  symbol:   method getId()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[136,72] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[140,80] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[143,22] cannot find symbol
+  symbol:   method setUser(org.example.hirehub.entity.User)
+  location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[144,22] cannot find symbol
+  symbol:   method setEmbeddingText(java.lang.String)
+  location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[145,22] cannot find symbol
+  symbol:   method setEmbedding(java.lang.String)
+  location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[146,22] cannot find symbol
+  symbol:   method setDimensions(int)
+  location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[147,22] cannot find symbol
+  symbol:   method setModel(java.lang.String)
+  location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[150,76] cannot find symbol
+  symbol:   method getId()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[166,44] cannot find symbol
+  symbol:   method getTitle()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[168,16] cannot find symbol
+  symbol:   method getDescription()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[169,50] cannot find symbol
+  symbol:   method getDescription()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[172,16] cannot find symbol
+  symbol:   method getLevel()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[173,44] cannot find symbol
+  symbol:   method getLevel()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[176,16] cannot find symbol
+  symbol:   method getWorkspace()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[177,48] cannot find symbol
+  symbol:   method getWorkspace()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[180,16] cannot find symbol
+  symbol:   method getAddress()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[181,47] cannot find symbol
+  symbol:   method getAddress()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[184,16] cannot find symbol
+  symbol:   method getType()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[185,43] cannot find symbol
+  symbol:   method getType()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[188,16] cannot find symbol
+  symbol:   method getSkills()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[188,44] cannot find symbol
+  symbol:   method getSkills()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[189,32] cannot find symbol
+  symbol:   method getSkills()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[195,16] cannot find symbol
+  symbol:   method getRecruiter()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[195,46] cannot find symbol
+  symbol:   method getRecruiter()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[196,46] cannot find symbol
+  symbol:   method getRecruiter()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[199,15] cannot find symbol
+  symbol:   method getStatus()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[200,45] cannot find symbol
+  symbol:   method getStatus()
+  location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[208,17] cannot find symbol
+  symbol:   method getName()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[209,44] cannot find symbol
+  symbol:   method getName()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[212,17] cannot find symbol
+  symbol:   method getPosition()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[213,48] cannot find symbol
+  symbol:   method getPosition()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[216,17] cannot find symbol
+  symbol:   method getField()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[217,45] cannot find symbol
+  symbol:   method getField()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[220,17] cannot find symbol
+  symbol:   method getDescription()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[221,45] cannot find symbol
+  symbol:   method getDescription()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[224,17] cannot find symbol
+  symbol:   method getAddress()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[225,48] cannot find symbol
+  symbol:   method getAddress()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[228,17] cannot find symbol
+  symbol:   method getUserSkills()
+  location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[228,50] cannot find symbol
+  symbol:   method getUserSkills()
+  location: variable user of type org.example.hirehub.entity.User
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.668 s
+[INFO] Finished at: 2026-01-04T18:28:20+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile (default-compile) on project hirehub: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[3,34] cannot access org.example.hirehub.entity.InterviewQuestion
+[ERROR]   bad source file: C:\Users\hirehub-combined\hirehub-backend\src\main\java\org\example\hirehub\entity\InterviewQuestion.java
+[ERROR]     file does not contain class org.example.hirehub.entity.InterviewQuestion
+[ERROR]     Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[10,68] cannot find symbol
+[ERROR]   symbol: class InterviewQuestion
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[11,10] cannot find symbol
+[ERROR]   symbol:   class InterviewQuestion
+[ERROR]   location: interface org.example.hirehub.repository.InterviewQuestionRepository
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/repository/InterviewQuestionRepository.java:[13,10] cannot find symbol
+[ERROR]   symbol:   class InterviewQuestion
+[ERROR]   location: interface org.example.hirehub.repository.InterviewQuestionRepository
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[22,33] cannot find symbol
+[ERROR]   symbol:   method getTo()
+[ERROR]   location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[23,38] cannot find symbol
+[ERROR]   symbol:   method getSubject()
+[ERROR]   location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[24,35] cannot find symbol
+[ERROR]   symbol:   method getBody()
+[ERROR]   location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/consumer/EmailConsumer.java:[25,38] cannot find symbol
+[ERROR]   symbol:   method isHtml()
+[ERROR]   location: variable emailMessage of type org.example.hirehub.message.EmailMessage
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/controller/AuthController.java:[69,17] cannot find symbol
+[ERROR]   symbol:   method getIsBanned()
+[ERROR]   location: variable user of type org.example.hirehub.dto.user.UserDetailDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/controller/AuthController.java:[69,47] cannot find symbol
+[ERROR]   symbol:   method getIsBanned()
+[ERROR]   location: variable user of type org.example.hirehub.dto.user.UserDetailDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[98,17] cannot find symbol
+[ERROR]   symbol:   method setLastLogin(java.time.LocalDateTime)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[102,93] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable loginRequest of type org.example.hirehub.dto.auth.LoginRequest
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[103,29] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable loginRequest of type org.example.hirehub.dto.auth.LoginRequest
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[111,60] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable loginRequest of type org.example.hirehub.dto.auth.LoginRequest
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[113,13] cannot find symbol
+[ERROR]   symbol:   method setLastLogin(java.time.LocalDateTime)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[156,50] cannot find symbol
+[ERROR]   symbol:   method getCreatedAt()
+[ERROR]   location: variable code of type org.example.hirehub.entity.Token
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[162,13] cannot find symbol
+[ERROR]   symbol:   method setIsVerified(boolean)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[171,50] cannot find symbol
+[ERROR]   symbol:   method getCreatedAt()
+[ERROR]   location: variable code of type org.example.hirehub.entity.Token
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[178,13] cannot find symbol
+[ERROR]   symbol:   method setPassword(java.lang.String)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[184,52] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[189,53] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[193,26] cannot find symbol
+[ERROR]   symbol:   method getRoleId()
+[ERROR]   location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[193,77] cannot find symbol
+[ERROR]   symbol:   method getRoleId()
+[ERROR]   location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[195,16] cannot find symbol
+[ERROR]   symbol:   method setRole(org.example.hirehub.entity.Role)
+[ERROR]   location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[197,33] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable role of type org.example.hirehub.entity.Role
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[199,42] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable data of type org.example.hirehub.dto.user.CreateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[249,16] cannot find symbol
+[ERROR]   symbol:   method setEmail(java.lang.String)
+[ERROR]   location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[250,16] cannot find symbol
+[ERROR]   symbol:   method setName(java.lang.String)
+[ERROR]   location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[251,16] cannot find symbol
+[ERROR]   symbol:   method setIsVerified(boolean)
+[ERROR]   location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/AuthService.java:[252,16] cannot find symbol
+[ERROR]   symbol:   method setRole(org.example.hirehub.entity.Role)
+[ERROR]   location: variable newUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[72,62] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable savedUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[81,62] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable savedUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[90,20] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[91,63] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[93,39] cannot find symbol
+[ERROR]   symbol:   method getAvatar()
+[ERROR]   location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[96,17] cannot find symbol
+[ERROR]   symbol:   method setAvatar(java.lang.String)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[98,39] cannot find symbol
+[ERROR]   symbol:   method getResume()
+[ERROR]   location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[102,17] cannot find symbol
+[ERROR]   symbol:   method setOpenAiResumeId(java.lang.String)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[103,17] cannot find symbol
+[ERROR]   symbol:   method setResume_link(java.lang.String)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[106,38] cannot find symbol
+[ERROR]   symbol:   method getSkillIds()
+[ERROR]   location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[107,46] cannot find symbol
+[ERROR]   symbol:   method getLanguageLevelIds()
+[ERROR]   location: variable request of type org.example.hirehub.dto.user.UpdateUserRequestDTO
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[110,17] cannot find symbol
+[ERROR]   symbol:   method getUserSkills()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[113,21] cannot find symbol
+[ERROR]   symbol:   method getUserSkills()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[117,17] cannot find symbol
+[ERROR]   symbol:   method getUserSkills()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[119,17] cannot find symbol
+[ERROR]   symbol:   method setLanguages(java.util.List<org.example.hirehub.entity.LanguageLevel>)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[124,62] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable savedUser of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/UserService.java:[139,13] cannot find symbol
+[ERROR]   symbol:   method setDeleted(boolean)
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/RolePermission.java:[35,60] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable role of type org.example.hirehub.entity.Role
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/RolePermission.java:[35,80] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable permission of type org.example.hirehub.entity.Permission
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/UserSkill.java:[39,65] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable skill of type org.example.hirehub.entity.Skill
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/UserSkill.java:[39,50] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/Relationship.java:[39,57] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable userA of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/entity/Relationship.java:[39,72] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable userB of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[80,70] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[84,75] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[87,21] cannot find symbol
+[ERROR]   symbol:   method setJob(org.example.hirehub.entity.Job)
+[ERROR]   location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[88,21] cannot find symbol
+[ERROR]   symbol:   method setEmbeddingText(java.lang.String)
+[ERROR]   location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[89,21] cannot find symbol
+[ERROR]   symbol:   method setEmbedding(java.lang.String)
+[ERROR]   location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[90,21] cannot find symbol
+[ERROR]   symbol:   method setDimensions(int)
+[ERROR]   location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[91,21] cannot find symbol
+[ERROR]   symbol:   method setModel(java.lang.String)
+[ERROR]   location: variable jobEmbedding of type org.example.hirehub.entity.JobEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[94,74] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[136,72] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[140,80] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[143,22] cannot find symbol
+[ERROR]   symbol:   method setUser(org.example.hirehub.entity.User)
+[ERROR]   location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[144,22] cannot find symbol
+[ERROR]   symbol:   method setEmbeddingText(java.lang.String)
+[ERROR]   location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[145,22] cannot find symbol
+[ERROR]   symbol:   method setEmbedding(java.lang.String)
+[ERROR]   location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[146,22] cannot find symbol
+[ERROR]   symbol:   method setDimensions(int)
+[ERROR]   location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[147,22] cannot find symbol
+[ERROR]   symbol:   method setModel(java.lang.String)
+[ERROR]   location: variable userEmbedding of type org.example.hirehub.entity.UserEmbedding
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[150,76] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[166,44] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[168,16] cannot find symbol
+[ERROR]   symbol:   method getDescription()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[169,50] cannot find symbol
+[ERROR]   symbol:   method getDescription()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[172,16] cannot find symbol
+[ERROR]   symbol:   method getLevel()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[173,44] cannot find symbol
+[ERROR]   symbol:   method getLevel()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[176,16] cannot find symbol
+[ERROR]   symbol:   method getWorkspace()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[177,48] cannot find symbol
+[ERROR]   symbol:   method getWorkspace()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[180,16] cannot find symbol
+[ERROR]   symbol:   method getAddress()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[181,47] cannot find symbol
+[ERROR]   symbol:   method getAddress()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[184,16] cannot find symbol
+[ERROR]   symbol:   method getType()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[185,43] cannot find symbol
+[ERROR]   symbol:   method getType()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[188,16] cannot find symbol
+[ERROR]   symbol:   method getSkills()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[188,44] cannot find symbol
+[ERROR]   symbol:   method getSkills()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[189,32] cannot find symbol
+[ERROR]   symbol:   method getSkills()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[195,16] cannot find symbol
+[ERROR]   symbol:   method getRecruiter()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[195,46] cannot find symbol
+[ERROR]   symbol:   method getRecruiter()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[196,46] cannot find symbol
+[ERROR]   symbol:   method getRecruiter()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[199,15] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[200,45] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable job of type org.example.hirehub.entity.Job
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[208,17] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[209,44] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[212,17] cannot find symbol
+[ERROR]   symbol:   method getPosition()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[213,48] cannot find symbol
+[ERROR]   symbol:   method getPosition()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[216,17] cannot find symbol
+[ERROR]   symbol:   method getField()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[217,45] cannot find symbol
+[ERROR]   symbol:   method getField()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[220,17] cannot find symbol
+[ERROR]   symbol:   method getDescription()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[221,45] cannot find symbol
+[ERROR]   symbol:   method getDescription()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[224,17] cannot find symbol
+[ERROR]   symbol:   method getAddress()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[225,48] cannot find symbol
+[ERROR]   symbol:   method getAddress()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[228,17] cannot find symbol
+[ERROR]   symbol:   method getUserSkills()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] /C:/Users/hirehub-combined/hirehub-backend/src/main/java/org/example/hirehub/service/EmbeddingService.java:[228,50] cannot find symbol
+[ERROR]   symbol:   method getUserSkills()
+[ERROR]   location: variable user of type org.example.hirehub.entity.User
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
