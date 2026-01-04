@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.example.hirehub.repository.UserRepository;
 import org.example.hirehub.entity.User;
@@ -97,7 +98,7 @@ public class UserService {
         }
         MultipartFile resume = request.getResume();
         if (resume != null && !resume.isEmpty()) {
-            String url = cloudinaryService.uploadAndGetUrl(resume, ObjectUtils.emptyMap());
+            String url = cloudinaryService.uploadAndGetUrl(resume, Map.of("async", true));
             String openAiResumeId = openAiFileService.uploadFile(resume);
             user.setOpenAiResumeId(openAiResumeId);
             user.setResume_link(url);
