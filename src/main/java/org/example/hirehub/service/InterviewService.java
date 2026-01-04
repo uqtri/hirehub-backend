@@ -324,7 +324,7 @@ public class InterviewService {
         InterviewRoom room = roomRepository.findByRoomCode(roomCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
         
-        // Check if user is authorized
+        // Check if user is authorized (applicant or recruiter)
         boolean isAuthorized = room.getApplicant().getId().equals(userId) || 
                                room.getRecruiter().getId().equals(userId);
         
@@ -332,16 +332,16 @@ public class InterviewService {
             return false;
         }
         
-        // Check if room is expired and auto-update status
+        // Auto-update status to EXPIRED if time has passed
         if (isRoomExpired(room) && !"FINISHED".equals(room.getStatus()) && !"CANCELLED".equals(room.getStatus())) {
             room.setStatus("EXPIRED");
             room.setEndedAt(room.getScheduledTime().plusMinutes(room.getDurationMinutes()));
             roomRepository.save(room);
-            return false; // Cannot join expired room
         }
         
-        // Can only join if room is SCHEDULED or ONGOING
-        return "SCHEDULED".equals(room.getStatus()) || "ONGOING".equals(room.getStatus());
+        // Allow access to view expired/finished rooms (read-only mode will be handled in frontend)
+        // Only block CANCELLED rooms
+        return !"CANCELLED".equals(room.getStatus());
     }
     
     // New methods for async interview
