@@ -44,5 +44,8 @@ public class InterviewQuestion {
     
     @Column(nullable = false)
     private String status = "PENDING"; // PENDING, ANSWERED
+    
+    @Column(length = 20)
+    private String evaluation; // PASS, FAIL, null (not evaluated yet)
 }
 

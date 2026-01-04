@@ -22,3 +22,4 @@ public interface JobTypeRepository extends JpaRepository<JobType, Long> {
 
 
 
+

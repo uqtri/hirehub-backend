@@ -155,6 +155,19 @@ public class InterviewRoomController {
         return ResponseEntity.ok(response);
     }
     
+    @PostMapping("/questions/{questionId}/evaluate")
+    public ResponseEntity<Map<String, Object>> evaluateQuestion(
+            @PathVariable Long questionId,
+            @RequestBody EvaluateQuestionDTO dto
+    ) {
+        InterviewQuestionDTO question = interviewService.evaluateQuestion(questionId, dto);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", question);
+        response.put("message", "Question evaluated successfully");
+        return ResponseEntity.ok(response);
+    }
+    
     @PostMapping("/results/async")
     public ResponseEntity<Map<String, Object>> submitAsyncResult(
             @RequestBody CreateInterviewResultDTO dto

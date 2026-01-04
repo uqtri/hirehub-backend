@@ -19,5 +19,6 @@ public class InterviewQuestionDTO {
     private LocalDateTime askedAt;
     private LocalDateTime answeredAt;
     private String status;
+    private String evaluation; // PASS, FAIL, null
 }
 

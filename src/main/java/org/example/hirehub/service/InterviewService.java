@@ -470,7 +470,24 @@ public class InterviewService {
         dto.setAskedAt(question.getAskedAt());
         dto.setAnsweredAt(question.getAnsweredAt());
         dto.setStatus(question.getStatus());
+        dto.setEvaluation(question.getEvaluation());
         return dto;
+    }
+    
+    @Transactional
+    public InterviewQuestionDTO evaluateQuestion(Long questionId, EvaluateQuestionDTO dto) {
+        InterviewQuestion question = interviewQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        
+        // Validate evaluation value
+        if (!"PASS".equals(dto.getEvaluation()) && !"FAIL".equals(dto.getEvaluation())) {
+            throw new IllegalArgumentException("Evaluation must be either PASS or FAIL");
+        }
+        
+        question.setEvaluation(dto.getEvaluation());
+        InterviewQuestion saved = interviewQuestionRepository.save(question);
+        
+        return toQuestionDTO(saved);
     }
 }
 
