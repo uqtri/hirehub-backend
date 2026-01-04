@@ -28,3 +28,4 @@ SELECT 'Active Job Types:', COUNT(*) FROM job_type WHERE is_deleted = false;
 
 
 
+

@@ -16,3 +16,4 @@ WHERE is_draft IS NULL;
 COMMENT ON COLUMN interview_result.is_draft IS 'True if saved as draft, false if submitted';
 COMMENT ON COLUMN interview_result.updated_at IS 'Last update timestamp';
 
+

@@ -58,3 +58,4 @@ INSERT INTO job_type (type, is_deleted, created_at) VALUES
 
 
 
+
