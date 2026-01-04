@@ -18,35 +18,34 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuestionBankService {
-    
+
     private final QuestionBankRepository questionBankRepository;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
-    
+
     public QuestionBankService(
             QuestionBankRepository questionBankRepository,
             QuestionRepository questionRepository,
-            UserRepository userRepository
-    ) {
+            UserRepository userRepository) {
         this.questionBankRepository = questionBankRepository;
         this.questionRepository = questionRepository;
         this.userRepository = userRepository;
     }
-    
+
     @Transactional
     public QuestionBankDTO createQuestionBank(CreateQuestionBankDTO dto) {
         User recruiter = userRepository.findById(dto.getRecruiterId())
                 .orElseThrow(() -> new ResourceNotFoundException("Recruiter not found"));
-        
+
         QuestionBank questionBank = new QuestionBank();
         questionBank.setRecruiter(recruiter);
         questionBank.setTitle(dto.getTitle());
         questionBank.setDescription(dto.getDescription());
         questionBank.setCategory(dto.getCategory());
         questionBank.setCreatedAt(LocalDateTime.now());
-        
+
         QuestionBank savedBank = questionBankRepository.save(questionBank);
-        
+
         // Create questions
         List<Question> questions = new ArrayList<>();
         if (dto.getQuestions() != null) {
@@ -60,57 +59,75 @@ public class QuestionBankService {
             }
             questionRepository.saveAll(questions);
         }
-        
+
         savedBank.setQuestions(questions);
         return toDTO(savedBank);
     }
-    
+
     public List<QuestionBankDTO> getQuestionBanksByRecruiterId(Long recruiterId) {
         return questionBankRepository.findByRecruiterIdAndIsDeletedFalse(recruiterId)
                 .stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
-    
+
     public QuestionBankDTO getQuestionBankById(Long id) {
         QuestionBank bank = questionBankRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Question bank not found"));
         return toDTO(bank);
     }
-    
+
     @Transactional
     public QuestionBankDTO updateQuestionBank(Long id, CreateQuestionBankDTO dto) {
         QuestionBank bank = questionBankRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Question bank not found"));
-        
+
         bank.setTitle(dto.getTitle());
         bank.setDescription(dto.getDescription());
         bank.setCategory(dto.getCategory());
         bank.setUpdatedAt(LocalDateTime.now());
-        
-        // Delete old questions and create new ones
-        if (bank.getQuestions() != null) {
-            questionRepository.deleteAll(bank.getQuestions());
+
+        List<Question> existingQuestions = bank.getQuestions();
+        if (existingQuestions == null) {
+            existingQuestions = new ArrayList<>();
+            bank.setQuestions(existingQuestions);
         }
-        
-        List<Question> questions = new ArrayList<>();
+
+        // Mark all as deleted initially
+        for (Question q : existingQuestions) {
+            q.setDeleted(true);
+        }
+
+        // Process new questions
         if (dto.getQuestions() != null) {
             for (int i = 0; i < dto.getQuestions().size(); i++) {
-                Question question = new Question();
-                question.setQuestionBank(bank);
-                question.setContent(dto.getQuestions().get(i));
-                question.setOrderIndex(i);
-                question.setCreatedAt(LocalDateTime.now());
-                questions.add(question);
+                String content = dto.getQuestions().get(i);
+                final int orderIndex = i;
+
+                // Try to find an existing question with the same content
+                Question existing = existingQuestions.stream()
+                        .filter(q -> q.getContent().equals(content))
+                        .findFirst()
+                        .orElse(null);
+
+                if (existing != null) {
+                    existing.setDeleted(false);
+                    existing.setOrderIndex(orderIndex);
+                } else {
+                    Question newQuestion = new Question();
+                    newQuestion.setQuestionBank(bank);
+                    newQuestion.setContent(content);
+                    newQuestion.setOrderIndex(orderIndex);
+                    newQuestion.setCreatedAt(LocalDateTime.now());
+                    existingQuestions.add(newQuestion);
+                }
             }
-            questionRepository.saveAll(questions);
         }
-        
-        bank.setQuestions(questions);
+
         QuestionBank savedBank = questionBankRepository.save(bank);
         return toDTO(savedBank);
     }
-    
+
     @Transactional
     public void deleteQuestionBank(Long id) {
         QuestionBank bank = questionBankRepository.findById(id)
@@ -118,7 +135,7 @@ public class QuestionBankService {
         bank.setDeleted(true);
         questionBankRepository.save(bank);
     }
-    
+
     private QuestionBankDTO toDTO(QuestionBank bank) {
         QuestionBankDTO dto = new QuestionBankDTO();
         dto.setId(bank.getId());
@@ -129,7 +146,7 @@ public class QuestionBankService {
         dto.setCategory(bank.getCategory());
         dto.setCreatedAt(bank.getCreatedAt());
         dto.setUpdatedAt(bank.getUpdatedAt());
-        
+
         if (bank.getQuestions() != null) {
             List<QuestionDTO> questionDTOs = bank.getQuestions().stream()
                     .filter(q -> !q.isDeleted())
@@ -137,8 +154,7 @@ public class QuestionBankService {
                     .collect(Collectors.toList());
             dto.setQuestions(questionDTOs);
         }
-        
+
         return dto;
     }
 }
-
