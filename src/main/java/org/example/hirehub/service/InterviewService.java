@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class InterviewService {
     private final NotificationService notificationService;
     private final EmailProducer emailProducer;
     private final EntityManager entityManager;
+    private final ResumeRepository resumeRepository;
     
     public InterviewService(
             InterviewRoomRepository roomRepository,
@@ -42,7 +44,8 @@ public class InterviewService {
             InterviewMapper interviewMapper,
             NotificationService notificationService,
             EmailProducer emailProducer,
-            EntityManager entityManager
+            EntityManager entityManager,
+            ResumeRepository resumeRepository
     ) {
         this.roomRepository = roomRepository;
         this.messageRepository = messageRepository;
@@ -55,6 +58,7 @@ public class InterviewService {
         this.notificationService = notificationService;
         this.emailProducer = emailProducer;
         this.entityManager = entityManager;
+        this.resumeRepository = resumeRepository;
     }
     
     @Transactional
@@ -312,24 +316,48 @@ public class InterviewService {
                 .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
         
         // Check if result already exists
-        if (resultRepository.findByRoomId(room.getId()).isPresent()) {
-            throw new IllegalStateException("Interview result already submitted");
-        }
+        Optional<InterviewResult> existingResultOpt = resultRepository.findByRoomId(room.getId());
         
-        InterviewResult result = new InterviewResult();
-        result.setRoom(room);
-        result.setScore(dto.getScore());
-        result.setComment(dto.getComment());
-        result.setPrivateNotes(dto.getPrivateNotes());
-        result.setRecommendation(dto.getRecommendation());
-        result.setCreatedAt(LocalDateTime.now());
+        InterviewResult result;
+        boolean isNewResult = !existingResultOpt.isPresent();
+        
+        if (existingResultOpt.isPresent()) {
+            // Update existing result (draft or submitted)
+            result = existingResultOpt.get();
+            result.setScore(dto.getScore());
+            result.setComment(dto.getComment());
+            result.setPrivateNotes(dto.getPrivateNotes());
+            result.setRecommendation(dto.getRecommendation());
+            result.setIsDraft(false); // Always set to false when submitting
+            result.setUpdatedAt(LocalDateTime.now());
+        } else {
+            // Create new result
+            result = new InterviewResult();
+            result.setRoom(room);
+            result.setScore(dto.getScore());
+            result.setComment(dto.getComment());
+            result.setPrivateNotes(dto.getPrivateNotes());
+            result.setRecommendation(dto.getRecommendation());
+            result.setIsDraft(false);
+            result.setCreatedAt(LocalDateTime.now());
+        }
         
         InterviewResult savedResult = resultRepository.save(result);
         
         // Update room status to FINISHED
         room.setStatus("FINISHED");
-        room.setEndedAt(LocalDateTime.now());
+        if (room.getEndedAt() == null) {
+            room.setEndedAt(LocalDateTime.now());
+        }
         roomRepository.save(room);
+        
+        // Send result email to applicant (only for submitted, not draft)
+        sendResultEmail(room, savedResult);
+        
+        // Update Resume status to PASS_INTERVIEW if recommendation is PASS
+        if ("PASS".equals(savedResult.getRecommendation())) {
+            updateResumeStatusToPassInterview(room);
+        }
         
         return interviewMapper.toResultDTO(savedResult);
     }
@@ -409,18 +437,33 @@ public class InterviewService {
         InterviewRoom room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
         
-        // Check if result already exists
-        if (resultRepository.findByRoomId(room.getId()).isPresent()) {
+        // Check if result already exists (non-draft)
+        Optional<InterviewResult> existingResult = resultRepository.findByRoomId(room.getId());
+        if (existingResult.isPresent() && !existingResult.get().getIsDraft()) {
             throw new IllegalStateException("Interview result already submitted");
         }
         
-        InterviewResult result = new InterviewResult();
-        result.setRoom(room);
-        result.setScore(dto.getScore());
-        result.setComment(dto.getComment());
-        result.setPrivateNotes(dto.getPrivateNotes());
-        result.setRecommendation(dto.getRecommendation());
-        result.setCreatedAt(LocalDateTime.now());
+        InterviewResult result;
+        if (existingResult.isPresent() && existingResult.get().getIsDraft()) {
+            // Update existing draft
+            result = existingResult.get();
+            result.setScore(dto.getScore());
+            result.setComment(dto.getComment());
+            result.setPrivateNotes(dto.getPrivateNotes());
+            result.setRecommendation(dto.getRecommendation());
+            result.setIsDraft(false); // Submit as final
+            result.setUpdatedAt(LocalDateTime.now());
+        } else {
+            // Create new result
+            result = new InterviewResult();
+            result.setRoom(room);
+            result.setScore(dto.getScore());
+            result.setComment(dto.getComment());
+            result.setPrivateNotes(dto.getPrivateNotes());
+            result.setRecommendation(dto.getRecommendation());
+            result.setIsDraft(false);
+            result.setCreatedAt(LocalDateTime.now());
+        }
         
         InterviewResult savedResult = resultRepository.save(result);
         
@@ -429,10 +472,74 @@ public class InterviewService {
         room.setEndedAt(LocalDateTime.now());
         roomRepository.save(room);
         
-        // Send result email to applicant
+        // Send result email to applicant (only for submitted, not draft)
         sendResultEmail(room, savedResult);
         
+        // Update Resume status to PASS_INTERVIEW if recommendation is PASS
+        if ("PASS".equals(savedResult.getRecommendation())) {
+            updateResumeStatusToPassInterview(room);
+        }
+        
         return interviewMapper.toResultDTO(savedResult);
+    }
+    
+    @Transactional
+    public InterviewResultDTO saveDraftResult(CreateInterviewResultDTO dto) {
+        InterviewRoom room = roomRepository.findById(dto.getRoomId())
+                .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
+        
+        // Check if non-draft result already exists
+        Optional<InterviewResult> existingResult = resultRepository.findByRoomId(room.getId());
+        if (existingResult.isPresent() && !existingResult.get().getIsDraft()) {
+            throw new IllegalStateException("Interview result already submitted. Cannot save as draft.");
+        }
+        
+        InterviewResult result;
+        if (existingResult.isPresent()) {
+            // Update existing draft
+            result = existingResult.get();
+            result.setScore(dto.getScore());
+            result.setComment(dto.getComment());
+            result.setPrivateNotes(dto.getPrivateNotes());
+            result.setRecommendation(dto.getRecommendation());
+            result.setIsDraft(true);
+            result.setUpdatedAt(LocalDateTime.now());
+        } else {
+            // Create new draft
+            result = new InterviewResult();
+            result.setRoom(room);
+            result.setScore(dto.getScore());
+            result.setComment(dto.getComment());
+            result.setPrivateNotes(dto.getPrivateNotes());
+            result.setRecommendation(dto.getRecommendation());
+            result.setIsDraft(true);
+            result.setCreatedAt(LocalDateTime.now());
+        }
+        
+        InterviewResult savedResult = resultRepository.save(result);
+        return interviewMapper.toResultDTO(savedResult);
+    }
+    
+    private void updateResumeStatusToPassInterview(InterviewRoom room) {
+        try {
+            // Find resume by job and applicant
+            List<Resume> resumes = resumeRepository.searchResumesDynamic(
+                room.getApplicant().getId(),
+                room.getJob().getId(),
+                null,
+                null
+            );
+            
+            // Update the first matching resume (should be only one per job-applicant pair)
+            if (!resumes.isEmpty()) {
+                Resume resume = resumes.get(0);
+                resume.setStatus("PASS_INTERVIEW");
+                resumeRepository.save(resume);
+            }
+        } catch (Exception e) {
+            // Log error but don't fail the transaction
+            System.err.println("Error updating resume status: " + e.getMessage());
+        }
     }
     
     private void sendResultEmail(InterviewRoom room, InterviewResult result) {

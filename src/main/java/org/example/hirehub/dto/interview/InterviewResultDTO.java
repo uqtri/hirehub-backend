@@ -16,6 +16,8 @@ public class InterviewResultDTO {
     private String comment;
     private String privateNotes;
     private String recommendation;
+    private Boolean isDraft;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
 

@@ -37,6 +37,11 @@ public class InterviewResult {
     private String recommendation; // PASS, FAIL
     
     @Column(nullable = false)
+    private Boolean isDraft = false; // true if saved as draft, false if submitted
+    
+    @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+    
+    private LocalDateTime updatedAt;
 }
 

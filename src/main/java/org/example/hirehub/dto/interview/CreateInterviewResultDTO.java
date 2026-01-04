@@ -13,5 +13,6 @@ public class CreateInterviewResultDTO {
     private String comment;
     private String privateNotes;
     private String recommendation;
+    private Boolean isDraft = false; // Optional, defaults to false
 }
 

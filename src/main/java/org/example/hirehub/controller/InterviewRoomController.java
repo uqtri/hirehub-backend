@@ -201,5 +201,18 @@ public class InterviewRoomController {
         response.put("message", "Interview result submitted and email sent");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+    
+    @PostMapping("/results/draft")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<Map<String, Object>> saveDraftResult(
+            @RequestBody CreateInterviewResultDTO dto
+    ) {
+        InterviewResultDTO result = interviewService.saveDraftResult(dto);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", result);
+        response.put("message", "Draft evaluation saved successfully");
+        return ResponseEntity.ok(response);
+    }
 }
 

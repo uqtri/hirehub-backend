@@ -30,6 +30,22 @@ public class DatabaseInitializer implements InitializingBean {
                 "evaluation"
             );
             
+            // Check and add isDraft column to interview_result
+            addColumnIfNotExists(
+                "interview_result",
+                "is_draft",
+                "ALTER TABLE interview_result ADD COLUMN is_draft BOOLEAN NOT NULL DEFAULT FALSE",
+                "is_draft"
+            );
+            
+            // Check and add updatedAt column to interview_result
+            addColumnIfNotExists(
+                "interview_result",
+                "updated_at",
+                "ALTER TABLE interview_result ADD COLUMN updated_at TIMESTAMP",
+                "updated_at"
+            );
+            
         } catch (Exception e) {
             System.err.println("⚠️ Error in database initialization: " + e.getMessage());
             // Don't throw exception to prevent application startup failure
