@@ -87,6 +87,28 @@ public class InterviewRoomController {
         return ResponseEntity.ok(response);
     }
     
+    @PutMapping("/{roomCode}/extend")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<Map<String, Object>> extendInterview(
+            @PathVariable String roomCode,
+            @RequestBody Map<String, Integer> request
+    ) {
+        Integer additionalMinutes = request.get("additionalMinutes");
+        if (additionalMinutes == null || additionalMinutes <= 0) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Additional minutes must be a positive number");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        
+        InterviewRoomDTO room = interviewService.extendInterviewDuration(roomCode, additionalMinutes);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", room);
+        response.put("message", "Interview duration extended successfully");
+        return ResponseEntity.ok(response);
+    }
+    
     @GetMapping("/{roomCode}/messages")
     public ResponseEntity<Map<String, Object>> getMessagesByRoomCode(
             @PathVariable String roomCode

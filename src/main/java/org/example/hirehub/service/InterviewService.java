@@ -239,6 +239,27 @@ public class InterviewService {
     }
     
     @Transactional
+    public InterviewRoomDTO extendInterviewDuration(String roomCode, Integer additionalMinutes) {
+        InterviewRoom room = roomRepository.findByRoomCode(roomCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
+        
+        // Check if room is already expired or finished
+        if (isRoomExpired(room) || "FINISHED".equals(room.getStatus())) {
+            throw new IllegalStateException("Cannot extend interview: Room is already expired or finished");
+        }
+        
+        // Extend duration
+        int currentDuration = room.getDurationMinutes() != null ? room.getDurationMinutes() : 60;
+        room.setDurationMinutes(currentDuration + additionalMinutes);
+        
+        // Create system message
+        createSystemMessage(room, String.format("Interview duration extended by %d minutes.", additionalMinutes));
+        
+        InterviewRoom savedRoom = roomRepository.save(room);
+        return enrichRoomDTO(interviewMapper.toRoomDTO(savedRoom), savedRoom);
+    }
+    
+    @Transactional
     public InterviewMessageDTO createMessage(CreateInterviewMessageDTO dto) {
         InterviewRoom room = roomRepository.findByRoomCode(dto.getRoomCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Interview room not found"));
