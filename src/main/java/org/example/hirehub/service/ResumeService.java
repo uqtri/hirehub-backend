@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,9 +38,9 @@ public class ResumeService {
     private final NotificationService notificationService;
 
     public ResumeService(ResumeRepository resumeRepository, ResumeMapper resumeMapper,
-            UserRepository userRepository,
-            JobRepository jobRepository, CloudinaryService cloudinaryService, OpenAiFileService openAiFileService,
-            NotificationService notificationService) {
+                         UserRepository userRepository,
+                         JobRepository jobRepository, CloudinaryService cloudinaryService, OpenAiFileService openAiFileService,
+                         NotificationService notificationService) {
         this.resumeRepository = resumeRepository;
         this.resumeMapper = resumeMapper;
         this.userRepository = userRepository;
@@ -72,7 +73,7 @@ public class ResumeService {
 
         MultipartFile resumeFile = request.getResumeFile();
         if (resumeFile != null && !resumeFile.isEmpty()) {
-            String url = cloudinaryService.uploadAndGetUrl(resumeFile, Map.of("async", true));
+            String url = cloudinaryService.uploadAndGetUrl(resumeFile, Collections.emptyMap());
             // String openAiResumeId = openAiFileService.uploadFile(resumeFile);
             resume.setLink(url);
             // resume.setOpenAiResumeId(openAiResumeId);

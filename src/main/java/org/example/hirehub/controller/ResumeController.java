@@ -29,11 +29,11 @@ public class ResumeController {
 
     @GetMapping("")
     public List<ResumeDetailDTO> getAllResumes(
-            @RequestParam(required = false) Long user,
-            @RequestParam(required = false) Long job,
-            @RequestParam(required = false) Long recruiter,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Long jobId,
+            @RequestParam(required = false) Long recruiterId,
             @RequestParam(required = false) String status) {
-        return resumeService.getAllResumes(user, job, recruiter, status).stream().map(resumeMapper::toDTO).toList();
+        return resumeService.getAllResumes(userId, jobId, recruiterId, status).stream().map(resumeMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")

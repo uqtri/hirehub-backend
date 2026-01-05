@@ -22,7 +22,7 @@ public class EmbeddingScheduler {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
 
-    @Value("${embedding.scheduler.enabled:true}")
+    @Value("${embedding.scheduler.enabled:false}")
     private boolean schedulerEnabled;
 
     @Value("${embedding.scheduler.batch-size:50}")
@@ -40,7 +40,7 @@ public class EmbeddingScheduler {
      * Regenerate embeddings for all jobs and users
      * Default: every 5 minutes (configurable via embedding.scheduler.cron)
      */
-    @Scheduled(cron = "${embedding.scheduler.cron:0 */1 * * * *}")
+    @Scheduled(cron = "${embedding.scheduler.cron:0 */2 * * * *}")
     public void regenerateEmbeddings() {
         if (!schedulerEnabled) {
             log.debug("Embedding scheduler is disabled");
